@@ -17,6 +17,7 @@ import TesterDetails from "./files/TesterDetails";
 import VerticalRightSidebar from "./VerticalRightSidebar";
 import CardAssignmentV2 from "./files/CardAssignment-v2";
 import StopFulFillment from "./files/StopFulFillment";
+import TestCase from "./files/TestCase";
 import { environmentMapping } from "../../utils/constent";
 
 function TCrequest() {
@@ -336,6 +337,15 @@ function TCrequest() {
             )}
             {activeStep === 9 && (
               <StopFulFillment
+                requestInfoData={requestInfoData}
+                handleSaveAndNext={handleSaveAndNext}
+                fetchData={fetchData}
+                showTrackDetails={true}
+                isCompleted={isCompleted}
+              />
+            )}
+            {activeStep === 10 && (
+              <TestCase
                 requestInfoData={requestInfoData}
                 handleSaveAndNext={handleSaveAndNext}
                 fetchData={fetchData}

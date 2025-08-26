@@ -73,6 +73,14 @@ const VerticalRightSidebar = ({
           <span className="sidebar-text">Stop Fulfillment</span>
         </button>
       )}
+
+      {/* Test Case */}
+      <button
+        className={`right-sidebar-item ${activeStep === 10 && "active"}`}
+        onClick={() => onTabClick(10)}
+      >
+        <span className="sidebar-text">Test Case</span>
+      </button>
     </div>
   );
 };
