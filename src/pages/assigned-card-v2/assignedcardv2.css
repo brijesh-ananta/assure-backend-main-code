@@ -1,0 +1,58 @@
+.search-card-wrapper {
+  padding: 20px;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.form-grid-search-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.assigned-card-conatiner {
+  margin: 2rem 3.5rem 1rem 3.5rem;
+}
+
+.form-grid-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 5rem;
+  align-items: flex-end;
+}
+
+.form-group-search-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  width: 450px;
+}
+
+.form-group-search-card p {
+  margin: 0 !important;
+}
+
+.form-group-search-card label {
+  font-weight: bold;
+  text-wrap: noWrap;
+  width: 'fit-content';
+}
+
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  pointer-events: none;
+}

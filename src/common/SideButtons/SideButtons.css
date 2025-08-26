@@ -1,0 +1,56 @@
+.side-buttons-wrapper {
+  position: fixed;
+  top: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 1000;
+}
+
+.side-buttons-wrapper.left {
+  left: 0;
+}
+
+.side-buttons-wrapper.right {
+  right: 0;
+}
+
+.side-tab {
+  writing-mode: vertical-lr;
+  transform: rotate(0deg);
+  padding: 2rem 0.5rem;
+  background-color: #fff;
+  border: 2px solid #000;
+  cursor: pointer;
+  color: #000;
+  font-weight: 500;
+  text-align: center;
+}
+
+.side-tab.active {
+  background-color: #ccc;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+.side-tab:disabled {
+  background-color: white;
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.side-buttons-wrapper.left .side-tab {
+  border-radius: 0 20px 20px 0;
+  border-left: none;
+}
+
+.side-buttons-wrapper.right .side-tab {
+  border-radius: 10px 0 0 10px;
+  writing-mode: sideways-lr;
+  border-right: none;
+}
+
+
+.active-dis {
+  opacity: 0.5 !important;
+}

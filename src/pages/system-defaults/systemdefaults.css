@@ -1,0 +1,38 @@
+.system-default-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.system-default-container-square-input {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.system-default-container span {
+  margin-left: 1rem;
+}
+
+.system-default-container-input {
+  border-radius: 8px;
+  border: 2px solid black !important;
+  width: 20% !important;
+}
+
+.system-default-container-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.system-default-container-div p {
+  margin: 0% !important;
+  text-decoration: underline;
+  font-weight: 600;
+  color: #0071bd;
+}

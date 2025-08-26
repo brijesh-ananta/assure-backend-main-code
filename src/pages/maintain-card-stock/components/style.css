@@ -1,0 +1,9 @@
+.border-b-table tr {
+    border-bottom: 3px solid;
+    border-radius: 5px;
+}
+
+.border-b-table .bg-green {
+    background-color: #D7E3BF !important;
+    color: black;
+}

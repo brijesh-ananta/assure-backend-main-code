@@ -1,0 +1,37 @@
+.assign-card-wrapper .credit-card-inner {
+  background: linear-gradient(180deg, #91CCDB, #70AEC0, #5298AB, #36879D 100%);
+  color: #535353;
+}
+
+.assign-card-wrapper input {
+  border: 2px solid;
+}
+
+.assign-card-wrapper .credit-discover-logo {
+  height: 50px;
+  width: 100px;
+}
+
+.card-chip img {
+  height: 35px;
+  width: 40px;
+}
+
+.card-chip {
+  left: 70px;
+}
+
+.assign-card-wrapper .seq-number {
+  bottom: 5%;
+  top: auto !important;
+}
+
+.assign-card-wrapper .cvv {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
+.bottom-4 {
+  bottom: 40px !important;
+}

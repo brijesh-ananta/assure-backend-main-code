@@ -1,0 +1,103 @@
+.add-card-wrapper {
+  font-family: Arial, sans-serif;
+}
+
+.add-card-wrapper .card-form {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  margin-top: 3rem;
+}
+
+.add-card-wrapper .row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.add-card-wrapper input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.add-card-wrapper .shadowed {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.add-card-wrapper .input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+
+.add-card-wrapper .input-wrapper span {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+.add-card-wrapper .buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3rem;
+}
+
+.add-card-wrapper .cancel {
+  background: #ccc;
+  padding: 0.5rem 2rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.6);
+}
+
+.add-card-wrapper .submit,
+.add-card-wrapper .add-more {
+  background: #fbb17a;
+  padding: 0.5rem 2rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.6);
+}
+
+.add-card-wrapper .labeled-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.add-card-wrapper .form-group-add-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-wrap: nowrap;
+  flex: 1;
+}
+
+.add-card-wrapper .form-group-add-card.double {
+  flex: 2;
+}
+
+.add-card-wrapper .bold-label {
+  font-weight: bold;
+  margin-bottom: 0px !important;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+}
