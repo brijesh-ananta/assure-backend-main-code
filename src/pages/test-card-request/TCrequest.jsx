@@ -46,6 +46,8 @@ function TCrequest() {
   const [requestNumberId, setRequestNumberId] = useState("");
   const [snStatusVerify, setSnStatusVerify] = useState(undefined);
   const [loading, setLoading] = useState(true);
+  const [isTestCaseAvailable, setIsTestCaseAvailable] = useState(false);
+  
 
   useEffect(() => {
     if (currentStep && typeof +currentStep === "number") {
@@ -96,6 +98,10 @@ function TCrequest() {
         if (terminalType === "Ecomm" || shipDetails.shipTo === "mobile") {
           setIsShipmentAvailable(false);
         }
+
+        // Check userCardId availability for TestCase tab
+        const userCardInfo = JSON.parse(response.data.userCardInfo || "{}");
+        setIsTestCaseAvailable(!!userCardInfo.user_card_id);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -344,7 +350,7 @@ function TCrequest() {
                 isCompleted={isCompleted}
               />
             )}
-            {activeStep === 10 && (
+            {activeStep === 10 && isTestCaseAvailable && (
               <TestCase
                 requestInfoData={requestInfoData}
                 handleSaveAndNext={handleSaveAndNext}
@@ -352,6 +358,13 @@ function TCrequest() {
                 showTrackDetails={true}
                 isCompleted={isCompleted}
               />
+            )}
+            {activeStep === 10 && !isTestCaseAvailable && (
+              <div className="container">
+                <div className="text-center p-4">
+                  <p className="text-muted">Test Case functionality is not available - User Card ID is required.</p>
+                </div>
+              </div>
             )}
           </div>
         </section>
@@ -366,6 +379,7 @@ function TCrequest() {
             isTerminalInfoAvailable={isTerminalInfoAvailable}
             isShippingInfoAvailable={isShippingInfoAvailable}
             isPhysicalCard={isPhysicalCard}
+            isTestCaseAvailable={isTestCaseAvailable}
           />
         )}
       </div>

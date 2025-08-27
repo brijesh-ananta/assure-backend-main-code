@@ -108,18 +108,20 @@ function TCfulfilment() {
           key: "request_id",
           label: "Request ID",
           sortable: true,
-          renderCell: (item) => (
-            <Link
-              to={`/dashboard/test-card-request/requestor-info/${item.cardRequestId}`}
-              state={{
-                environment: item.environment_id,
-                terminalType: item.terminalType,
-                status: item.status,
-              }}
-            >
-              {item.request_id}
-            </Link>
-          ),
+          renderCell: (item) => {
+            return (
+              <Link
+                to={`/dashboard/test-card-request/requestor-info/${item.cardRequestId}`}
+                state={{
+                  environment: item.environment_id,
+                  terminalType: item.terminalType,
+                  status: item.status,
+                }}
+              >
+                {item.request_id}
+              </Link>
+            );
+          },
         },
         { key: "status", label: "Status", sortable: true,
           renderCell: (item) => colorMapping[ item.status] || item.status,

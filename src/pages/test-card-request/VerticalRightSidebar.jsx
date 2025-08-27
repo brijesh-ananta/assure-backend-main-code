@@ -8,6 +8,7 @@ const VerticalRightSidebar = ({
   isPhysicalCard,
   requestInfoData,
   environment,
+  isTestCaseAvailable,
 }) => {
   const navigate = useNavigate();
   const afterSubmitStatus = ["approved", "assign_card", "shipped", "completed"];
@@ -78,6 +79,7 @@ const VerticalRightSidebar = ({
       <button
         className={`right-sidebar-item ${activeStep === 10 && "active"}`}
         onClick={() => onTabClick(10)}
+        disabled={!isTestCaseAvailable}
       >
         <span className="sidebar-text">Test Case</span>
       </button>

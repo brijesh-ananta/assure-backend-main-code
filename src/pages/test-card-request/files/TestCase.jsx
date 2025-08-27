@@ -1,15 +1,69 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axiosToken from "../../../utils/axiosToken";
 import { toast } from "react-toastify";
 import { ChevronRight, ChevronDown, CheckCircle, MinusCircle } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 function TestCase({ requestInfoData, fetchData }) {
   const [expandedTesters, setExpandedTesters] = useState({});
   const [auditTrail, setAuditTrail] = useState([]);
+  const [testers, setTesters] = useState([]);
+  const { cardRequestId } = useParams();
 
-  // Mock data - replace with actual API data
-  const [testers] = useState([
+  useEffect(() => {
+    const fetchCardRequestData = async () => {
+      try {
+        const response = await axiosToken.get(`/card-requests/${cardRequestId}`);
+        console.log('Card Request API Response:', response.data);
+        
+        const userCardInfo = JSON.parse(response.data.userCardInfo || '{}');
+        const userCardId = userCardInfo.user_card_id;
+        
+        if (userCardId) {
+          const testCasesResponse = await axiosToken.get(`/test-cases-user-mapping/user-card/${userCardId}`);
+          console.log('Test Cases API Response:', testCasesResponse.data);
+          
+          const groupedTesters = testCasesResponse.data.data.reduce((acc, testCase) => {
+            const existingTester = acc.find(t => t.id === testCase.tester_id);
+            if (existingTester) {
+              existingTester.testCases.push({
+                testId: testCase.test_cases_unique_id,
+                description: testCase.short_description,
+                testingSteps: testCase.testing_steps,
+                testerStatus: testCase.status === 'pending' ? 'Pending Testing' : 'Complete',
+                supportStatus: testCase.support_status
+              });
+            } else {
+              acc.push({
+                id: testCase.tester_id,
+                name: testCase.tester_name,
+                email: testCase.tester_email,
+                testCases: [{
+                  testId: testCase.test_cases_unique_id,
+                  description: testCase.short_description,
+                  testingSteps: testCase.testing_steps,
+                  testerStatus: testCase.status === 'pending' ? 'Pending Testing' : 'Complete',
+                  supportStatus: testCase.support_status
+                }]
+              });
+            }
+            return acc;
+          }, []);
+          
+          setTesters(groupedTesters);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    if (cardRequestId) {
+      fetchCardRequestData();
+    }
+  }, [cardRequestId]);
+
+  const [mockTesters] = useState([
     {
       id: 1,
       name: "John Doe",
@@ -19,13 +73,13 @@ function TestCase({ requestInfoData, fetchData }) {
           testId: "TC001",
           description: "Login functionality test",
           testerStatus: "Complete",
-          supportStatus: "Pending Validation"
+          supportStatus: "pending_validation"
         },
         {
           testId: "TC002",
           description: "Payment processing test",
-          testerStatus: "Pending Testing",
-          supportStatus: "Pending Validation"
+          testerStatus: "Complete",
+          supportStatus: "pending_validation"
         }
       ]
     },
@@ -38,7 +92,7 @@ function TestCase({ requestInfoData, fetchData }) {
           testId: "TC003",
           description: "User registration test",
           testerStatus: "Complete",
-          supportStatus: "Passed"
+          supportStatus: "passed"
         }
       ]
     },
@@ -51,7 +105,7 @@ function TestCase({ requestInfoData, fetchData }) {
           testId: "TC004",
           description: "Password reset test",
           testerStatus: "Pending Testing",
-          supportStatus: "Pending Validation"
+          supportStatus: "pending_validation"
         }
       ]
     },
@@ -64,19 +118,30 @@ function TestCase({ requestInfoData, fetchData }) {
           testId: "TC005",
           description: "API response time test",
           testerStatus: "Pending Testing",
-          supportStatus: "Pending Validation"
+          supportStatus: "pending_validation"
         }
       ]
     }
   ]);
 
   const supportStatuses = [
-    "Pending Validation",
-    "Passed",
-    "Failed",
-    "N/A",
-    "Retest"
+    { label: 'Pending Validation', value: 'pending_validation' },
+    { label: 'Retest', value: 'retest' },
+    { label: 'Passed', value: 'passed' },
+    { label: 'Failed Complete', value: 'failed_complete' },
+    { label: 'NA', value: 'na' }
   ];
+
+  const getIconsToShow = (tester) => {
+    const allTestsComplete = tester.testCases.every(tc => tc.testerStatus === 'Complete');
+    const allSupportComplete = tester.testCases.every(tc => tc.supportStatus === 'passed' || tc.supportStatus === 'failed_complete' || tc.supportStatus === 'na');
+    
+    return {
+      showYellow: allTestsComplete,
+      showGreen: allSupportComplete,
+      showIcons: allTestsComplete || allSupportComplete
+    };
+  };
 
   const toggleTester = (testerId) => {
     setExpandedTesters(prev => ({
@@ -87,6 +152,20 @@ function TestCase({ requestInfoData, fetchData }) {
 
   const handleSupportStatusChange = async (testerId, testId, newStatus) => {
     try {
+      // Update local state
+      setTesters(prev => prev.map(tester => 
+        tester.id === testerId 
+          ? {
+              ...tester,
+              testCases: tester.testCases.map(tc => 
+                tc.testId === testId 
+                  ? { ...tc, supportStatus: newStatus }
+                  : tc
+              )
+            }
+          : tester
+      ));
+
       // API call would go here
       // await axiosToken.put(`/test-cases/${testId}`, { supportStatus: newStatus });
 
@@ -110,7 +189,19 @@ function TestCase({ requestInfoData, fetchData }) {
 
   return (
     <div className="container">
-      <p className="blue-heading text-center">Test Case Management</p>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <p className="blue-heading text-center mb-0">Test Case Management</p>
+        <div className="d-flex gap-3 align-items-center">
+          <div className="d-flex align-items-center gap-1">
+            <CheckCircle size={16} className="text-warning" />
+            <small>Tester Complete</small>
+          </div>
+          <div className="d-flex align-items-center gap-1">
+            <CheckCircle size={16} className="text-success" />
+            <small>All Complete</small>
+          </div>
+        </div>
+      </div>
 
       <div className="request-form form-field-wrapper">
         {testers.map(tester => (
@@ -120,6 +211,18 @@ function TestCase({ requestInfoData, fetchData }) {
               onClick={() => toggleTester(tester.id)}
               style={{ cursor: 'pointer' }}
             >
+              <div className="d-flex gap-1" style={{ width: '45px' }}>
+                {(() => {
+                  const { showYellow, showGreen, showIcons } = getIconsToShow(tester);
+                  if (!showIcons) return null;
+                  return (
+                    <>
+                      {showYellow && <CheckCircle size={20} className="text-warning" />}
+                      {showGreen && <CheckCircle size={20} className="text-success" />}
+                    </>
+                  );
+                })()}
+              </div>
               <span className="me-2">{expandedTesters[tester.id] ? <ChevronDown /> : <ChevronRight />}</span>
               <div className="d-flex gap-3 flex-grow-1">
                 <div className="form-control-plaintext fw-bold text-primary underline">Tester <span className="">{tester.id}</span></div>
@@ -139,12 +242,17 @@ function TestCase({ requestInfoData, fetchData }) {
                 {tester.testCases.map(testCase => (
                   <div key={testCase.testId} className="row mb-3 align-items-center">
                     <div className="col-md-2">
-                      <a href="#" className="text-primary fw-bold">
+                      <a href="#" className="text-muted fw-bold">
                         {testCase.testId}
                       </a>
                     </div>
                     <div className="col-md-4">
-                      {testCase.description}
+                      <textarea 
+                        className="form-control form-control-sm"
+                        value={testCase.testingSteps || testCase.description}
+                        rows={2}
+                        readOnly
+                      />
                     </div>
                     <div className="col-md-2 text-center">
                       <span className={`badge ${testCase.testerStatus === 'Complete' ? 'text-success' : 'text-muted'}`}>
@@ -152,7 +260,15 @@ function TestCase({ requestInfoData, fetchData }) {
                       </span>
                     </div>
                     <div className="col-md-3">
-                      {testCase.supportStatus}
+                      <select
+                        className="form-select form-select-sm"
+                        value={testCase.supportStatus}
+                        onChange={(e) => handleSupportStatusChange(tester.id, testCase.testId, e.target.value)}
+                      >
+                        {supportStatuses.map(status => (
+                          <option key={status.value} value={status.value}>{status.label}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 ))}
