@@ -40,6 +40,7 @@ function TestCase({ requestInfoData, fetchData }) {
               );
               if (existingTester) {
                 existingTester.testCases.push({
+                  mappingId: testCase.id,
                   testId: testCase.test_cases_unique_id,
                   description: testCase.short_description,
                   testingSteps: testCase.testing_steps,
@@ -56,6 +57,7 @@ function TestCase({ requestInfoData, fetchData }) {
                   email: testCase.tester_email,
                   testCases: [
                     {
+                      mappingId: testCase.id,
                       testId: testCase.test_cases_unique_id,
                       description: testCase.short_description,
                       testingSteps: testCase.testing_steps,
@@ -84,67 +86,6 @@ function TestCase({ requestInfoData, fetchData }) {
       fetchCardRequestData();
     }
   }, [cardRequestId]);
-
-  const [mockTesters] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@company.com",
-      testCases: [
-        {
-          testId: "TC001",
-          description: "Login functionality test",
-          testerStatus: "Complete",
-          supportStatus: "pending_validation",
-        },
-        {
-          testId: "TC002",
-          description: "Payment processing test",
-          testerStatus: "Complete",
-          supportStatus: "pending_validation",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@company.com",
-      testCases: [
-        {
-          testId: "TC003",
-          description: "User registration test",
-          testerStatus: "Complete",
-          supportStatus: "passed",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      email: "alice.johnson@company.com",
-      testCases: [
-        {
-          testId: "TC004",
-          description: "Password reset test",
-          testerStatus: "Pending Testing",
-          supportStatus: "pending_validation",
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "Bob Brown",
-      email: "bob.brown@company.com",
-      testCases: [
-        {
-          testId: "TC005",
-          description: "API response time test",
-          testerStatus: "Pending Testing",
-          supportStatus: "pending_validation",
-        },
-      ],
-    },
-  ]);
 
   const supportStatuses = [
     { label: "Pending Validation", value: "pending_validation" },
@@ -179,8 +120,13 @@ function TestCase({ requestInfoData, fetchData }) {
     }));
   };
 
-  const handleSupportStatusChange = async (testerId, testId, newStatus) => {
+  const handleSupportStatusChange = async (testerId, testId, newStatus, mappingId) => {
     try {
+      // Make PUT API call to update admin status using mapping ID
+      await axiosToken.put(`/test-cases-user-mapping/admin-update/${mappingId}`, {
+        support_status: newStatus
+      });
+
       // Update local state
       setTesters((prev) =>
         prev.map((tester) =>
@@ -197,9 +143,6 @@ function TestCase({ requestInfoData, fetchData }) {
         )
       );
 
-      // API call would go here
-      // await axiosToken.put(`/test-cases/${testId}`, { supportStatus: newStatus });
-
       const auditEntry = {
         timestamp: new Date().toLocaleString(),
         action: `Support status changed to ${newStatus} for ${testId}`,
@@ -208,8 +151,8 @@ function TestCase({ requestInfoData, fetchData }) {
       setAuditTrail((prev) => [auditEntry, ...prev]);
 
       toast.success("Status updated successfully");
-      // fetchData();
     } catch (error) {
+      console.error("Error updating support status:", error);
       toast.error("Failed to update status");
     }
   };
@@ -326,7 +269,8 @@ function TestCase({ requestInfoData, fetchData }) {
                           handleSupportStatusChange(
                             tester.id,
                             testCase.testId,
-                            e.target.value
+                            e.target.value,
+                            testCase.mappingId
                           )
                         }
                       >
