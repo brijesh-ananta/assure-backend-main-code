@@ -66,7 +66,6 @@ function Notifications() {
         url += `&status=${statusFilter}`;
       }
       const response = await axiosToken.get(url);
-      console.log("response", response);
 
       const notificationsData = Array.isArray(response.data.notifications)
         ? response.data.notifications
@@ -221,6 +220,11 @@ function Notifications() {
                           <span className="float-end">
                             End Date &nbsp;
                             {formatDate(notification.end_date)}
+                          </span>
+                        </p>
+                        <p className="fw-bold">
+                          <span className="fw-bold">
+                            {notification.short_title}
                           </span>
                         </p>
                         <p className="mb-2">

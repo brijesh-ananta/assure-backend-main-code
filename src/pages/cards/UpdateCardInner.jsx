@@ -24,16 +24,20 @@ function UpdateCardInner({ card }) {
       const updateData = {
         cardId: card.id,
         cardStatus: cardStatus,
-        isDeleted: isDeleted
+        isDeleted: isDeleted,
       };
 
       // API call - adjust URL and config as per your backend
-      const response = await axiosToken.put(`/cards/update-card-status`, updateData, {
-        headers: {
-          "Content-Type": "application/json",
-          // Add any auth headers if needed
+      const response = await axiosToken.put(
+        `/cards/update-card-status`,
+        updateData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // Add any auth headers if needed
+          },
         }
-      });
+      );
 
       // Optionally update local state or trigger a refresh
       setLoading(false);
@@ -165,128 +169,128 @@ function UpdateCardInner({ card }) {
                   </div>
                 </div>
                 <div className="cardbody bg-light-theme">
-                    <div className="login-page mb-lg-4 mb-2 row">
+                  <div className="login-page mb-lg-4 mb-2 row">
+                    <div className="col-lg-3 mb-lg-4 mb-2">
+                      <label htmlFor="issuer" className="form-label fw-bold">
+                        Issuer
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="issuer"
+                        value={card.issuerName}
+                        readOnly
+                      />
+                    </div>
+                    <div className="col-lg-3 mb-lg-4 mb-2">
+                      <label htmlFor="product" className="form-label fw-bold">
+                        Product
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="product"
+                        readOnly
+                        value={card.binProduct}
+                      />
+                    </div>
+                    {/* if card.cardType == Pos */}
+                    {card.cardType == "Pos" && (
+                      <>
+                        <div className="col-lg-3 mb-lg-4 mb-2">
+                          <label
+                            htmlFor="specialFeature"
+                            className="form-label fw-bold"
+                          >
+                            Special Feature
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="specialFeature"
+                            readOnly
+                            value={card.feature}
+                          />
+                        </div>
+                        <div className="col-lg-3 mb-lg-4 mb-2">
+                          <label
+                            htmlFor="region"
+                            className="form-label fw-bold"
+                          >
+                            Region
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="region"
+                            readOnly
+                            value={card.region}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div className="row">
                       <div className="col-lg-3 mb-lg-4 mb-2">
-                        <label htmlFor="issuer" className="form-label fw-bold">
-                          Issuer
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="issuer"
-                          value={card.issuerName}
-                          readOnly
-                        />
+                        <div className="d-lg-flex align-items-center">
+                          <label
+                            className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                            htmlFor="nameOnCard"
+                          >
+                            Name On Card
+                          </label>
+                          <div className="position-relative w-75">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="nameOnCard"
+                              value={
+                                card.decryptedCardDetails?.nameOnCard || ""
+                              }
+                              readOnly
+                            />
+                          </div>
+                        </div>
                       </div>
                       <div className="col-lg-3 mb-lg-4 mb-2">
-                        <label htmlFor="product" className="form-label fw-bold">
-                          Product
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="product"
-                          readOnly
-                          value={card.binProduct}
-                        />
+                        <div className="d-lg-flex align-items-center">
+                          <label
+                            className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                            htmlFor="expryDate"
+                          >
+                            Expiry Date
+                          </label>
+                          <div className="position-relative w-75">
+                            <input
+                              type="date"
+                              className="form-control"
+                              id="expryDate"
+                              value={card.decryptedCardDetails?.expDate}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-lg-3 mb-lg-4 mb-2">
+                        <div className="d-lg-flex align-items-center">
+                          <label
+                            className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                            htmlFor="cvv"
+                          >
+                            CVV
+                          </label>
+                          <div className="position-relative w-75">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="cvv"
+                              value={card.decryptedCardDetails?.cvv}
+                              readOnly
+                            />
+                          </div>
+                        </div>
                       </div>
                       {/* if card.cardType == Pos */}
                       {card.cardType == "Pos" && (
-                        <>
-                          <div className="col-lg-3 mb-lg-4 mb-2">
-                            <label
-                              htmlFor="specialFeature"
-                              className="form-label fw-bold"
-                            >
-                              Special Feature
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="specialFeature"
-                              readOnly
-                              value={card.feature}
-                            />
-                          </div>
-                          <div className="col-lg-3 mb-lg-4 mb-2">
-                            <label
-                              htmlFor="region"
-                              className="form-label fw-bold"
-                            >
-                              Region
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="region"
-                              readOnly
-                              value={card.region}
-                            />
-                          </div>
-                        </>
-                      )}
-                      <div className="row">
-                        <div className="col-lg-3 mb-lg-4 mb-2">
-                          <div className="d-lg-flex align-items-center">
-                            <label
-                              className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                              htmlFor="nameOnCard"
-                            >
-                              Name On Card
-                            </label>
-                            <div className="position-relative w-75">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="nameOnCard"
-                                value={
-                                  card.decryptedCardDetails?.nameOnCard || ""
-                                }
-                                readOnly
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-3 mb-lg-4 mb-2">
-                          <div className="d-lg-flex align-items-center">
-                            <label
-                              className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                              htmlFor="expryDate"
-                            >
-                              Expiry Date
-                            </label>
-                            <div className="position-relative w-75">
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="expryDate"
-                                value={card.decryptedCardDetails?.expDate}
-                                readOnly
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-3 mb-lg-4 mb-2">
-                          <div className="d-lg-flex align-items-center">
-                            <label
-                              className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                              htmlFor="cvv"
-                            >
-                              CVV
-                            </label>
-                            <div className="position-relative w-75">
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="cvv"
-                                value={card.decryptedCardDetails?.cvv}
-                                readOnly
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        {/* if card.cardType == Pos */}
-                        {card.cardType == "Pos" && (
                         <div className="col-lg-3 mb-lg-4 mb-2">
                           <div className="d-lg-flex align-items-center">
                             <label
@@ -306,87 +310,85 @@ function UpdateCardInner({ card }) {
                             </div>
                           </div>
                         </div>
-                        )}
-                      </div>
-                      <div className="col-lg-4 mb-lg-4 mb-2">
-                        <div className="d-lg-flex align-items-center">
-                          <label
-                            className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                            htmlFor="address"
-                          >
-                            Addresss
-                          </label>
-                          <div className="position-relative w-75">
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="address"
-                              id="address"
-                              value={card.decryptedCardDetails?.address || ""}
-                              placeholder="Unit/Building and Street Name"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-2 mb-lg-4 mb-2">
-                        <div className="d-lg-flex align-items-center">
-                          <div className="position-relative w-75">
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="city"
-                              id="city"
-                              value={card.decryptedCardDetails?.city || ""}
-                              placeholder="City"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-2 mb-lg-4 mb-2">
-                        <div className="d-lg-flex align-items-center">
-                          <div className="position-relative w-75">
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="state"
-                              id="state"
-                              value={card.decryptedCardDetails?.state || ""}
-                              placeholder="State"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-2 mb-lg-4 mb-2">
-                        <div className="d-lg-flex align-items-center">
-                          <div className="position-relative w-75">
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="country"
-                              id="country"
-                              value={card.decryptedCardDetails?.country || ""}
-                              placeholder="Country"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-2 mb-lg-4 mb-2">
-                        <div className="d-lg-flex align-items-center">
-                          <div className="position-relative w-75">
-                            <input
-                              className="form-control"
-                              type="text"
-                              name="PostalCode"
-                              id="PostalCode"
-                              value={
-                                card.decryptedCardDetails?.postalCode || ""
-                              }
-                              placeholder="Postal Code"
-                            />
-                          </div>
+                      )}
+                    </div>
+                    <div className="col-lg-4 mb-lg-4 mb-2">
+                      <div className="d-lg-flex align-items-center">
+                        <label
+                          className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                          htmlFor="address"
+                        >
+                          Addresss
+                        </label>
+                        <div className="position-relative w-75">
+                          <input
+                            className="form-control"
+                            type="text"
+                            name="address"
+                            id="address"
+                            value={card.decryptedCardDetails?.address || ""}
+                            placeholder="Unit/Building and Street Name"
+                          />
                         </div>
                       </div>
                     </div>
+                    <div className="col-lg-2 mb-lg-4 mb-2">
+                      <div className="d-lg-flex align-items-center">
+                        <div className="position-relative w-75">
+                          <input
+                            className="form-control"
+                            type="text"
+                            name="city"
+                            id="city"
+                            value={card.decryptedCardDetails?.city || ""}
+                            placeholder="City"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-2 mb-lg-4 mb-2">
+                      <div className="d-lg-flex align-items-center">
+                        <div className="position-relative w-75">
+                          <input
+                            className="form-control"
+                            type="text"
+                            name="state"
+                            id="state"
+                            value={card.decryptedCardDetails?.state || ""}
+                            placeholder="State"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-2 mb-lg-4 mb-2">
+                      <div className="d-lg-flex align-items-center">
+                        <div className="position-relative w-75">
+                          <input
+                            className="form-control"
+                            type="text"
+                            name="country"
+                            id="country"
+                            value={card.decryptedCardDetails?.country || ""}
+                            placeholder="Country"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-2 mb-lg-4 mb-2">
+                      <div className="d-lg-flex align-items-center">
+                        <div className="position-relative w-75">
+                          <input
+                            className="form-control"
+                            type="text"
+                            name="PostalCode"
+                            id="PostalCode"
+                            value={card.decryptedCardDetails?.postalCode || ""}
+                            placeholder="Postal Code"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 {/* Additional User Settings */}
                 <div className="yellowcolor mb-lg-4 mb-2">
@@ -475,14 +477,14 @@ function UpdateCardInner({ card }) {
                 </div>
                 <div className="d-flex justify-content-end gap-3">
                   {userRole === 1 && (
-                  <button
-                    className="btn-add py-2"
-                    type="button"
-                    onClick={handleUpdateCard}
-                    disabled={loading}
-                  >
-                    {loading ? "Loading..." : "Update Status"}
-                  </button>
+                    <button
+                      className="btn-add py-2"
+                      type="button"
+                      onClick={handleUpdateCard}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Update Status"}
+                    </button>
                   )}
                 </div>
               </div>

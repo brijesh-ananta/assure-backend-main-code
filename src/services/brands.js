@@ -3,7 +3,7 @@ import { handleErrorToaster } from "../utils/function";
 
 class BrandsService {
   constructor() {}
-  async get({env}) {
+  async get({ env }) {
     try {
       const result = await axiosToken.get(`/brands?environment=${env}`);
       if (result.status === 200 || result.status === 201) {

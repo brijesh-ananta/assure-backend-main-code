@@ -23,14 +23,34 @@ const EcommCard = (props) => {
   const cardDetails = data?.decryptedCardDetails;
   const [showCardNumber, setShowCardNumber] = useState(false);
 
-  const getCardValidityDate = useCallback(
-    (data) =>
-      `${new Date(data).getMonth() + 1}/${new Date(data)
-        .getFullYear()
-        .toString()
-        .slice(2, 54)}`,
-    []
-  );
+  const getCardValidityDate = useCallback((data) => {
+    if (!data) return "";
+
+    const str = String(data).trim();
+
+    // If already MMYY (e.g. "0825")
+    if (/^\d{4}$/.test(str)) {
+      const mm = str.slice(0, 2);
+      const yy = str.slice(2, 4);
+      return `${mm}/${yy}`;
+    }
+
+    // If MM-YYYY or MM/YYYY
+    const m4 = str.match(/^(\d{2})[-\/](\d{4})$/);
+    if (m4) {
+      return `${m4[1]}/${m4[2].slice(2)}`; // → 08/25
+    }
+
+    // If it's a Date or ISO string
+    const date = new Date(str);
+    if (!isNaN(date)) {
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear().toString().slice(2, 4);
+      return `${month}/${year}`;
+    }
+
+    return "";
+  }, []);
 
   const handleToggleCardNumber = () => {
     setShowCardNumber((prevState) => !prevState);
@@ -55,7 +75,9 @@ const EcommCard = (props) => {
               style={{ color: styles.wifiColor }}
             ></i>
           </div>
-          <div className={`d-flex align-items-end justify-content-end right-comp-image ${network == 'mastercard' && "master-card"}`}>
+          <div
+            className={`d-flex align-items-end justify-content-end right-comp-image ${network == "mastercard" && "master-card"}`}
+          >
             <img
               src={styles.logo}
               className="credit-network-logo"
@@ -80,7 +102,7 @@ const EcommCard = (props) => {
                 Thru
               </small>
               <span className="font">
-                {getCardValidityDate(cardDetails?.expDate)}
+                {getCardValidityDate(cardDetails?.validThru)}
               </span>
             </div>
           </div>
@@ -99,7 +121,8 @@ const EcommCard = (props) => {
             <div className="seq text-right">
               <span className="font"> Seq# &nbsp;</span>{" "}
               <span className="font text-right">
-                {cardDetails?.seqNumber || cardDetails?.sequence_number} <br />{" "}
+                {cardDetails?.seqNumber || cardDetails?.sequence_number}{" "}
+                <br />{" "}
               </span>
             </div>
             <p className="text-right font">

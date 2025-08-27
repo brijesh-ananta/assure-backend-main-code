@@ -14,7 +14,7 @@ function AddNotification() {
     notificationText: "",
     file: null,
   });
-  const {user} = useAuth()
+  const { user } = useAuth();
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [loadingDraft, setLoadingDraft] = useState(false);
@@ -259,25 +259,25 @@ function AddNotification() {
             </div>
             {/* userRole must be 1` */}
             {user.role === 1 && (
-            <div className="btn-section text-lg-center d-lg-flex gap-3 justify-content-center">
-              <button
-                type="button"
-                className="btn-add btn-gray mb-lg-0 mb-3"
-                onClick={handleSaveDraft}
-                disabled={loadingDraft}
-              >
-                {loadingDraft && (
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                )}
-                Save Draft
-              </button>
-              <button type="submit" className="btn-add" disabled={loading}>
-                {loading && (
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                )}
-                Submit
-              </button>
-            </div>
+              <div className="btn-section text-lg-center d-lg-flex gap-3 justify-content-center">
+                <button
+                  type="button"
+                  className="btn-add btn-gray mb-lg-0 mb-3"
+                  onClick={handleSaveDraft}
+                  disabled={loadingDraft}
+                >
+                  {loadingDraft && (
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                  )}
+                  Save Draft
+                </button>
+                <button type="submit" className="btn-add" disabled={loading}>
+                  {loading && (
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                  )}
+                  Submit
+                </button>
+              </div>
             )}
           </form>
         </div>

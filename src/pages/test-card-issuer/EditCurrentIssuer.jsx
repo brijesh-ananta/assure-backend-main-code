@@ -21,7 +21,8 @@ const EditCurrentIssuer = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [issuer, setIssuer] = useState([]);
   // Stores the initial secured_connection value (0 or 1) from the API
-  const [initialSecuredConnection, setInitialSecuredConnection] = useState(null);
+  const [initialSecuredConnection, setInitialSecuredConnection] =
+    useState(null);
   const isEditingRef = useRef(false);
 
   // Validation schema for Formik
@@ -184,13 +185,22 @@ const EditCurrentIssuer = () => {
   };
 
   // Helper function to determine if a status radio button should be disabled
-  const getStatusDisabled = (currentStatus, isEditing, cardType, securedConnection, initialSecuredConnection) => {
+  const getStatusDisabled = (
+    currentStatus,
+    isEditing,
+    cardType,
+    securedConnection,
+    initialSecuredConnection
+  ) => {
     if (!isEditing) {
       return true; // Always disabled if not in editing mode
     }
 
     if (cardType === "Ecomm") {
-      return false; // All statuses are available for Ecomm when editing
+      return (
+        currentStatus.toLowerCase() === "draft" &&
+        ["active", "inactive"].includes(formik.values.status.toLowerCase())
+      );
     }
 
     // Logic for POS card type
@@ -205,15 +215,19 @@ const EditCurrentIssuer = () => {
         if (securedConnection === "Yes") {
           // If secured connection is now 'Yes', status cannot be 'Draft'
           return currentStatus.toLowerCase() === "draft";
-        } else { // securedConnection === "No"
+        } else {
+          // securedConnection === "No"
           // If secured connection is now 'No', status can only be 'Draft'
-          return currentStatus.toLowerCase() === "active" || currentStatus.toLowerCase() === "inactive";
+          // If secured connection is now 'No', status can only be 'Draft'
+          return (
+            currentStatus.toLowerCase() === "active" ||
+            currentStatus.toLowerCase() === "inactive"
+          );
         }
       }
     }
     return false; // Default case, should ideally be covered by above logic
   };
-
 
   // Effect to handle automatic status changes based on securedConnection for POS
   useEffect(() => {
@@ -230,7 +244,10 @@ const EditCurrentIssuer = () => {
         } else if (formik.values.securedConnection === "No") {
           // If securedConnection is changed to "No", force status to "Draft" if it was "Active" or "Inactive"
           // Only update if the current status is 'active' or 'inactive' to avoid unnecessary re-renders
-          if (formik.values.status.toLowerCase() === "active" || formik.values.status.toLowerCase() === "inactive") {
+          if (
+            formik.values.status.toLowerCase() === "active" ||
+            formik.values.status.toLowerCase() === "inactive"
+          ) {
             formik.setFieldValue("status", "Draft");
           }
         }
@@ -243,7 +260,6 @@ const EditCurrentIssuer = () => {
     initialSecuredConnection,
     formik.setFieldValue,
   ]);
-
 
   return (
     <>
@@ -323,14 +339,18 @@ const EditCurrentIssuer = () => {
               <p className="font col-5 text-right m-0 d-flex align-content-center justify-content-end">
                 Card Type
               </p>
-              <div className="col-5 d-flex gap-3">
+              <div className="col-5 p-0 d-flex gap-3">
                 <div className="form-check me-3 d-flex gap-2 align-items-center">
                   <input
                     className="form-check-input"
-                    type="radio"
+                    type="checkbox"
                     name="cardType"
+                    style={{ borderRadius: 0, width: "20px", height: "20px" }}
                     value="Pos"
-                    checked={formik.values.cardType === "Pos"}
+                    checked={
+                      formik.values.cardType === "Pos" ||
+                      formik.values.cardType === "Both"
+                    }
                     disabled // Always disabled
                     id="cardType1"
                   />
@@ -345,10 +365,14 @@ const EditCurrentIssuer = () => {
                 <div className="form-check d-flex gap-2 align-items-center">
                   <input
                     className="form-check-input"
-                    type="radio"
+                    type="checkbox"
                     name="cardType"
                     value="Ecomm"
-                    checked={formik.values.cardType === "Ecomm"}
+                    style={{ borderRadius: 0, width: "20px", height: "20px" }}
+                    checked={
+                      formik.values.cardType === "Ecomm" ||
+                      formik.values.cardType === "Both"
+                    }
                     disabled // Always disabled
                     id="cardType2"
                   />
@@ -402,7 +426,7 @@ const EditCurrentIssuer = () => {
                   name="issuerCode"
                   value={formik.values.issuerCode}
                   className="form-control formcontrol"
-                  disabled // Always disabled
+                  onChange={isEditing ? formik.handleChange : undefined}
                 />
                 {formik.touched.issuerCode && formik.errors.issuerCode && (
                   <div className="text-danger font mt-1">
@@ -438,7 +462,11 @@ const EditCurrentIssuer = () => {
                       id="securedNo"
                       value="No"
                       onChange={isEditing ? formik.handleChange : undefined}
-                      disabled={!isEditing || (initialSecuredConnection === 1 && formik.values.cardType === "Pos")}
+                      disabled={
+                        !isEditing ||
+                        (initialSecuredConnection === 1 &&
+                          formik.values.cardType === "Pos")
+                      }
                       checked={formik.values.securedConnection === "No"}
                     />
                     <label className="form-check-label" htmlFor="securedNo">
@@ -499,32 +527,42 @@ const EditCurrentIssuer = () => {
           <div className="col-6 row mt-4">
             <label className="font col-5 text-right">Status</label>
             <div className="col-6 d-flex gap-5">
-              {['Draft', 'Active', 'Inactive'].map((status) => (
+              {["Draft", "Active", "Inactive"].map((status) => (
                 <label key={status} className="radio-label">
                   <input
                     className="form-check-input"
                     type="radio"
                     name="status"
                     value={status}
-                    checked={formik.values.status.toLowerCase() === status.toLowerCase()}
-                    onChange={isEditing ? formik.handleChange : undefined}
-                    disabled={
-                      getStatusDisabled(
-                        status,
-                        isEditing,
-                        formik.values.cardType,
-                        formik.values.securedConnection,
-                        initialSecuredConnection
-                      )
+                    checked={
+                      formik.values.status.toLowerCase() ===
+                      status.toLowerCase()
                     }
+                    onChange={isEditing ? formik.handleChange : undefined}
+                    disabled={getStatusDisabled(
+                      status,
+                      isEditing,
+                      formik.values.cardType,
+                      formik.values.securedConnection,
+                      initialSecuredConnection
+                    )}
                     style={{
                       marginTop: 0,
-                      width: '1.3rem',
-                      height: '1.3rem',
-                      marginRight: '10px',
+                      width: "1.3rem",
+                      height: "1.3rem",
+                      marginRight: "10px",
                     }}
                   />
-                  <span className={formik.values.status.toLowerCase() === status.toLowerCase() ? 'highlight' : ''}>{status}</span>
+                  <span
+                    className={
+                      formik.values.status.toLowerCase() ===
+                      status.toLowerCase()
+                        ? "highlight"
+                        : ""
+                    }
+                  >
+                    {status}
+                  </span>
                 </label>
               ))}
             </div>

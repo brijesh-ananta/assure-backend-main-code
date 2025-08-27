@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function AuditTrail() {
-  return (
-    <div>AuditTrail</div>
-  )
+  return <div>AuditTrail</div>;
 }
 
-export default AuditTrail
+export default AuditTrail;

@@ -72,7 +72,9 @@ class CardProfileService {
 
   async getAvailableCards(params) {
     try {
-      const result = await axiosToken.get(`/profiles/get_available_cards`, { params });
+      const result = await axiosToken.get(`/profiles/get_available_cards`, {
+        params,
+      });
       if (result.status === 200 || result.status === 201) {
         return result.data;
       } else {
@@ -111,7 +113,10 @@ class CardProfileService {
 
   async releaseCard(userCardId, body = {}) {
     try {
-      const result = await axiosToken.post(`/profiles/release-card?userCardId=${userCardId}`, body);
+      const result = await axiosToken.post(
+        `/profiles/release-card?userCardId=${userCardId}`,
+        body
+      );
       if (result.status === 200 || result.status === 201) {
         return result.data;
       } else {

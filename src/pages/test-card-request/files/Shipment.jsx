@@ -212,8 +212,8 @@ function Shipment({
                       {option === "one"
                         ? "One Address"
                         : option === "multiple"
-                        ? "Multiple Addresses"
-                        : "Mobile Card Only"}
+                          ? "Multiple Addresses"
+                          : "Mobile Card Only"}
                     </label>
                   </div>
                 ))}
@@ -397,9 +397,7 @@ function Shipment({
                       : ""
                   }
                   className="form-control formcontrol"
-                  onChange={(e) =>
-                    handleShippingDateChange(0, e.target.value)
-                  }
+                  onChange={(e) => handleShippingDateChange(0, e.target.value)}
                   min={getMinDate()}
                 />
               </div>
@@ -425,7 +423,7 @@ function Shipment({
         )}
 
         <div className="btn-section col-12 d-flex justify-content-end">
-          {userRole === 1 && (requestInfoData.status !== "shipped") && (
+          {userRole === 1 && requestInfoData.status !== "shipped" && (
             <a
               className="btn-add d-flex align-items-center gap-1"
               style={{ cursor: "pointer" }}

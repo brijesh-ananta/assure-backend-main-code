@@ -42,7 +42,7 @@ const ProdPosTable = ({ issuers, environment, cardType }) => {
               }}
             >
               {cardType == "Pos"
-                ? (item.posCount - item.posAssignedCount || 0)
+                ? item.posCount - item.posAssignedCount || 0
                 : item.ecommCount - item.ecommAssignedCount}
             </div>
           ),
@@ -66,14 +66,16 @@ const ProdPosTable = ({ issuers, environment, cardType }) => {
           renderCell: (item) => (
             <button
               className="btn save-btn"
-              disabled={item?.bin_status === 'inactive'}
+              disabled={item?.bin_status === "inactive"}
               onClick={() =>
                 navigate(
-                  `/dashboard/maintain-card-stock/add-card/${item?.bin_id || item?.id}?environment=${environment}&terminalType=${cardType}`
+                  `/dashboard/maintain-card-stock/add-card/${
+                    item?.bin_id || item?.id
+                  }?environment=${environment}&terminalType=${cardType}`
                 )
               }
             >
-             {item?.bin_status === 'inactive' ? "InActive": "Add Card"}
+              {item?.bin_status === "inactive" ? "InActive" : "Add Card"}
             </button>
           ),
         },
@@ -116,7 +118,7 @@ const ProdPosTable = ({ issuers, environment, cardType }) => {
         columns={tableConfig.columns}
         expandable={tableConfig.options.expandable}
         emptyState={
-          <div className="text-center p-5 font fa-1x">No Issuer found.</div>
+          <div className="text-center p-5 font fa-1x">No Data found.</div>
         }
       />
     </div>

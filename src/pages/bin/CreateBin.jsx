@@ -12,6 +12,7 @@ const CreateBin = () => {
   const [cardType, setCardType] = useState(cardTypeFromQuery || "Pos");
   const [issuerList, setIssuerList] = useState([]);
   const [issuerId, setIssuerId] = useState("");
+  const [Bcardsrtpes, Bsetcardtypes] = useState("");
   const [issuerData, setIssuerData] = useState({
     issuer_name: "",
     iisc: "",
@@ -52,7 +53,7 @@ const CreateBin = () => {
           const data = await binService.getIssuerData(issuerId);
           setIssuerData(data || {});
           if (data && data.card_type) {
-            setCardType(data.card_type);
+            Bsetcardtypes(data.card_type);
           }
         } catch {
           setIssuerData({});
@@ -89,13 +90,14 @@ const CreateBin = () => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       const payload = {
+        environment_id: environment,
         issuer_id: issuerId,
         bin: values.bin,
         bin_product: values.binProduct,
         pan_length: values.pan_length,
         status: values.status,
         environment: environment, // Add the environment value here
-        cardType
+        cardType,
       };
       setIsLoading(true);
       try {
@@ -105,7 +107,9 @@ const CreateBin = () => {
         navigate("/dashboard/bin-list");
       } catch (error) {
         setIsLoading(false);
-        toast.error(error?.response?.data.error || error.message || "Error creating bin");
+        toast.error(
+          error?.response?.data.error || error.message || "Error creating bin"
+        );
       }
     },
   });
@@ -135,6 +139,7 @@ const CreateBin = () => {
                   checked={environment === "1"}
                   onChange={handleEnvironmentChange}
                   id="flexRadioDefault1"
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}
@@ -153,6 +158,7 @@ const CreateBin = () => {
                   checked={environment === "2"}
                   onChange={handleEnvironmentChange}
                   id="flexRadioDefault2"
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}
@@ -172,8 +178,9 @@ const CreateBin = () => {
                   name="cardType"
                   value={"Pos"}
                   checked={cardType === "Pos"}
-                  onChange={handleCardTypeChange}
+                  // onChange={handleCardTypeChange}
                   id="cardType1"
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}
@@ -190,9 +197,9 @@ const CreateBin = () => {
                   name="cardType"
                   value={"Ecomm"}
                   checked={cardType === "Ecomm"}
-                  onChange={handleCardTypeChange}
+                  // onChange={handleCardTypeChange}
                   id="cardType2"
-                  disabled={environment === "2"}
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}

@@ -8,7 +8,7 @@ import { useAuth } from "../../../utils/AuthContext";
 import { X } from "lucide-react";
 import DatePicker from "react-datepicker";
 import { toYYYYMMDD } from "../../../utils/date";
-
+import { dateToMMDDYYYY } from "../../maintain-card-stock/AddCard";
 function ShippingCard({
   requestInfoData,
   fetchData,
@@ -32,6 +32,8 @@ function ShippingCard({
   const [multipleAddress, setMultipleAddress] = useState([]);
   const [trackingNumberCount, setTrackingNumberCount] = useState(0);
   const [trackingUsageMap, setTrackingUsageMap] = useState({});
+
+  const [assignedTester, setAssignedTester] = useState([]);
 
   const [addressDetails, setAddressDetails] = useState([
     {
@@ -92,6 +94,54 @@ function ShippingCard({
     }
   }, [requestInfoData]);
 
+  useEffect(() => {
+    const testerDetails =
+      (requestInfoData?.testerDetails &&
+        JSON.parse(requestInfoData?.testerDetails)) ||
+      {};
+
+    const shipDetails =
+      (requestInfoData?.shipDetails &&
+        JSON.parse(requestInfoData?.shipDetails)) ||
+      {};
+
+    if (testerDetails && shipDetails && shipDetails?.shipTo === "multiple") {
+      const ids =
+        testerDetails?.testers
+          ?.map((t) => {
+            if (t.status === "assigned") {
+              return t.userId;
+            }
+          })
+          .filter(Boolean) || [];
+      setAssignedTester(ids);
+    }
+  }, [requestInfoData?.shipDetails, requestInfoData?.testerDetails]);
+
+  const areAllShippingDetailsSaved = useMemo(() => {
+    if (shipTo === "one") {
+      const address = addressDetails[0];
+      return (
+        address?.firstName &&
+        address?.lastName &&
+        address?.address &&
+        address?.city &&
+        address?.state &&
+        address?.country &&
+        address?.zipCode
+      );
+    }
+
+    if (shipTo === "multiple") {
+      return testerDetails.every(
+        (tester) => Object.keys(tester.shippingAddress).length > 0
+      );
+    }
+
+    return false;
+  }, [shipTo, addressDetails, testerDetails]);
+
+  console.log(testerDetails);
   const isRequester = useMemo(() => user.role === 2, [user.role]);
 
   useEffect(() => {
@@ -129,20 +179,28 @@ function ShippingCard({
       };
     }
     updatedAddresses[index][field] = value;
+
+    console.log("updated address -->", updatedAddresses);
     setAddressDetails(updatedAddresses);
 
     if (field === "trackingNumber") {
       fetchTrackingUsage();
     }
   };
-
-  const getMinDate = () => {
+  const getDateRange = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // set to midnight to avoid timezone issues
+    today.setHours(0, 0, 0, 0); // reset to midnight
+
     const oneWeekAgo = new Date(today);
     oneWeekAgo.setDate(today.getDate() - 7);
-    return oneWeekAgo.toISOString().split("T")[0];
+
+    return {
+      minDate: oneWeekAgo,
+      maxDate: today,
+    };
   };
+
+  const { minDate, maxDate } = getDateRange();
 
   const handleCancel = () => {
     navigate("/dashboard/request-history");
@@ -212,7 +270,7 @@ function ShippingCard({
   const handleSave = async (e, modify = false, tester) => {
     e && e?.preventDefault();
     if (saveLoading) return;
-
+    setSaveLoading(true);
     if (shipTo === "multiple") {
       const missingAddresses = testerDetails?.filter(
         (tester) => Object.keys(tester.shippingAddress).length === 0
@@ -235,7 +293,17 @@ function ShippingCard({
         testerId: tester.testerId,
         shippingAddress: tester.shippingAddress,
       })),
-      addressDetails: shipTo === "one" ? [addressDetails[0]] : multipleAddress,
+      addressDetails:
+        shipTo === "one"
+          ? [
+              {
+                ...addressDetails[0],
+                shippingDate: addressDetails[0].shippingDate
+                  ? toYYYYMMDD(addressDetails[0].shippingDate)
+                  : null,
+              },
+            ]
+          : multipleAddress,
       numTesters,
       shipTo,
     };
@@ -281,6 +349,7 @@ function ShippingCard({
           !tester.shippingAddress.shippingDate ||
           !tester.shippingAddress.trackingNumber
       );
+      console.log("details", missingDetails);
 
       if (missingDetails?.length > 0) {
         return false;
@@ -299,9 +368,27 @@ function ShippingCard({
     const submitData = {
       testerDetails: testerDetails.map((tester) => ({
         testerId: tester.testerId,
-        shippingAddress: tester.shippingAddress,
+        shippingAddress: {
+          ...tester.shippingAddress,
+          shippingDate: tester.shippingAddress.shippingDate
+            ? toYYYYMMDD(tester.shippingAddress.shippingDate)
+            : tester.shippingAddress.shippingDate,
+        },
       })),
-      addressDetails: shipTo === "one" ? addressDetails : multipleAddress,
+      addressDetails:
+        shipTo === "one"
+          ? addressDetails.map((addr) => ({
+              ...addr,
+              shippingDate: addr.shippingDate
+                ? toYYYYMMDD(addr.shippingDate)
+                : addr.shippingDate,
+            }))
+          : multipleAddress.map((addr) => ({
+              ...addr,
+              shippingDate: addr.shippingDate
+                ? toYYYYMMDD(addr.shippingDate)
+                : addr.shippingDate,
+            })),
       numTesters: testerDetails.length,
       shipTo,
     };
@@ -490,6 +577,7 @@ function ShippingCard({
               trackingNumber,
             }
           );
+          console.log(trackingNumber);
           setTrackingNumberCount(data?.total);
         } else {
           setTrackingNumberCount(0);
@@ -515,6 +603,7 @@ function ShippingCard({
             trackingNumbers,
           }
         );
+        console.log("data---->", data);
 
         const map = {};
         data?.results?.forEach(({ trackingNumber, count }) => {
@@ -525,10 +614,11 @@ function ShippingCard({
       }
     } catch (error) {
       console.error("Error fetching tracking count:", error);
+      setTrackingNumberCount(0);
       setTrackingUsageMap({});
     }
   };
-
+  console.log(testerDetails);
   useEffect(() => {
     fetchTrackingUsage();
   }, [addressDetails, testerDetails, shipTo]);
@@ -571,8 +661,8 @@ function ShippingCard({
                     {option === "one"
                       ? "One Address"
                       : option === "multiple"
-                      ? "Multiple Addresses (Per User Profile)"
-                      : "Mobile Card Only"}
+                        ? "Multiple Addresses (Per User Profile)"
+                        : "Mobile Card Only"}
                   </label>
                 </div>
               ))}
@@ -718,6 +808,7 @@ function ShippingCard({
             <div className="mt-4">
               <div className="accordion border-0" id={`testerAccordion`}>
                 {testerDetails?.map((tester, index) => (
+                  // assignedTester?.includes(tester?.testerId) && (
                   <div key={index} className="accordion-item mt-4 w-80 m-auto">
                     <h2 className="accordion-header" id={`heading${index}`}>
                       <button
@@ -783,7 +874,8 @@ function ShippingCard({
                                 <label className="font">Shipping Date</label>
                                 <DatePicker
                                   placeholder="Shipping Date"
-                                  minDate={getMinDate()}
+                                  minDate={minDate}
+                                  maxDate={maxDate}
                                   name="shipping_date"
                                   className="form-control formcontrol mt-2 pe-1 h-50"
                                   required
@@ -799,7 +891,9 @@ function ShippingCard({
                                   dateFormat="MM-dd-yyyy"
                                   placeholderText="MM-DD-YYYY"
                                   onChange={(date) => {
-                                    const str = toYYYYMMDD(date);
+                                    console.log(date);
+                                    const str = dateToMMDDYYYY(date);
+                                    console.log(str);
                                     handleTesterAddressChange(
                                       index,
                                       "shippingDate",
@@ -848,15 +942,20 @@ function ShippingCard({
 
                                     const trackingNumber = rawTracking?.trim();
                                     const usageCount = trackingNumber
-                                      ? trackingUsageMap?.[trackingNumber] ?? 0
+                                      ? (trackingUsageMap?.[trackingNumber] ??
+                                        0)
                                       : 0;
 
-                                    return trackingNumber && usageCount > 0 ? (<>
-                                   
-                                      <label className="font">
-                                        Usage#{usageCount}
-                                      </label>
-                                    
+                                    return trackingNumber && usageCount > 0 ? (
+                                      <>
+                                        <div className="col-2 d-flex flex-column align-items-center justify-content-center">
+                                          <label className="font mb-2">
+                                            Usage#
+                                          </label>
+                                          <span className="text-danger font">
+                                            {usageCount}
+                                          </span>
+                                        </div>
                                       </>
                                     ) : null;
                                   })()}
@@ -1002,6 +1101,7 @@ function ShippingCard({
                   !isChecked ||
                   reqInfo?.status !== "approved" ||
                   !validateFields ||
+                  !areAllShippingDetailsSaved ||
                   disableSubmit ||
                   canEdit
                 }
@@ -1019,7 +1119,8 @@ function ShippingCard({
                 <label className="font">Shipping Date</label>
                 <DatePicker
                   placeholder="Shipping Date"
-                  minDate={getMinDate()}
+                  minDate={minDate}
+                  maxDate={maxDate}
                   name="shipping_date"
                   className="form-control formcontrol mt-2 pe-1 h-50"
                   required
@@ -1031,39 +1132,39 @@ function ShippingCard({
                   dateFormat="MM-dd-yyyy"
                   placeholderText="MM-DD-YYYY"
                   onChange={(date) => {
-                    const str = toYYYYMMDD(date);
+                    const str = dateToMMDDYYYY(date);
+                    console.log("321", str);
                     handleAddressChange(0, "shippingDate", str);
-                    }}
-                    disabled={isCompleted || addressDetails[0]?.isShipped}
-                  />
-                  </div>
-                  <div className="col-3">
-                  <label className="font">Tracking Number</label>
-                  <input
-                    placeholder="Tracking Number"
-                    type="text"
-                    name="tracking_number"
-                    className="form-control formcontrol mt-2 h-50"
-                    required
-                    
-                    value={
+                  }}
+                  disabled={isCompleted || addressDetails[0]?.isShipped}
+                />
+              </div>
+              <div className="col-3">
+                <label className="font">Tracking Number</label>
+                <input
+                  placeholder="Tracking Number"
+                  type="text"
+                  name="tracking_number"
+                  className="form-control formcontrol mt-2 h-50"
+                  required
+                  value={
                     addressDetails[0]?.trackingNumber ||
                     addressDetails[0]?.tracking_number ||
                     ""
-                    }
-                    onChange={(e) =>
+                  }
+                  onChange={(e) =>
                     handleAddressChange(0, "trackingNumber", e.target.value)
-                    }
-                    disabled={isCompleted || addressDetails[0]?.isShipped}
-                  />
-                  </div>
-                  <div className="col-2 d-flex flex-column align-items-center justify-content-center">
-                  <label className="font mb-2">Usage#</label>
-                  <span className="text-danger font">{trackingNumberCount}</span>
-                  </div>
-                  <div className="col-3">
-                  <button
-                    onClick={() => {
+                  }
+                  disabled={isCompleted || addressDetails[0]?.isShipped}
+                />
+              </div>
+              <div className="col-2 d-flex flex-column align-items-center justify-content-center">
+                <label className="font mb-2">Usage#</label>
+                <span className="text-danger font">{trackingNumberCount}</span>
+              </div>
+              <div className="col-3">
+                <button
+                  onClick={() => {
                     if (
                       !addressDetails[0]?.shippingDate ||
                       !addressDetails[0]?.trackingNumber ||

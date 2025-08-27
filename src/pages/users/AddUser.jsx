@@ -30,7 +30,7 @@ function AddUser() {
     country: "",
     postalCode: "",
   });
-
+  const [existingUserData, setExistingUserData] = useState(null);
   const handleCancel = () => {
     if (reqId) {
       navigate(`/dashboard/test-card-request/requestor-info/${reqId}`);
@@ -68,75 +68,18 @@ function AddUser() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const isValid = validateForm();
-    if (!isValid) return;
-
-    setIsLoading(true);
-
-    const partner = partners.find((p) => p.partner_id === testingPartner);
-
-    const formData = {
-      shippingAddress: shippingAddress,
-      ...(passwordType === "admin" && password && { password }),
-      ...(!userId && {
-        userRole: selectedUserRole,
-        userType: "mobile",
-        partnerName: partner?.partner_name,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        passwordType,
-        selectedRoles: ["mobile"],
-        partnerEmail: partner?.email,
-        testingPartnerId: partner?.pt_id,
-      }),
-      environments: selectedEnvironments,
-    };
-
-    try {
-      const response = userId
-        ? await axiosToken.put(`/users/${userId}`, formData)
-        : await axiosToken.post(`/users`, formData);
-
-      toast.success(response.data.message);
-      setIsLoading(false);
-      if (from) {
-        if (from.includes("addmail")) {
-          window.location.href = from?.replace(
-            "addmail",
-            `addmail=${encodeURIComponent(email)}`
-          );
-        } else {
-          window.location.href = from;
-        }
-      } else if (userId) {
-        window.location.href = `/dashboard`;
-      } else {
-        window.location.href = `/dashboard/test-card-request/requestor-info/${reqId}`;
-      }
-    } catch (error) {
-      console.error("Error onboarding user:", error);
-      toast.error(
-        error.response?.data?.error || error.message || "An error occurred."
-      );
-      setIsLoading(false);
-    }
-  };
-
   const fetchUserDetails = useCallback(async () => {
     try {
       const response = await axiosToken.get(`/users/getUserData/${userId}`);
       const userData = response.data;
-      console.log(userData);
+      console.log("userdata--->", userData);
       const shippingAddress =
         (userData?.user?.shippingAddress &&
           JSON.parse(userData?.user?.shippingAddress)) ||
         {};
       console.log(shippingAddress);
       const partner = partners.find((p) => p.email === userData.partnerEmail);
-
+      setExistingUserData(userData?.user || {});
       setShippingAddress(shippingAddress);
       setFirstName(userData.firstName);
       setLastName(userData.lastName);
@@ -172,6 +115,77 @@ function AddUser() {
     return partners.find((partner) => partner.partner_id == testingPartnerId);
   }, [partners, testingPartnerId]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const isValid = validateForm();
+    if (!isValid) return;
+
+    setIsLoading(true);
+
+    const partner = partners.find((p) => p.partner_id === testingPartner);
+    let formData;
+
+    if (userId) {
+      formData = {
+        ...existingUserData,
+        shippingAddress,
+        environments: selectedEnvironments,
+        userType: existingUserData?.userType || "mobile",
+        userRole: existingUserData?.userRole || selectedUserRole,
+        selectedRoles: existingUserData?.selectedRoles?.length
+          ? existingUserData.selectedRoles
+          : ["mobile"],
+        ...(passwordType === "admin" && password && { password }),
+      };
+    } else {
+      formData = {
+        shippingAddress: shippingAddress,
+        ...(passwordType === "admin" && password && { password }),
+        ...(!userId && {
+          userRole: selectedUserRole,
+          userType: "mobile",
+          partnerName: partner?.partner_name,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          passwordType,
+          selectedRoles: ["mobile"],
+          partnerEmail: partner?.email,
+          testingPartnerId: partner?.pt_id,
+        }),
+        environments: selectedEnvironments,
+      };
+    }
+
+    try {
+      const response = userId
+        ? await axiosToken.put(`/users/${userId}`, formData)
+        : await axiosToken.post(`/users`, formData);
+
+      toast.success(response.data.message);
+      setIsLoading(false);
+      if (from) {
+        if (from.includes("addmail")) {
+          window.location.href = from?.replace(
+            "addmail",
+            `addmail=${encodeURIComponent(email)}`
+          );
+        } else {
+          window.location.href = from;
+        }
+      } else if (userId) {
+        window.location.href = `/dashboard`;
+      } else {
+        window.location.href = `/dashboard/test-card-request/requestor-info/${reqId}`;
+      }
+    } catch (error) {
+      console.error("Error onboarding user:", error);
+      toast.error(
+        error.response?.data?.error || error.message || "An error occurred."
+      );
+      setIsLoading(false);
+    }
+  };
   return (
     <section className="notification pb-5">
       <div className="container-fluid">

@@ -29,14 +29,15 @@ const ProductBundleTable = () => {
           `/issuers/get-all-issuers-with-bin?environment=${environment}&status=All&cardType=${cardType}`
         );
         const allIssuers = response.data || [];
-        
+
         const pos = allIssuers.filter(
           (issuer) =>
             issuer.test_card_type === "Pos" || issuer.card_type == "Pos"
         );
 
         const ecomm = allIssuers.filter(
-          (issuer) => issuer.test_card_type === "Ecomm" || issuer.card_type === "Ecomm"
+          (issuer) =>
+            issuer.test_card_type === "Ecomm" || issuer.card_type === "Ecomm"
         );
 
         setPosDetails(pos);

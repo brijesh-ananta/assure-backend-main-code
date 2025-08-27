@@ -16,7 +16,6 @@ class RequestsService {
       handleErrorToaster(error);
     }
   }
-  
 }
 
 export default new RequestsService();

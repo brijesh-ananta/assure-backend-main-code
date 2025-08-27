@@ -33,8 +33,8 @@ const UpdateTestCase = () => {
           terminal_type: data.terminal_type,
           testing_type: data.testing_type,
           testing_scope: data.testing_scope,
-          pin_entry_capability: data.pin_entry_capability,
-          cashback_pin: data.cashback_pin,
+          pin_entry_capability: Boolean(data.pin_entry_capability), // Convert 1/0 to boolean
+          cashback_pin: Boolean(data.cashback_pin), // Convert 1/0 to boolean
           payment_technology: data.payment_technology,
           short_description: data.short_description,
           status: data.status,
@@ -57,6 +57,9 @@ const UpdateTestCase = () => {
         ...values,
         environment_id: environment,
         testing_steps: steps.join("\n"),
+        // Convert boolean back to 1/0 for API
+        pin_entry_capability: values.pin_entry_capability ? 1 : 0,
+        cashback_pin: values.cashback_pin ? 1 : 0,
       };
       setIsLoading(true);
       try {
@@ -85,11 +88,16 @@ const UpdateTestCase = () => {
 
   const handleCardTypeChange = (e) => setCardType(e.target.value);
 
+  // Boolean handler for Yes/No radio buttons
+  const handleBooleanChange = (fieldName) => (e) => {
+    formik.setFieldValue(fieldName, e.target.value === "Yes");
+  };
+
   return (
     <>
       <div className="mb-lg-0 mb-3 py-lg-3 py-2 aqua-border-b">
         <div className="container-fluid">
-          <div className="d-lg-flex align-items-center justify-content-evenly w-100">
+          <div className="d-lg-flex  w-100 " style={{ paddingLeft: "170px" }}>
             <div className="d-lg-flex formcard card-custom-shadow-1 custom-bg-to-left p-2 rounded-3">
               <span className="me-3 font">Environment</span>
               <div className="form-check me-3 d-flex gap-2 align-items-center">
@@ -101,6 +109,7 @@ const UpdateTestCase = () => {
                   checked={environment === "1"}
                   onChange={handleEnvironmentChange}
                   id="envProd"
+                  disabled
                 />
                 <label className="form-check-label" htmlFor="envProd">
                   Prod
@@ -115,23 +124,13 @@ const UpdateTestCase = () => {
                   checked={environment === "2"}
                   onChange={handleEnvironmentChange}
                   id="envQA"
+                  disabled
                 />
                 <label className="form-check-label" htmlFor="envQA">
                   QA
                 </label>
               </div>
             </div>
-            {/* <div className="d-lg-flex formcard card-custom-shadow-1 custom-bg-to-left p-2 rounded-3 ms-3">
-              <span className="me-3 font">Card Type</span>
-              <div className="form-check me-3 d-flex gap-2 align-items-center">
-                <input className="form-check-input" type="radio" name="cardType" value="Pos" checked={cardType === "Pos"} onChange={handleCardTypeChange} id="cardType1" />
-                <label className="form-check-label" htmlFor="cardType1">POS</label>
-              </div>
-              <div className="form-check d-flex gap-2 align-items-center">
-                <input className="form-check-input" type="radio" name="cardType" value="Ecomm" checked={cardType === "Ecomm"} onChange={handleCardTypeChange} id="cardType2" disabled={environment === "2"} />
-                <label className="form-check-label" htmlFor="cardType2">Ecomm</label>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
@@ -139,22 +138,9 @@ const UpdateTestCase = () => {
       <section className="form-field-wrapper form-container">
         <form onSubmit={formik.handleSubmit} className="row">
           <div className="col-12 row">
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">Test Case ID</p>
-              <div className="col-5 p-0">
-                <input
-                  type="text"
-                  name="test_cases_unique_id"
-                  value={formik.values.test_cases_unique_id}
-                  onChange={formik.handleChange}
-                  placeholder="Test Case ID"
-                  className="form-control formcontrol"
-                />
-              </div>
-            </div>
-            <div className="col-6 row align-items-center mb-3">
+            <div className="col-6 row align-items-center mb-4">
               <p className="font col-4 pe-4 text-right m-0">Terminal Type</p>
-              <div className="col-5 p-0">
+              <div className="col-5 ps-3">
                 <select
                   name="terminal_type"
                   value={formik.values.terminal_type}
@@ -170,91 +156,111 @@ const UpdateTestCase = () => {
                 </select>
               </div>
             </div>
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">Testing Type</p>
-              <div className="col-5 p-0">
-                <select
-                  name="testing_type"
-                  value={formik.values.testing_type}
-                  onChange={formik.handleChange}
-                  className="form-control formcontrol"
-                >
-                  <option value="Regression">Regression</option>
-                </select>
+
+            <div className="row align-items-center mb-4">
+              <span className="font col-2 pe-4 text-right m-0">
+                Testing Scope
+              </span>
+              <div className="row formcard col-7 ps-4 ">
+                {["Contact", "Contactless", "Both"].map((scope) => {
+                  const isTransitOrTOM =
+                    formik.values.terminal_type === "Transit" ||
+                    formik.values.terminal_type === "TOM/SoftPOS";
+
+                  const shouldDisable =
+                    isTransitOrTOM && scope !== "Contactless";
+
+                  return (
+                    <div key={scope} className="form-check col-3">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="testing_scope"
+                        value={scope}
+                        checked={formik.values.testing_scope === scope}
+                        onChange={formik.handleChange}
+                        disabled={shouldDisable}
+                      />
+                      <label className="form-check-label ms-3">{scope}</label>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">Testing Scope</p>
-              <div className="col-5 p-0">
-                <select
-                  name="testing_scope"
-                  value={formik.values.testing_scope}
-                  onChange={formik.handleChange}
-                  className="form-control formcontrol"
-                >
-                  <option value="Contact">Contact</option>
-                  <option value="Contactless">Contactless</option>
-                  <option value="Both">Both</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">
-                PIN Entry Capability
-              </p>
-              <div className="col-5 p-0">
-                <select
-                  name="pin_entry_capability"
-                  value={formik.values.pin_entry_capability}
-                  onChange={formik.handleChange}
-                  className="form-control formcontrol"
-                >
-                  <option value={true}>Yes</option>
-                  <option value={false}>No</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">Cashback PIN</p>
-              <div className="col-5 p-0">
-                <select
-                  name="cashback_pin"
-                  value={formik.values.cashback_pin}
-                  onChange={(e) =>
-                    formik.setFieldValue(
-                      "cashback_pin",
-                      e.target.value === "true"
-                    )
-                  }
-                  className="form-control formcontrol"
-                >
-                  <option value={true}>True</option>
-                  <option value={false}>False</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-6 row align-items-center mb-3">
-              <p className="font col-4 pe-4 text-right m-0">
+
+            <div className="row align-items-center mb-4">
+              <span className="font col-2 pe-4 text-right m-0">
                 Payment Technology
-              </p>
-              <div className="col-5 p-0">
-                <select
-                  name="payment_technology"
-                  value={formik.values.payment_technology}
-                  onChange={formik.handleChange}
-                  className="form-control formcontrol"
-                >
-                  <option value="Magstripe">Magstripe</option>
-                  <option value="Spec 1">Spec 1</option>
-                  <option value="Spec 2">Spec 2</option>
-                </select>
+              </span>
+              <div className="row formcard col-7 ps-4">
+                {["DPAS 1.0", "DPAS Connect"].map((spec) => (
+                  <div key={spec} className="form-check col-3">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="payment_technology"
+                      value={spec}
+                      checked={formik.values.payment_technology === spec}
+                      onChange={formik.handleChange}
+                    />
+                    <label className="form-check-label ms-3">{spec}</label>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="col-6 row align-items-center mb-3">
+
+            <div className="row align-items-center mb-4">
+              <span className="font col-2 pe-4 text-right m-0">
+                Cashback PIN
+              </span>
+              <div className="row formcard col-7 ps-4 ">
+                {["Yes", "No"].map((option) => (
+                  <div key={option} className="form-check col-3">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="cashback_pin"
+                      value={option}
+                      checked={
+                        formik.values.cashback_pin === (option === "Yes")
+                      }
+                      onChange={handleBooleanChange("cashback_pin")}
+                    />
+                    <label className="form-check-label ms-3">{option}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="row align-items-center mb-4">
+              <span className="font col-2 pe-4 text-right m-0">
+                PIN Entry Capability
+              </span>
+              <div className="row formcard col-7 ps-4">
+                {["Yes", "No"].map((option) => (
+                  <div key={option} className="form-check col-3">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="pin_entry_capability"
+                      value={option}
+                      checked={
+                        formik.values.pin_entry_capability ===
+                        (option === "Yes")
+                      }
+                      onChange={handleBooleanChange("pin_entry_capability")}
+                    />
+                    <label className="form-check-label ms-3">{option}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="col-6 row align-items-center mb-4">
               <p className="font col-4 pe-4 text-right m-0">
                 Short Description
               </p>
-              <div className="col-5 p-0">
+              <div className="col-5 ps-3">
                 <input
                   type="text"
                   name="short_description"
@@ -264,11 +270,12 @@ const UpdateTestCase = () => {
                 />
               </div>
             </div>
-            <div className="col-12 mb-3 d-flex align-items-center mt-4">
-              <label className="font col-2 px-4 text-right m-0">
+
+            <div className="col-12 mb-3 d-flex align-items-center ">
+              <label className="font col-2 pe-5 text-right m-0">
                 Testing Steps
               </label>
-              <div className="d-block col-6">
+              <div className="col-6 p-0">
                 {steps.map((step, index) => (
                   <div key={index} className="mb-2 col-12">
                     <input
@@ -289,8 +296,9 @@ const UpdateTestCase = () => {
                 +
               </button>
             </div>
+
             <div className="row mt-4">
-              <label className="col-2 font text-right">Bin Status</label>
+              <label className="col-2 font text-right">Test Case Status</label>
               <div className="radio-group col-8">
                 {["draft", "active", "inactive"].map((status) => (
                   <label
@@ -307,7 +315,7 @@ const UpdateTestCase = () => {
                       type="radio"
                       name="status"
                       value={status}
-                      checked={formik.values.status === status}
+                      checked={formik.values.status?.toLowerCase() === status}
                       onChange={formik.handleChange}
                       style={{
                         marginTop: 0,
@@ -315,10 +323,17 @@ const UpdateTestCase = () => {
                         height: "1.3rem",
                         marginRight: "10px",
                       }}
+                      disabled={
+                        (formik.values.status?.toLowerCase() === "active" ||
+                          formik.values.status?.toLowerCase() === "inactive") &&
+                        status === "draft"
+                      }
                     />
                     <span
                       className={
-                        formik.values.status === status ? "highlight" : ""
+                        formik.values.status?.toLowerCase() === status
+                          ? "highlight"
+                          : ""
                       }
                     >
                       {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -327,6 +342,7 @@ const UpdateTestCase = () => {
                 ))}
               </div>
             </div>
+
             <div className="col-12 row align-items-center mb-3 mt-4">
               <div className="col-12 p-0 d-flex justify-content-end form-actions">
                 <button

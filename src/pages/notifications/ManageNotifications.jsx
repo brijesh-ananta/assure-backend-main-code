@@ -47,11 +47,16 @@ function ManageNotifications() {
         setNotifications(countNotifications);
         setStatusCounts({
           Draft: countNotifications.filter((n) => n.status === "draft").length,
-          Returned: countNotifications.filter((n) => n.status === "returned").length,
-          Submitted: countNotifications.filter((n) => n.status === "submitted").length,
-          Approved: countNotifications.filter((n) => n.status === "approved").length,
-          Deleted: countNotifications.filter((n) => n.status === "deleted").length,
-          Expired: countNotifications.filter((n) => n.status === "expired").length,
+          Returned: countNotifications.filter((n) => n.status === "returned")
+            .length,
+          Submitted: countNotifications.filter((n) => n.status === "submitted")
+            .length,
+          Approved: countNotifications.filter((n) => n.status === "approved")
+            .length,
+          Deleted: countNotifications.filter((n) => n.status === "deleted")
+            .length,
+          Expired: countNotifications.filter((n) => n.status === "expired")
+            .length,
         });
 
         // Fetch for table (interfaceFilter + statusFilter)
@@ -202,8 +207,8 @@ function ManageNotifications() {
                 </label>
               </div>
             </div>
-            
-              <div>
+
+            <div>
               {userRole === 1 && (
                 <Link
                   className="btn-add py-2"
@@ -212,7 +217,7 @@ function ManageNotifications() {
                   Create Notification
                 </Link>
               )}
-              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -276,7 +281,8 @@ function ManageNotifications() {
                 <tbody>
                   {filteredNotifications.length > 0 ? (
                     filteredNotifications.map((notification) => {
-                      const isExpanded = expandedRows[notification.notification_id];
+                      const isExpanded =
+                        expandedRows[notification.notification_id];
                       const text = notification.notification_text || "N/A";
                       const truncatedText =
                         text.length > 50 ? text.substring(0, 50) + "..." : text;
@@ -294,10 +300,14 @@ function ManageNotifications() {
                           <td>{notification.type}</td>
                           <td>{notification.status.toUpperCase()}</td>
                           <td>
-                            {new Date(notification.start_date).toLocaleDateString()}
+                            {new Date(
+                              notification.start_date
+                            ).toLocaleDateString()}
                           </td>
                           <td>
-                            {new Date(notification.end_date).toLocaleDateString()}
+                            {new Date(
+                              notification.end_date
+                            ).toLocaleDateString()}
                           </td>
                           <td>
                             {isExpanded ? (
@@ -330,7 +340,9 @@ function ManageNotifications() {
                           </td>
                           <td>{notification.createdBy}</td>
                           <td>
-                            {new Date(notification.created_at).toLocaleDateString()}
+                            {new Date(
+                              notification.created_at
+                            ).toLocaleDateString()}
                           </td>
                         </tr>
                       );

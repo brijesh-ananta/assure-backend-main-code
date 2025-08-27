@@ -125,8 +125,11 @@ const UpdateUser = () => {
     }
 
     if (userActionOptions === "Mobile App user") {
-      if (!shippingAddress?.postalCode?.trim()) {
+      if (shippingAddress?.postalCode?.trim() === "") {
         newErrors.postalCode = "Postal Code is required,";
+      }
+      if (shippingAddress?.city?.trim() === "") {
+        newErrors.city = "City is required,";
       }
 
       if (!selectedPartnerName) {
@@ -139,6 +142,7 @@ const UpdateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const { isValid, errors: validationErrors } = validateForm();
     if (!isValid) {
       const errorMessage = Object.values(validationErrors).join("\n");
@@ -162,10 +166,10 @@ const UpdateUser = () => {
             selectedUserRole === "1"
               ? ["prod", "qa", "test"]
               : selectedUserRole === "4"
-              ? ["prod", "qa", "test"]
-              : webEnvironments.length > 0
-              ? webEnvironments
-              : [],
+                ? ["prod", "qa", "test"]
+                : webEnvironments.length > 0
+                  ? webEnvironments
+                  : [],
         },
         prod: webEnvironments.includes("prod") ? 1 : 0,
         qa: webEnvironments.includes("qa") ? 1 : 0,
@@ -186,18 +190,18 @@ const UpdateUser = () => {
           selectedUserRole === "1"
             ? 1
             : selectedUserRole === "4"
-            ? 1
-            : profileEditorEnvironments.includes("prod")
-            ? 1
-            : 0,
+              ? 1
+              : profileEditorEnvironments.includes("prod")
+                ? 1
+                : 0,
         profile_env_qa_access:
           selectedUserRole === "1"
             ? 1
             : selectedUserRole === "4"
-            ? 1
-            : profileEditorEnvironments.includes("qa")
-            ? 1
-            : 0,
+              ? 1
+              : profileEditorEnvironments.includes("qa")
+                ? 1
+                : 0,
       }),
       isActive,
       is_locked: isLocked,
@@ -435,10 +439,31 @@ const UpdateUser = () => {
   };
 
   const handleUserTypeChange = (role) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles(selectedRoles.filter((r) => r !== role));
+    let updatedRoles = [...selectedRoles];
+    if (updatedRoles.includes(role)) {
+      updatedRoles = updatedRoles.filter((r) => r !== role);
     } else {
-      setSelectedRoles([...selectedRoles, role]);
+      updatedRoles.push(role);
+      // If profile_editor is checked, also check mobile
+      if (role === "profile_editor" && !updatedRoles.includes("mobile")) {
+        updatedRoles.push("mobile");
+        updatedRoles.push("web");
+      }
+    }
+    setSelectedRoles(updatedRoles);
+    // Set accordions open/close based on selected roles
+    setWebUserRoleOpen(updatedRoles.includes("web"));
+    setMobileUserRole(updatedRoles.includes("mobile"));
+    setProfileEditorRole(updatedRoles.includes("profile_editor"));
+    // Optionally update userActionOptions for legacy logic
+    if (updatedRoles.length === 1) {
+      if (updatedRoles[0] === "web") setUserActionOptions("Web User");
+      else if (updatedRoles[0] === "mobile")
+        setUserActionOptions("Mobile User");
+      else if (updatedRoles[0] === "profile_editor")
+        setUserActionOptions("Profile Editor User");
+    } else {
+      setUserActionOptions("");
     }
   };
 
@@ -578,6 +603,7 @@ const UpdateUser = () => {
                         checked={selectedRoles.includes(role.value)}
                         onChange={() => handleUserTypeChange(role.value)}
                         disabled={!isEditMode}
+                        required={selectedRoles.length === 0}
                       />
                       <span className="text-capitalize">{role.label}</span>
                     </label>
@@ -750,6 +776,7 @@ const UpdateUser = () => {
                 className="bypass-otp-input"
                 placeholder="Please provide reason for bypassing OTP"
                 value={bypassOtpReason}
+                required={bypassOtp == true}
                 onChange={(e) => setBypassOtpReason(e.target.value)}
                 disabled={!isEditMode}
               />
@@ -785,7 +812,7 @@ const UpdateUser = () => {
                     </AccordionItemHeading>
                     <AccordionItemPanel>
                       <div className="role-group">
-                        <label className="radio-label">
+                        <label className="radio-label col-2">
                           <input
                             type="radio"
                             name="webUserRole"
@@ -794,11 +821,12 @@ const UpdateUser = () => {
                             checked={selectedUserRole === "1"}
                             onChange={handleUserRoleChange}
                             disabled={!isEditMode}
+                            required={selectedRoles.includes("web")}
                           />
                           <span className="font">Test Card SME</span>
                         </label>
 
-                        <label className="radio-label">
+                        <label className="radio-label ps-3">
                           <input
                             type="radio"
                             name="webUserRole"
@@ -807,6 +835,7 @@ const UpdateUser = () => {
                             checked={selectedUserRole === "4"}
                             onChange={handleUserRoleChange}
                             disabled={!isEditMode}
+                            required={selectedRoles.includes("web")}
                           />
                           <span className="font">Test Card Manager</span>
                         </label>
@@ -823,6 +852,7 @@ const UpdateUser = () => {
                               checked={selectedUserRole === "2"}
                               onChange={handleUserRoleChange}
                               disabled={!isEditMode}
+                              required={selectedRoles.includes("web")}
                             />
                             <span className="font">Test Card Request User</span>
                           </label>
@@ -836,6 +866,7 @@ const UpdateUser = () => {
                               checked={selectedUserRole === "3"}
                               onChange={handleUserRoleChange}
                               disabled={!isEditMode}
+                              required={selectedRoles.includes("web")}
                             />
                             <span className="font">
                               Test Card Request View User
@@ -864,6 +895,7 @@ const UpdateUser = () => {
                                 checked={webEnvironments.includes(env)}
                                 onChange={handleWebEnvironmentChange}
                                 disabled={!isEditMode}
+                                required={webEnvironments.length === 0}
                               />
                               <span className="font">
                                 {env.charAt(0).toUpperCase() + env.slice(1)}
@@ -929,6 +961,7 @@ const UpdateUser = () => {
                                     : []
                                 }
                                 disabled={!isEditMode}
+                                required={selectedRoles.includes("mobile")}
                               />
                             </div>
                           </div>
@@ -954,6 +987,7 @@ const UpdateUser = () => {
                                     value={shippingAddress.name}
                                     onChange={handleAddressChange}
                                     disabled={!isEditMode}
+                                    required
                                   />
                                 </div>
                                 <div className="col-6">
@@ -964,6 +998,7 @@ const UpdateUser = () => {
                                     value={shippingAddress.city}
                                     onChange={handleAddressChange}
                                     disabled={!isEditMode}
+                                    required
                                   />
                                 </div>
                               </div>
@@ -977,6 +1012,7 @@ const UpdateUser = () => {
                                     value={shippingAddress.state}
                                     onChange={handleAddressChange}
                                     disabled={!isEditMode}
+                                    required
                                   />
                                 </div>
 
@@ -988,6 +1024,7 @@ const UpdateUser = () => {
                                     value={shippingAddress.country}
                                     onChange={handleAddressChange}
                                     disabled={!isEditMode}
+                                    required
                                   />
                                 </div>
 
@@ -999,6 +1036,7 @@ const UpdateUser = () => {
                                     value={shippingAddress.postalCode}
                                     onChange={handleAddressChange}
                                     disabled={!isEditMode}
+                                    required
                                   />
                                 </div>
                               </div>
@@ -1103,6 +1141,7 @@ const UpdateUser = () => {
                           value={apduDebugReason}
                           onChange={(e) => setApduDebugReason(e.target.value)}
                           disabled={!isEditMode}
+                          required={apduLog === true || debugLog === true}
                         />
                       </div>
                     </AccordionItemPanel>
@@ -1165,6 +1204,9 @@ const UpdateUser = () => {
                                     checked={profileEditorEnvironments.includes(
                                       env
                                     )}
+                                    required={
+                                      profileEditorEnvironments.length === 0
+                                    }
                                     onChange={
                                       handleProfileEditorEnvironmentChange
                                     }

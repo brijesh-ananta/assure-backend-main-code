@@ -26,17 +26,20 @@ function Help() {
                   <p>
                     <strong>Q: How do I reset my password?</strong>
                     <br />
-                    A: Click on the "Forgot Password" link on the login page and follow the instructions.
+                    A: Click on the "Forgot Password" link on the login page and
+                    follow the instructions.
                   </p>
                   <p>
                     <strong>Q: How do I contact support?</strong>
                     <br />
-                    A: You can reach out to our support team via our <Link to="/contact">Contact Us</Link> page.
+                    A: You can reach out to our support team via our{" "}
+                    <Link to="/contact">Contact Us</Link> page.
                   </p>
                   <p>
                     <strong>Q: Where can I find the user guide?</strong>
                     <br />
-                    A: The user guide is available in the Help section of your dashboard.
+                    A: The user guide is available in the Help section of your
+                    dashboard.
                   </p>
                 </div>
               </div>
@@ -49,13 +52,18 @@ function Help() {
                 </div>
                 <div className="card-body">
                   <p>
-                    If you have any issues or need further assistance, please don't hesitate to contact our support team.
+                    If you have any issues or need further assistance, please
+                    don't hesitate to contact our support team.
                   </p>
                   <p>
-                    You can reach us via email at <a href="mailto:support@example.com">support@example.com</a> or call us at <strong>+1 (555) 123-4567</strong>.
+                    You can reach us via email at{" "}
+                    <a href="mailto:support@example.com">support@example.com</a>{" "}
+                    or call us at <strong>+1 (555) 123-4567</strong>.
                   </p>
                   <p>
-                    Alternatively, you can fill out our support form on the <Link to="/contact">Contact Us</Link> page and we will get back to you as soon as possible.
+                    Alternatively, you can fill out our support form on the{" "}
+                    <Link to="/contact">Contact Us</Link> page and we will get
+                    back to you as soon as possible.
                   </p>
                 </div>
               </div>

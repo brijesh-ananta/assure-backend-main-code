@@ -147,8 +147,8 @@ const OnBoardUser = () => {
       userType: selectedRoles.includes("mobile")
         ? "mobile"
         : selectedRoles.includes("web")
-        ? "web"
-        : "both",
+          ? "web"
+          : "both",
       ...(selectedRoles.includes("web") && {
         webUser: {
           role: selectedUserRole,
@@ -156,10 +156,10 @@ const OnBoardUser = () => {
             selectedUserRole === "1"
               ? ["prod", "qa", "test"]
               : selectedUserRole === "4"
-              ? ["prod", "qa", "test"]
-              : webEnvironments.length > 0
-              ? webEnvironments
-              : [],
+                ? ["prod", "qa", "test"]
+                : webEnvironments.length > 0
+                  ? webEnvironments
+                  : [],
         },
       }),
       ...(selectedRoles.includes("mobile") && {
@@ -343,6 +343,7 @@ const OnBoardUser = () => {
       // If profile_editor is checked, also check mobile
       if (role === "profile_editor" && !updatedRoles.includes("mobile")) {
         updatedRoles.push("mobile");
+        updatedRoles.push("web");
       }
     }
     setSelectedRoles(updatedRoles);
@@ -623,7 +624,7 @@ const OnBoardUser = () => {
                           type="radio"
                           name="webUserRole"
                           value="4"
-                          className="form-check-input p-12p ms-2"
+                          className="form-check-input p-12p ms-5"
                           checked={selectedUserRole === "4"}
                           required={selectedRoles.includes("web")}
                           onChange={handleUserRoleChange}
@@ -723,10 +724,10 @@ const OnBoardUser = () => {
                     <div className="d-flex gap-4 flex-column w-80 m-auto">
                       <div className="row">
                         <div className="col-6 row align-items-center onboarduserv2-form">
-                          <label className="font text-right col-5 onboarduserv2-form-label">
+                          <label className="font text-left  onboarduserv2-form-label">
                             Testing Partner
                           </label>
-                          <div className="col-5">
+                          <div className="col-7">
                             <Select
                               options={transformedPartners}
                               labelField="label"

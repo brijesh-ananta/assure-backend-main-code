@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 function Sidebar() {
   // Define your menu items with their corresponding routes
@@ -15,7 +15,11 @@ function Sidebar() {
     <div className="offcanvas offcanvas-start" id="offcanvasExample">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title">BluHive</h5>
-        <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        <button
+          type="button"
+          className="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+        ></button>
       </div>
       <div className="offcanvas-body">
         <ul className="list-unstyled menu-items">

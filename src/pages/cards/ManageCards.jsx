@@ -170,7 +170,9 @@ function ManageCards() {
                               {issuer.posCount - issuer.posAssignedCount}
                             </span>
                           </td>
-                          <td className="bggray">{issuer.posAssignedCount || "0"}</td>
+                          <td className="bggray">
+                            {issuer.posAssignedCount || "0"}
+                          </td>
                           <td className="bggray">{issuer.posCount}</td>
                           <td className="bggray">
                             <div>
@@ -198,7 +200,9 @@ function ManageCards() {
                               {issuer.ecommCount - issuer.ecommAssignedCount}
                             </span>
                           </td>
-                          <td className="bggray">{issuer.ecommAssignedCount || "0"}</td>
+                          <td className="bggray">
+                            {issuer.ecommAssignedCount || "0"}
+                          </td>
                           <td className="bggray">{issuer.ecommCount}</td>
                           <td className="bggray">
                             <div>
@@ -279,7 +283,9 @@ function ManageCards() {
                               {issuer.posCount - issuer.posAssignedCount}
                             </span>
                           </td>
-                          <td className="bggray">{issuer.posAssignedCount || "0"}</td>
+                          <td className="bggray">
+                            {issuer.posAssignedCount || "0"}
+                          </td>
                           <td className="bggray">{issuer.posCount}</td>
                           <td className="bggray">
                             <div>

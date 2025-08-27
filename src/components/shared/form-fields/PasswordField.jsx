@@ -49,7 +49,7 @@ function PasswordInput({
           }}
           onClick={() => setVisible((v) => !v)}
         >
-          {visible ? <FaEyeSlash size={24}/> : <FaEye size={24}/>}
+          {visible ? <FaEyeSlash size={24} /> : <FaEye size={24} />}
         </span>
       </div>
       {touched && error && (

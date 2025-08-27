@@ -1,4 +1,4 @@
-import './text-loader.css'
+import "./text-loader.css";
 
 const TextLoader = () => {
   return (

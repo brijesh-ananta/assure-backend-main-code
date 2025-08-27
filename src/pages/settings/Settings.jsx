@@ -6,7 +6,7 @@ import axiosToken from "../../utils/axiosToken";
 import { useAuth } from "../../utils/AuthContext";
 
 function Settings() {
-  const [headerTitle, ] = useState("System Defaults");
+  const [headerTitle] = useState("System Defaults");
   const [env, setEnv] = useState("1");
   const { userRole } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -21,14 +21,18 @@ function Settings() {
   useEffect(() => {
     const fetchSystemDefaults = async () => {
       try {
-        const { data } = await axiosToken.get("/system-defaults?environment=" + env);
-        setSystemDefaults(data?.[0] || {
-          offline_usage: 5,
-          total_usage: 5,
-          key_expiry: 5,
-          offline_days: 5,
-          days_to_free_card: 30,
-        });
+        const { data } = await axiosToken.get(
+          "/system-defaults?environment=" + env
+        );
+        setSystemDefaults(
+          data?.[0] || {
+            offline_usage: 5,
+            total_usage: 5,
+            key_expiry: 5,
+            offline_days: 5,
+            days_to_free_card: 30,
+          }
+        );
       } catch (error) {
         console.error("Error fetching system defaults:", error);
       }
@@ -42,7 +46,8 @@ function Settings() {
   };
 
   const handleInputChange = (field, value) => {
-    if (userRole === 1) { // Only allow changes if userRole is 1
+    if (userRole === 1) {
+      // Only allow changes if userRole is 1
       setSystemDefaults((prevDefaults) => ({
         ...prevDefaults,
         [field]: value,

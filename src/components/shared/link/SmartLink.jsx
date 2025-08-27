@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 
-const SmartLink = ({ to = '', children, ...rest }) => {
+const SmartLink = ({ to = "", children, ...rest }) => {
   const location = useLocation();
   const hasQuery = to.includes("?");
   const linkTo = hasQuery ? to : `${to}${location.search}`;

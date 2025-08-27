@@ -8,8 +8,8 @@ import { useAuth } from "../../utils/AuthContext";
 
 const ManageUsers = () => {
   const [headerTitle, setHeaderTitle] = useState("Manage Users"); // Default title
-  // userType 
-  const [userType, setUserType] = useState('');
+  // userType
+  const [userType, setUserType] = useState("");
   const { userRole } = useAuth(); // Added userRole to useAuth
 
   return (
@@ -55,12 +55,12 @@ const ManageUsers = () => {
             <div className="">
               {/* userRole == 1 */}
               {userRole === 1 && (
-              <Link
-                className="btn-add py-2"
-                to="/dashboard/user-management/onboard-user"
-              >
-                Onboard User
-              </Link>
+                <Link
+                  className="btn-add py-2"
+                  to="/dashboard/user-management/onboard-user"
+                >
+                  Onboard User
+                </Link>
               )}
             </div>
           </div>

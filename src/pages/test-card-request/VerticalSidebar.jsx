@@ -35,8 +35,8 @@ const VerticalSidebar = ({
     terminalType == "Ecomm" || environment == 3
       ? true
       : requestInfoData?.testInfo == null
-      ? true
-      : false;
+        ? true
+        : false;
 
   const onTabClick = (index) => {
     handleStepChange(index);

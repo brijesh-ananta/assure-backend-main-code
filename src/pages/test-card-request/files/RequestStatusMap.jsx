@@ -9,7 +9,11 @@ function isCardHidden({ environment, terminalType, card }) {
     );
   }
   if (environment == 3 && terminalType === "Pos") {
-    return card === "Terminal Details" || card === "Tester Details" || card === 'Assign Card'
+    return (
+      card === "Terminal Details" ||
+      card === "Tester Details" ||
+      card === "Assign Card"
+    );
   }
 
   return false;
@@ -76,7 +80,8 @@ const RequestStatusMap = ({ setStart, terminalType, environment }) => {
           </div>
         </div>
 
-        <div className={`workflow-card ${
+        <div
+          className={`workflow-card ${
             isCardHidden({
               environment,
               terminalType,
@@ -84,7 +89,8 @@ const RequestStatusMap = ({ setStart, terminalType, environment }) => {
             })
               ? "opacity-04"
               : ""
-          }`}>
+          }`}
+        >
           <div className="workflow-card-title">Shipping Details</div>
           <div className="workflow-card-content">Provide shipping details</div>
           <div className="workflow-card-bar"></div>
@@ -160,9 +166,7 @@ const RequestStatusMap = ({ setStart, terminalType, environment }) => {
           </div>
         </div>
 
-        <div
-          className={`workflow-card-rounded mr-21-polygon  shipping-card`}
-        >
+        <div className={`workflow-card-rounded mr-21-polygon  shipping-card`}>
           <div className="polygon-border">
             <div className="workflow-polygon">
               Submit <br /> TC Request

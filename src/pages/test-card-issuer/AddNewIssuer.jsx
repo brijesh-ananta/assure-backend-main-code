@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useFormik } from "formik";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "./IssuerDetail.css";
 import { toast } from "react-toastify";
 import axiosToken from "../../utils/axiosToken";
 
@@ -12,7 +11,9 @@ const AddNewIssuer = () => {
   const termFromQuery = params.get("terminalType");
 
   const [environment, setEnvironment] = useState(envFromQuery || "1");
-  const [cardType, setcardType] = useState(termFromQuery || "Pos");
+  const [cardType, setcardType] = useState(
+    termFromQuery ? [termFromQuery] : ["Pos"]
+  );
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,19 +71,29 @@ const AddNewIssuer = () => {
     validate,
     enableReinitialize: true,
     onSubmit: async (values) => {
+      let finalCardType;
+      if (cardType.includes("Pos") && cardType.includes("Ecomm")) {
+        finalCardType = "Both";
+      } else if (cardType.includes("Pos")) {
+        finalCardType = "Pos";
+      } else if (cardType.includes("Ecomm")) {
+        finalCardType = "Ecomm";
+      } else {
+        finalCardType = "Pos";
+      }
+
       const payload = {
         environment_id: environment,
         issuer_name: values.issuerName,
         issuer_code: values.issuerCode,
         iisc: values.iisc,
-        card_type: cardType,
+        card_type: finalCardType,
         contact_person: values.contactPerson,
         contact_email: values.email,
         status: values.status?.toLowerCase() || "draft",
-        confirm_secured_connection:
-          cardType === "Pos"
-            ? values.securedConnection?.toLowerCase() || "yes"
-            : undefined,
+        confirm_secured_connection: cardType.includes("Pos")
+          ? values.securedConnection?.toLowerCase() || "yes"
+          : undefined,
         createdBy: 178, // Uncomment if you have user context
       };
       Object.keys(payload).forEach(
@@ -113,25 +124,39 @@ const AddNewIssuer = () => {
 
   const handleEnvironmentChange = (e) => {
     setEnvironment(e.target.value);
-    setcardType("Pos");
+    setcardType(["Pos"]);
   };
 
   const handlecardTypeChange = (e) => {
-    setcardType(e.target.value);
+    const value = e.target.value;
+    const isChecked = e.target.checked;
+
+    setcardType((prevCardType) => {
+      if (isChecked) {
+        return [...new Set([...prevCardType, value])];
+      } else {
+        return prevCardType.filter((type) => type !== value);
+      }
+    });
   };
 
-    useEffect(() => {
-    if (cardType === "Pos") {
+  useEffect(() => {
+    if (cardType.includes("Pos")) {
+      if (!formik.values.securedConnection) {
+        formik.setFieldValue("securedConnection", "Yes");
+      }
       if (formik.values.securedConnection === "Yes") {
         formik.setFieldValue("status", "Active");
       } else if (formik.values.securedConnection === "No") {
         formik.setFieldValue("status", "Draft");
       }
+    } else {
+      formik.setFieldValue("securedConnection", "No");
     }
-  }, [cardType, formik.values.securedConnection]);
+  }, [cardType, formik.values.securedConnection, formik.setFieldValue]);
 
   const isStatusLocked =
-    cardType === "Pos" &&
+    cardType.includes("Pos") &&
     (formik.values.securedConnection === "Yes" ||
       formik.values.securedConnection === "No");
 
@@ -151,6 +176,7 @@ const AddNewIssuer = () => {
                   checked={environment === "1"}
                   onChange={handleEnvironmentChange}
                   id="flexRadioDefault1"
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}
@@ -169,6 +195,7 @@ const AddNewIssuer = () => {
                   checked={environment === "2"}
                   onChange={handleEnvironmentChange}
                   id="flexRadioDefault2"
+                  disabled
                 />
                 <label
                   style={{ marginBottom: 0 }}
@@ -208,14 +235,6 @@ const AddNewIssuer = () => {
               <p className="font col-3 text-right m-0">Issuer ID</p>
               <div className="col-6">
                 <p className="font col-3 text-left m-0">New</p>
-                {/* <input
-                  type="text"
-                  name="issuerId"
-                  value={formik.values.issuerId}
-                  onChange={formik.handleChange}
-                  className="form-control formcontrol"
-                  placeholder="Issuer ID"
-                /> */}
                 {formik.touched.issuerId && formik.errors.issuerId && (
                   <div className="text-danger font mt-1">
                     {formik.errors.issuerId}
@@ -274,15 +293,11 @@ const AddNewIssuer = () => {
                 <div className="form-check me-3 d-flex gap-2 align-items-center">
                   <input
                     className="form-check-input"
-                    type="radio"
+                    type="checkbox"
                     style={{ borderRadius: 0, width: "20px", height: "20px" }}
                     name="cardType"
-                    value={"Pos"}
-                    checked={
-                      cardType === "Pos" ||
-                      environment === "2" ||
-                      environment === "3"
-                    }
+                    value="Pos"
+                    checked={cardType.includes("Pos")}
                     onChange={handlecardTypeChange}
                     id="cardType1"
                   />
@@ -297,15 +312,11 @@ const AddNewIssuer = () => {
                 <div className="form-check d-flex gap-2 align-items-center">
                   <input
                     className="form-check-input"
-                    type="radio"
+                    type="checkbox"
                     style={{ borderRadius: 0, width: "20px", height: "20px" }}
                     name="cardType"
-                    value={"Ecomm"}
-                    checked={
-                      cardType === "Ecomm" &&
-                      environment !== "2" &&
-                      environment !== "3"
-                    }
+                    value="Ecomm"
+                    checked={cardType.includes("Ecomm")}
                     disabled={environment === "2"}
                     onChange={handlecardTypeChange}
                     id="cardType2"
@@ -323,65 +334,62 @@ const AddNewIssuer = () => {
 
             <div className="col-6 row align-items-end">
               <div className="col-12 d-flex gap-3 align-items-start">
-                {cardType === "Pos" && (
-            <div className="col-6 row align-items-end">
-              <div className="col-12 d-flex gap-3 align-items-start">
-                <label
-                  style={{
-                    textDecoration: "underline dotted",
-                    fontStyle: "italic",
-                    color: "#7eb7df",
-                  }}
-                  className="rounded-4 p-1 no-wrap d-flex align-items-start font"
-                >
-                  Secured connection established?
-                </label>
-                <div className="d-flex gap-1">
-                  {["Yes", "No"].map((opt) => (
-                    <label
-                      style={{
-                        marginBottom: 0,
-                        gap: 0,
-                        marginRight: "2rem",
-                      }}
-                      key={opt}
-                      className="radio-label"
-                    >
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="securedConnection"
-                        value={opt}
-                        checked={formik.values.securedConnection === opt}
-                        onChange={formik.handleChange}
+                {cardType.includes("Pos") && (
+                  <div className="col-6 row align-items-end">
+                    <div className="col-12 d-flex gap-3 align-items-start">
+                      <label
                         style={{
-                          marginTop: 0,
-                          width: "1.3rem",
-                          height: "1.3rem",
-                          marginRight: "12px",
+                          textDecoration: "underline dotted",
+                          fontStyle: "italic",
+                          color: "#7eb7df",
                         }}
-                        
-                      />
-                      <span
-                        className={
-                          formik.values.securedConnection === opt
-                            ? "highlight"
-                            : ""
-                        }
+                        className="rounded-4 p-1 no-wrap d-flex align-items-start font"
                       >
-                        {opt}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+                        Secured connection established?
+                      </label>
+                      <div className="d-flex gap-1">
+                        {["Yes", "No"].map((opt) => (
+                          <label
+                            style={{
+                              marginBottom: 0,
+                              gap: 0,
+                              marginRight: "2rem",
+                            }}
+                            key={opt}
+                            className="radio-label"
+                          >
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="securedConnection"
+                              value={opt}
+                              checked={formik.values.securedConnection === opt}
+                              onChange={formik.handleChange}
+                              style={{
+                                marginTop: 0,
+                                width: "1.3rem",
+                                height: "1.3rem",
+                                marginRight: "12px",
+                              }}
+                            />
+                            <span
+                              className={
+                                formik.values.securedConnection === opt
+                                  ? "highlight"
+                                  : ""
+                              }
+                            >
+                              {opt}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-          {/* Contact Person + Email */}
 
           <div className="col-12 row mt-5">
             <div className="col-6 row align-items-center">
@@ -466,7 +474,7 @@ const AddNewIssuer = () => {
             </div>
           </div> */}
 
-           <div className="row mt-4">
+          <div className="row mt-4">
             <label className="col-2 font text-right">Status</label>
             <div className="radio-group col-8">
               {["Draft", "Active", "Inactive"].map((status) => (
@@ -515,16 +523,18 @@ const AddNewIssuer = () => {
               Cancel
             </button>
             <button type="submit" disabled={isLoading}>
-    {isLoading ? (
-      <>
-        <span className="loader" style={{ marginRight: "8px" }}></span>
-        Saving...
-      </>
-    ) : (
-      "Save"
-    )}
-  </button>
-            
+              {isLoading ? (
+                <>
+                  <span
+                    className="loader"
+                    style={{ marginRight: "8px" }}
+                  ></span>
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </button>
           </div>
         </form>
       </section>

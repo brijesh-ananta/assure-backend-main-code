@@ -5,11 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function ShippingCardV2({
-  requestInfoData,
-  terminalType,
-  environment,
-}) {
+function ShippingCardV2({ requestInfoData, terminalType, environment }) {
   const navigate = useNavigate();
   const [shippingInfoData, setShippingInfoData] = useState(
     requestInfoData?.shipDetails || {}

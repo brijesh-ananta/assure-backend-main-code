@@ -43,7 +43,7 @@ const AddNotificationv2 = () => {
     e.preventDefault();
     setErrors({});
   };
-1
+  1;
   return (
     <>
       {/* Notification Type Section */}

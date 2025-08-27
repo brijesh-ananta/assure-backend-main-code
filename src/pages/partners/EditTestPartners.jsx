@@ -252,7 +252,10 @@ function EditTestPartners() {
                         onChange={handleStatusChange}
                         disabled={userRole !== 1} // Disable if userRole != 1
                       />
-                      <label className="form-check-label" htmlFor="statusActive">
+                      <label
+                        className="form-check-label"
+                        htmlFor="statusActive"
+                      >
                         Active
                       </label>
                     </div>
@@ -267,7 +270,10 @@ function EditTestPartners() {
                         onChange={handleStatusChange}
                         disabled={userRole !== 1} // Disable if userRole != 1
                       />
-                      <label className="form-check-label" htmlFor="statusInactive">
+                      <label
+                        className="form-check-label"
+                        htmlFor="statusInactive"
+                      >
                         Deactivate
                       </label>
                     </div>

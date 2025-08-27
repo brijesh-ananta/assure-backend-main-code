@@ -1091,7 +1091,7 @@ th {
   overflow: hidden;
 }
 
-
 .react-dropdown-select-item-selected {
   background: #f0965b !important;
+  color: #000 !important;
 }

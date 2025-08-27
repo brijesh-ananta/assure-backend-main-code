@@ -18,10 +18,10 @@ const BinDetails = () => {
       }
     };
     fetchBinData();
-     if (id) {
-        const params = new URLSearchParams(location.search);
-        params.set("recordId", id);
-        navigate({ search: params.toString() }, { replace: true });
+    if (id) {
+      const params = new URLSearchParams(location.search);
+      params.set("recordId", id);
+      navigate({ search: params.toString() }, { replace: true });
     }
   }, [id]);
 
@@ -46,7 +46,11 @@ const BinDetails = () => {
                   disabled
                   id="flexRadioDefault1"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="flexRadioDefault1">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="flexRadioDefault1"
+                >
                   Prod
                 </label>
               </div>
@@ -60,7 +64,11 @@ const BinDetails = () => {
                   disabled
                   id="flexRadioDefault2"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="flexRadioDefault2">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="flexRadioDefault2"
+                >
                   QA
                 </label>
               </div>
@@ -77,7 +85,11 @@ const BinDetails = () => {
                   disabled
                   id="cardType1"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="cardType1">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="cardType1"
+                >
                   POS
                 </label>
               </div>
@@ -91,7 +103,11 @@ const BinDetails = () => {
                   disabled
                   id="cardType2"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="cardType2">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="cardType2"
+                >
                   Ecomm
                 </label>
               </div>
@@ -104,15 +120,18 @@ const BinDetails = () => {
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer Name</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_name}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_name}
+              </p>
             </div>
           </div>
 
-          
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer ID</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_unique_id}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_unique_id}
+              </p>
             </div>
           </div>
 
@@ -122,11 +141,13 @@ const BinDetails = () => {
               <p className="form-control-plaintext mb-0">{binData.iisc}</p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer Code</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_code}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_code}
+              </p>
             </div>
           </div>
 
@@ -136,13 +157,8 @@ const BinDetails = () => {
               <p className="form-control-plaintext mb-0">{binData.status}</p>
             </div>
           </div>
-          
-          
 
-
-          <div className="col-6 row align-items-center mb-3">
-            {/* blank */}
-          </div>
+          <div className="col-6 row align-items-center mb-3">{/* blank */}</div>
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Bin</p>
             <div className="col-5 p-0">
@@ -153,39 +169,39 @@ const BinDetails = () => {
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Bin ID</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.bin_unique_id}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.bin_unique_id}
+              </p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Card Type</p>
             <div className="col-5 p-0">
               <p className="form-control-plaintext mb-0">{binData.card_type}</p>
             </div>
           </div>
-          <div className="col-6 row align-items-center mb-3">
-            {/* blank */}
-          </div>
+          <div className="col-6 row align-items-center mb-3">{/* blank */}</div>
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Bin Product</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.bin_product}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.bin_product}
+              </p>
             </div>
           </div>
-          <div className="col-6 row align-items-center mb-3">
-            {/* blank */}
-          </div>
+          <div className="col-6 row align-items-center mb-3">{/* blank */}</div>
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Pan Length</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.pan_length}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.pan_length}
+              </p>
             </div>
           </div>
-          
+
           {/* Bin Status - full row */}
-          <div className="col-6 row align-items-center mb-3">
-            {/* blank */}
-          </div>
+          <div className="col-6 row align-items-center mb-3">{/* blank */}</div>
           <div className="row col-6 row align-items-center mb-3 ">
             <label className="col-4 font pe-4 text-right">Bin Status</label>
             <div className="radio-group col-8">
@@ -221,8 +237,8 @@ const BinDetails = () => {
                 </label>
               ))}
             </div>
-            </div>
-         
+          </div>
+
           <div className="col-12 row align-items-center mb-3 mt-4">
             <div className="col-12 p-0 d-flex justify-content-end form-actions">
               <button
@@ -243,7 +259,6 @@ const BinDetails = () => {
           </div>
         </div>
       </section>
-      
     </>
   );
 };

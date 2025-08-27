@@ -492,8 +492,8 @@ function ShippingCardTestEnv({
                       {option === "one"
                         ? "One Address"
                         : option === "multiple"
-                        ? "Multiple Addresses"
-                        : "Mobile Card Only"}
+                          ? "Multiple Addresses"
+                          : "Mobile Card Only"}
                     </label>
                   </div>
                 ))}

@@ -25,7 +25,7 @@ function AuditTrailView() {
       const result = await apiService.auditTrail.getById(id);
       setData(result);
     } catch (error) {
-      console.error('error', error);
+      console.error("error", error);
     }
   }, [id]);
 

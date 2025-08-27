@@ -21,6 +21,23 @@ const priorityColors = {
 };
 
 function TCrequesetHistory() {
+  const formatStatusDisplay = (status) => {
+    const statusMap = {
+      assign_card: "Assign Card",
+      draft: "Draft",
+      returned: "Returned",
+      submitted: "Submitted",
+      approved: "Approved",
+      shipped: "Shipped",
+      completed: "Completed",
+    };
+
+    return (
+      statusMap[status] ||
+      (status ? status.charAt(0).toUpperCase() + status.slice(1) : "N/A")
+    );
+  };
+
   const [environment, setEnvironment] = useState("All");
   const [termialType, setTermialType] = useState("All");
   const [loading, setLoading] = useState(false);
@@ -120,8 +137,15 @@ function TCrequesetHistory() {
           url += `&requestType=${requestType}`;
         }
         const response = await axiosToken.get(url);
+        const all = response.data || [];
 
-        setRequests(response.data || []);
+        const updateuser = all.map((item) => {
+          let environment = environmentMapping[item?.environment_id];
+
+          return { ...item, environment };
+        });
+
+        setRequests(updateuser || []);
       } catch (error) {
         console.error("Error fetching requests:", error);
       }
@@ -210,9 +234,10 @@ function TCrequesetHistory() {
           label: "Status",
           sortable: true,
           width: "120px",
+          renderCell: (item) => formatStatusDisplay(item.status),
         },
         {
-          key: "submittedDate",
+          key: "submitted_date",
           label: "Date Submitted",
           sortable: true,
           renderCell: (item) =>
@@ -221,7 +246,7 @@ function TCrequesetHistory() {
               : "N/A",
         },
         {
-          key: "updatedDate",
+          key: "updated_at",
           label: "Last Update",
           sortable: true,
           renderCell: (item) =>
@@ -230,7 +255,7 @@ function TCrequesetHistory() {
               : "N/A",
         },
         {
-          key: "priority",
+          key: "request_priority",
           label: "Priority",
           sortable: true,
           renderCell: (item) => {
@@ -249,8 +274,9 @@ function TCrequesetHistory() {
           width: "100px",
         },
         {
-          key: "testObjective",
+          key: "testing_objective",
           label: "Test Objective",
+          sortable: true,
           renderCell: (item, { expandedRows, onToggle }) => {
             const objective = item?.testing_objective || "N/A";
             const isExpanded = expandedRows[item.cardRequestId];

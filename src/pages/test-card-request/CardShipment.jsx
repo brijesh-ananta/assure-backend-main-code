@@ -188,7 +188,6 @@ function CardShipment() {
         ...prev,
         [index]: vaultCount,
       }));
-
     } catch (error) {
       console.error("Error fetching issuers:", error);
 
@@ -622,8 +621,8 @@ function CardShipment() {
                                           {option === "one"
                                             ? "One Address"
                                             : option === "multiple"
-                                            ? "Multiple Addresses"
-                                            : "Mobile Card Only"}
+                                              ? "Multiple Addresses"
+                                              : "Mobile Card Only"}
                                         </label>
                                       </div>
                                     )
@@ -758,37 +757,39 @@ function CardShipment() {
                           </div>
 
                           {/* Offline Fields with per-row state */}
-                          <div className="login-page mb-lg-4 mb-2 row justify-content-between pt-3 pb-3 w-100" style={{ backgroundColor: "#FEF5EE" }}>
-
-                              <div className="col-12 col-lg-4 me-lg-4 me-0">
-                                <div className="d-lg-flex align-items-center">
-                                  <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2 ms-lg-5">
-                                    Shipping Date
-                                  </label>
-                                  <input
-                                    name="last_use_date"
-                                    placeholder="dd/mm/yyyy"
-                                    type="date"
-                                    value=""
-                                    className="form-control formcontrol"
-                                  />
-                                </div>
-                              </div>
-                              <div className="col-12 col-lg-4 me-lg-4 me-0">
-                                <div className="d-lg-flex align-items-center">
-                                  <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2 ms-lg-5">
-                                    Tracking Number
-                                  </label>
-                                  <input
-                                    name="last_use_date"
-                                    placeholder="Tracking Number"
-                                    type="text"
-                                    value=""
-                                    className="form-control formcontrol"
-                                  />
-                                </div>
+                          <div
+                            className="login-page mb-lg-4 mb-2 row justify-content-between pt-3 pb-3 w-100"
+                            style={{ backgroundColor: "#FEF5EE" }}
+                          >
+                            <div className="col-12 col-lg-4 me-lg-4 me-0">
+                              <div className="d-lg-flex align-items-center">
+                                <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2 ms-lg-5">
+                                  Shipping Date
+                                </label>
+                                <input
+                                  name="last_use_date"
+                                  placeholder="dd/mm/yyyy"
+                                  type="date"
+                                  value=""
+                                  className="form-control formcontrol"
+                                />
                               </div>
                             </div>
+                            <div className="col-12 col-lg-4 me-lg-4 me-0">
+                              <div className="d-lg-flex align-items-center">
+                                <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2 ms-lg-5">
+                                  Tracking Number
+                                </label>
+                                <input
+                                  name="last_use_date"
+                                  placeholder="Tracking Number"
+                                  type="text"
+                                  value=""
+                                  className="form-control formcontrol"
+                                />
+                              </div>
+                            </div>
+                          </div>
                           <div className="btn-section col-12 d-flex justify-content-end">
                             {tcStatus === "assign_card" && (
                               <>

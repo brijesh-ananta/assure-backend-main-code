@@ -17,7 +17,7 @@ function Settings() {
     key_expiry: 5,
     offline_days: 5,
     days_to_free_card: 30,
-    grace_days: 5
+    grace_days: 5,
   });
 
   const fetchSystemDefaults = async () => {
@@ -38,7 +38,7 @@ function Settings() {
       console.error("Error fetching system defaults:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchSystemDefaults();
   }, [env]);
@@ -62,7 +62,7 @@ function Settings() {
       await axiosToken.put("/system-defaults/" + env, systemDefaults);
       setLoading(false);
       toast.success("Settings updated successfully!");
-      fetchSystemDefaults()
+      fetchSystemDefaults();
     } catch (error) {
       console.error("Error updating system defaults:", error);
       toast.error("Error updating system defaults!");
@@ -178,7 +178,7 @@ function Settings() {
                         onChange={(e) =>
                           handleInputChange("grace_days", e.target.value)
                         }
-                        disabled={userRole !== 1} 
+                        disabled={userRole !== 1}
                       />
                       <span>days</span>
                     </div>
@@ -257,7 +257,7 @@ function Settings() {
               Cancel
             </button>
             {userRole === 1 && (
-              <button  className="w-150p btn save-btn" onClick={handleSave}>
+              <button className="w-150p btn save-btn" onClick={handleSave}>
                 {loading && (
                   <span className="spinner-border spinner-border-sm me-2"></span>
                 )}

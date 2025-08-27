@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { environmentMapping } from "../../utils/constent";
 
 const parseIfJson = (input) => {
   if (typeof input !== "string") return input || {};
@@ -38,11 +39,17 @@ function BeforeAfterDiff({ oldData, newData }) {
         </thead>
         <tbody>
           {keys.map((key) => {
-            if (key === "password_hash") {
-              return null;
+            if (key === "password_hash") return null;
+
+            let oldVal = oldObj[key] != null ? oldObj[key].toString() : "";
+            let newVal = newObj[key] != null ? newObj[key].toString() : "";
+
+            // Replace environment_id with text
+            if (key === "environment_id") {
+              oldVal = environmentMapping[oldObj[key]] || oldVal;
+              newVal = environmentMapping[newObj[key]] || newVal;
             }
-            const oldVal = oldObj[key] != null ? oldObj[key].toString() : "";
-            const newVal = newObj[key] != null ? newObj[key].toString() : "";
+
             const changed = oldVal !== newVal;
             const displayOldVal =
               oldVal.length > 50 ? oldVal.substring(0, 50) + " ..." : oldVal;

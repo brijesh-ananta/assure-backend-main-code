@@ -228,7 +228,7 @@ const TestingPartnerList = () => {
         </div>
       </section>
 
-       <ToastContainer
+      <ToastContainer
         position="bottom-right"
         autoClose={1800}
         hideProgressBar={false}

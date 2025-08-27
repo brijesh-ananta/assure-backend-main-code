@@ -14,8 +14,8 @@ function ManageNotifications() {
   const { user } = useAuth();
   const userRole = user?.role;
 
-    const [expandedRows, setExpandedRows] = useState({});
-  
+  const [expandedRows, setExpandedRows] = useState({});
+
   const [notifications, setNotifications] = useState([]);
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
@@ -148,6 +148,14 @@ function ManageNotifications() {
     }));
   };
 
+  const formatToMMDDYYYY = (isoDate) => {
+    const date = new Date(isoDate);
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   const tableConfig = useMemo(
     () => ({
       columns: [
@@ -170,22 +178,27 @@ function ManageNotifications() {
         {
           key: "status",
           label: "Status",
-          renderCell: (item) => <span className="text-capitalize">{item.status}</span>
+          sortable: true,
+          renderCell: (item) => (
+            <span className="text-capitalize">{item.status}</span>
+          ),
         },
         {
           key: "start_date",
           label: "Start Date",
+          sortable: true,
           renderCell: (item) =>
             item.start_date && item.start_date !== ""
-              ? formatDateToLocal(item.start_date)
+              ? formatToMMDDYYYY(item.start_date)
               : "N/A",
         },
         {
           key: "end_date",
           label: "End Date",
+          sortable: true,
           renderCell: (item) =>
             item.end_date && item.end_date !== ""
-              ? formatDateToLocal(item.end_date)
+              ? formatToMMDDYYYY(item.end_date)
               : "N/A",
         },
         {

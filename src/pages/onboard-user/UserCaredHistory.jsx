@@ -11,6 +11,8 @@ const UserCaredHistory = () => {
   const { userId } = useParams();
   const [cardHistory, setCardHistory] = useState();
   const [user, setUser] = useState();
+  const [totalamount, setotalamount] = useState(0);
+  const [totalUsage, setotalUsage] = useState(0);
   const tableConfig = useMemo(
     () => ({
       columns: [
@@ -130,6 +132,9 @@ const UserCaredHistory = () => {
   const getCardHistory = useCallback(async () => {
     try {
       const result = await apiService.card.getCardHistory(userId);
+
+      setotalamount(result?.posData?.totalPosAmoutUsed || 0);
+      setotalUsage(result?.posData?.totalPosUsage || 0);
       const userCiperText = localStorage.getItem("ciperText");
 
       if (result?.cards?.length) {
@@ -252,26 +257,28 @@ const UserCaredHistory = () => {
           </div>
           <div className="col-12 mt-3">
             <div className="col-6 row">
-              <label className="col-5 text-right font">POS Card Usage #</label>
+              <label className="col-5 text-right font">POS Card Usaged #</label>
               <div className="col-4">
                 <input
                   placeholder="000"
                   className="form-control formcontrol"
                   disabled
-                  value={158}
+                  value={totalamount || 0}
                 />
               </div>
             </div>
           </div>
           <div className="col-12 mt-3">
             <div className="col-6 row">
-              <label className="col-5 text-right font">POS Card Usage</label>
+              <label className="col-5 text-right font">
+                POS Card Total Amount{" "}
+              </label>
               <div className="col-4">
                 <input
                   placeholder="000"
                   className="form-control formcontrol"
                   disabled
-                  value={158}
+                  value={totalUsage || 0}
                 />
               </div>
             </div>

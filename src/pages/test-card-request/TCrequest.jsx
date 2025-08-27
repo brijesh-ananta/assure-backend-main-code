@@ -47,7 +47,6 @@ function TCrequest() {
   const [snStatusVerify, setSnStatusVerify] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [isTestCaseAvailable, setIsTestCaseAvailable] = useState(false);
-  
 
   useEffect(() => {
     if (currentStep && typeof +currentStep === "number") {
@@ -164,8 +163,16 @@ function TCrequest() {
   );
 
   const canEdit = useMemo(
-    () => afterSubmitStatus.includes(requestInfoData.status) || (requestInfoData?.createdBy && requestInfoData?.createdBy != user.user_id),
-    [afterSubmitStatus, requestInfoData?.createdBy, requestInfoData.status, user.user_id]
+    () =>
+      afterSubmitStatus.includes(requestInfoData.status) ||
+      (requestInfoData?.createdBy &&
+        requestInfoData?.createdBy != user.user_id),
+    [
+      afterSubmitStatus,
+      requestInfoData?.createdBy,
+      requestInfoData.status,
+      user.user_id,
+    ]
   );
 
   const isRequester = useMemo(() => user.role === 2, [user.role]);
@@ -176,7 +183,6 @@ function TCrequest() {
       navigate({ search: params.toString() }, { replace: true });
     }
   }, [cardRequestId]);
-
 
   if (loading) {
     return "";
@@ -312,7 +318,6 @@ function TCrequest() {
                 canEdit={canEdit}
                 isCompleted={isCompleted}
                 afterSubmitStatus={afterSubmitStatus}
-
               />
             )}
             {activeStep === 7 && (
@@ -362,7 +367,10 @@ function TCrequest() {
             {activeStep === 10 && !isTestCaseAvailable && (
               <div className="container">
                 <div className="text-center p-4">
-                  <p className="text-muted">Test Case functionality is not available - User Card ID is required.</p>
+                  <p className="text-muted">
+                    Test Case functionality is not available - User Card ID is
+                    required.
+                  </p>
                 </div>
               </div>
             )}
@@ -385,7 +393,6 @@ function TCrequest() {
       </div>
 
       {/* <Footer audit={true} tableName="card_requests" recordId={cardRequestId} /> */}
-
     </>
   );
 }

@@ -513,7 +513,11 @@ function Terminaldetails() {
               }}
             >
               <h2 className="accordion-header">
-                <button className="accordion-button" type="button" onClick={handleCardShippingDetails}>
+                <button
+                  className="accordion-button"
+                  type="button"
+                  onClick={handleCardShippingDetails}
+                >
                   <p className="mb-0 text-center d-block w-100">
                     Card and Shipping Details
                   </p>
@@ -522,7 +526,7 @@ function Terminaldetails() {
             </div>
 
             {/* if tcStatus != "draft" hide this */}
-            {(tcStatus != "draft" && tcStatus != "new") && (
+            {tcStatus != "draft" && tcStatus != "new" && (
               <>
                 {/* Fulfilment */}
                 <div
@@ -564,7 +568,11 @@ function Terminaldetails() {
                   }}
                 >
                   <h2 className="accordion-header">
-                    <button className="accordion-button" type="button" onClick={handleCardAssignment}>
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={handleCardAssignment}
+                    >
                       <p className="mb-0 text-center d-block w-100">
                         Card Assignment
                       </p>
@@ -577,19 +585,21 @@ function Terminaldetails() {
                   className="accordion-item"
                   style={{
                     pointerEvents:
-                      tcStatus == "assign_card" ||
-                      tcStatus == "shipped"
+                      tcStatus == "assign_card" || tcStatus == "shipped"
                         ? "auto"
                         : "none",
                     opacity:
-                      tcStatus == "assign_card" ||
-                      tcStatus == "shipped"
+                      tcStatus == "assign_card" || tcStatus == "shipped"
                         ? "1"
                         : "0.5",
                   }}
                 >
                   <h2 className="accordion-header">
-                    <button className="accordion-button" type="button" onClick={handleShipment}>
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={handleShipment}
+                    >
                       <p className="mb-0 text-center d-block w-100">
                         Shipment Tracking
                       </p>

@@ -49,7 +49,9 @@ function ManageIssuers() {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const response = await axiosToken.get(`/issuers?environment=${environment}`);
+        const response = await axiosToken.get(
+          `/issuers?environment=${environment}`
+        );
         const allIssuers = response.data;
         setStatusCounts({
           Draft: allIssuers.filter((i) => i.status === "draft").length,
@@ -80,7 +82,8 @@ function ManageIssuers() {
     fetchIssuers();
   }, [environment, statusFilter]);
 
-  const totalCount = statusCounts.Draft + statusCounts.Active + statusCounts.Inactive;
+  const totalCount =
+    statusCounts.Draft + statusCounts.Active + statusCounts.Inactive;
   const statuses = [
     { label: "Draft", key: "draft", count: statusCounts.Draft },
     { label: "Active", key: "active", count: statusCounts.Active },
@@ -190,7 +193,6 @@ function ManageIssuers() {
         <div className="notification">
           <div className="container-fluid">
             <ul className="list-unstyled d-flex stepform flex-wrap justify-content-lg-between justify-content-center gap-4 mb-lg-5 col-lg-6">
-              
               {statuses.map((status) => (
                 <li
                   key={status.key}
@@ -198,7 +200,9 @@ function ManageIssuers() {
                   onClick={() => handleStatusFilter(status.key)}
                   style={{ cursor: "pointer" }}
                 >
-                  <span className={`totavalue ${statusFilter === status.key ? "active-value" : ""}`}>
+                  <span
+                    className={`totavalue ${statusFilter === status.key ? "active-value" : ""}`}
+                  >
                     {status.count}
                   </span>
                   <p>{status.label}</p>
@@ -210,7 +214,9 @@ function ManageIssuers() {
                 onClick={() => handleStatusFilter("All")}
                 style={{ cursor: "pointer" }}
               >
-                <span className={`totavalue ${statusFilter === "All" ? "active-value" : ""}`}>
+                <span
+                  className={`totavalue ${statusFilter === "All" ? "active-value" : ""}`}
+                >
                   {totalCount}
                 </span>
                 <p>Total</p>
@@ -219,7 +225,10 @@ function ManageIssuers() {
           </div>
 
           {/* Wrap the table in a div with a key including both environment and statusFilter */}
-          <div className="container-fluid" key={`${environment}-${statusFilter}`}>
+          <div
+            className="container-fluid"
+            key={`${environment}-${statusFilter}`}
+          >
             <div className="table-responsive">
               <table
                 ref={tableRef}
@@ -264,7 +273,9 @@ function ManageIssuers() {
                         <td>{issuer.iisc}</td>
                         <td>{issuer.test_card_type}</td>
                         <td>{issuer.createdBy}</td>
-                        <td>{new Date(issuer.created_at).toLocaleDateString()}</td>
+                        <td>
+                          {new Date(issuer.created_at).toLocaleDateString()}
+                        </td>
                       </tr>
                     ))
                   ) : (

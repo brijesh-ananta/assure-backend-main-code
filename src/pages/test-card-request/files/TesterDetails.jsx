@@ -18,7 +18,7 @@ const TesterDetails = ({
   canEdit,
   isRequester,
   isSubmitted,
-  afterSubmitStatus
+  afterSubmitStatus,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const addmail = searchParams.get("addmail") || "";
@@ -201,12 +201,22 @@ const TesterDetails = ({
 
   const fetchPartners = async () => {
     try {
-      const response = await axiosToken.get("/partners?status=active");
+      let url = "/partners?status=active";
+
+      if (canEdit) {
+        url = "/partners";
+      }
+
+      const response = await axiosToken.get(url);
       setPartners(response.data.partners);
     } catch (error) {
       console.error("Error fetching partners:", error);
     }
   };
+  useEffect(() => {
+    fetchPartners();
+  });
+  console.log(canEdit, isApproved, isRequester);
 
   const handleSave = async (goNext = false, skipRowCheck = false) => {
     const isFormValid = validateForm(skipRowCheck);
@@ -254,7 +264,10 @@ const TesterDetails = ({
       }
     } catch (error) {
       console.error("Error saving data:", error?.response?.data);
-      toast.error(error?.response?.data?.message || "An error occurred while saving the data.");
+      toast.error(
+        error?.response?.data?.message ||
+          "An error occurred while saving the data."
+      );
       return false;
     } finally {
       setLoading(false); // Hide loading indicator
@@ -465,10 +478,6 @@ const TesterDetails = ({
       setVaultCounts(0);
     }
   };
-
-  useEffect(() => {
-    fetchPartners();
-  }, []);
 
   useEffect(() => {
     if (formData?.partner_id) {
@@ -689,7 +698,8 @@ const TesterDetails = ({
                     disabled={
                       (requestInfoData.status !== "draft" &&
                         requestInfoData.status !== undefined) ||
-                      !isRequester || canEdit
+                      !isRequester ||
+                      canEdit
                     }
                     onChange={(e) => {
                       handleValueChange(e);
@@ -723,10 +733,12 @@ const TesterDetails = ({
                       <option value="">Select</option>
                       <option value="transit">Transit</option>
                       <option value="pin_preferred">Pin Preferred</option>
-                      <option value="signature_preferred">Signature Preferred</option>
+                      <option value="signature_preferred">
+                        Signature Preferred
+                      </option>
                       {/* <option value="online_pin">Online pin</option> */}
                       {/* <option value="transit_online_pin"> */}
-                        {/* Transit online pin */}
+                      {/* Transit online pin */}
                       {/* </option> */}
                       {/* <option value="generic">Generic</option> */}
                     </select>
@@ -773,7 +785,8 @@ const TesterDetails = ({
                 {/* Issuer */}
                 <div>
                   <label className="font">Issuer</label>
-                  {!afterSubmitStatus.includes(requestInfoData.status) && !isSubmitted ? (
+                  {!afterSubmitStatus.includes(requestInfoData.status) &&
+                  !isSubmitted ? (
                     <select
                       name="issuer"
                       onChange={handleValueChange}
@@ -818,7 +831,7 @@ const TesterDetails = ({
                 <option value="">Select</option>
                 {partners?.map((partner, index) => (
                   <option key={index} value={partner?.partner_id}>
-                    {partner?.partner_name || "-"}
+                    {partner?.partner_name || "-"}{" "}
                   </option>
                 ))}
               </select>
@@ -844,7 +857,8 @@ const TesterDetails = ({
                     requestInfoData.status !== "returned" &&
                     requestInfoData.status !== undefined) ||
                   isApproved ||
-                  !isRequester  || canEdit
+                  !isRequester ||
+                  canEdit
                 }
                 defaultChecked
                 onChange={() => {
@@ -883,7 +897,8 @@ const TesterDetails = ({
                     requestInfoData.status !== undefined) ||
                   isApproved ||
                   terminalType === "Ecomm" ||
-                  !isRequester  || canEdit
+                  !isRequester ||
+                  canEdit
                 }
                 onChange={() => {
                   setFormData({
@@ -1146,7 +1161,8 @@ const TesterDetails = ({
                   !isChecked ||
                   reqInfo?.status !== "approved" ||
                   !validateFields ||
-                  isApproved || canEdit
+                  isApproved ||
+                  canEdit
                 }
               >
                 Submit TC Request

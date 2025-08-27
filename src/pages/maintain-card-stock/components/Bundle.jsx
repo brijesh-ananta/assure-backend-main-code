@@ -47,6 +47,10 @@ const Bundle = () => {
     const filteredNewBundles = newBundles.filter(
       (b) => b.bundleName.trim() && Number(b.count) > 0
     );
+    if (filteredNewBundles.length === 0) {
+      toast.error("Please enter data");
+      return;
+    }
 
     const validUpdate = Object.values(addQuantities).every(
       (v) => v === "" || (typeof v === "number" && v >= 0)
@@ -187,6 +191,7 @@ const Bundle = () => {
                       onChange={(e) =>
                         handleNewBundleChange(idx, "bundleName", e.target.value)
                       }
+                      required={b.bundleName.length === 0}
                     />
                   </td>
                   <td>
@@ -204,6 +209,7 @@ const Bundle = () => {
                         onChange={(e) =>
                           handleNewBundleChange(idx, "count", e.target.value)
                         }
+                        required={b.count.length === 0}
                       />
                       <button
                         type="button"

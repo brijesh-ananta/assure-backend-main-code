@@ -104,49 +104,49 @@ function AddTestPartners() {
 
       <section className="notification pb-5">
         <div className="container-fluid">
-            <div className="login-page mb-lg-4 mb-2 mt-4 row">
-              <div className="col-12 col-lg-6 pe-lg-5">
-                <div className="d-lg-flex align-items-center">
-                  <label
-                    className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                    htmlFor="partner_name"
-                  >
-                    Partner Name
-                  </label>
-                  <div className="position-relative w-100">
-                    <input
-                      id="partner_name"
-                      name="partner_name"
-                      placeholder="Testing Partner"
-                      type="text"
-                      className="form-control formcontrol"
-                      value={formData.partner_name}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-12 col-lg-6">
-                <div className="d-lg-flex align-items-center">
-                  <label
-                    className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                    htmlFor="email"
-                  >
-                    Email
-                  </label>
+          <div className="login-page mb-lg-4 mb-2 mt-4 row">
+            <div className="col-12 col-lg-6 pe-lg-5">
+              <div className="d-lg-flex align-items-center">
+                <label
+                  className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                  htmlFor="partner_name"
+                >
+                  Partner Name
+                </label>
+                <div className="position-relative w-100">
                   <input
-                    id="email"
-                    name="email"
-                    placeholder="janedoe@gmail.com"
-                    type="email"
+                    id="partner_name"
+                    name="partner_name"
+                    placeholder="Testing Partner"
+                    type="text"
                     className="form-control formcontrol"
-                    value={formData.email}
+                    value={formData.partner_name}
                     onChange={handleChange}
                   />
                 </div>
               </div>
-              {/* <div className="col-12 col-lg-6">
+            </div>
+
+            <div className="col-12 col-lg-6">
+              <div className="d-lg-flex align-items-center">
+                <label
+                  className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  placeholder="janedoe@gmail.com"
+                  type="email"
+                  className="form-control formcontrol"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            {/* <div className="col-12 col-lg-6">
                 <div className="d-lg-flex align-items-center">
                   <label
                     className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
@@ -165,86 +165,81 @@ function AddTestPartners() {
                   />
                 </div>
               </div> */}
-            </div>
+          </div>
 
-            <div className="login-page mb-lg-4 mb-2 row">
-              <div className="col-12 col-lg-6 pe-lg-5">
-                <div className="d-lg-flex align-items-center">
-                  <label
-                    className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
-                    htmlFor="contact_person"
-                  >
-                    Partner Contact Person
-                  </label>
-                  <input
-                    id="contact_person"
-                    name="contact_person"
-                    placeholder="Jane Doe"
-                    type="text"
-                    className="form-control formcontrol"
-                    value={formData.contact_person}
-                    onChange={handleChange}
-                  />
-                </div>
+          <div className="login-page mb-lg-4 mb-2 row">
+            <div className="col-12 col-lg-6 pe-lg-5">
+              <div className="d-lg-flex align-items-center">
+                <label
+                  className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2"
+                  htmlFor="contact_person"
+                >
+                  Partner Contact Person
+                </label>
+                <input
+                  id="contact_person"
+                  name="contact_person"
+                  placeholder="Jane Doe"
+                  type="text"
+                  className="form-control formcontrol"
+                  value={formData.contact_person}
+                  onChange={handleChange}
+                />
               </div>
-
-             
             </div>
+          </div>
 
           <div className="row">
             <div className="col-lg-12 mb-4">
               <div className="d-lg-flex align-items-center justify-content-start">
                 <span className="me-lg-5 font">Status</span>
-                  <div className="d-lg-flex formcard">
-                    <div className="form-check me-3 d-flex gap-4 align-items-center">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="statusDraft"
-                        value="draft"
-                        checked={formData.status === "draft"}
-                        onChange={handleStatusChange}
-                      />
-                      <label className="form-check-label" htmlFor="statusDraft">
-                        DRAFT
-                      </label>
-                    </div>
-                    <div className="form-check me-3 d-flex gap-4 align-items-center">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="statusActive"
-                        value="active"
-                        checked={formData.status === "active"}
-                        onChange={handleStatusChange}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="statusActive"
-                      >
-                        Active
-                      </label>
-                    </div>
-                    <div className="form-check d-flex gap-4 align-items-center">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="statusInactive"
-                        value="inactive"
-                        checked={formData.status === "inactive"}
-                        onChange={handleStatusChange}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="statusInactive"
-                      >
-                        Deactivate
-                      </label>
-                    </div>
+                <div className="d-lg-flex formcard">
+                  <div className="form-check me-3 d-flex gap-4 align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="statusDraft"
+                      value="draft"
+                      checked={formData.status === "draft"}
+                      onChange={handleStatusChange}
+                    />
+                    <label className="form-check-label" htmlFor="statusDraft">
+                      DRAFT
+                    </label>
                   </div>
+                  <div className="form-check me-3 d-flex gap-4 align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="statusActive"
+                      value="active"
+                      checked={formData.status === "active"}
+                      onChange={handleStatusChange}
+                    />
+                    <label className="form-check-label" htmlFor="statusActive">
+                      Active
+                    </label>
+                  </div>
+                  <div className="form-check d-flex gap-4 align-items-center">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="flexRadioDefault"
+                      id="statusInactive"
+                      value="inactive"
+                      checked={formData.status === "inactive"}
+                      onChange={handleStatusChange}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="statusInactive"
+                    >
+                      Deactivate
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 

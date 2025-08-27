@@ -10,7 +10,7 @@ const CustomFileUpload = ({
   touched,
   buttonText = "Upload New Profile",
   className = "",
-  accept = "application/xml"
+  accept = "application/xml",
 }) => {
   const inputRef = useRef();
 

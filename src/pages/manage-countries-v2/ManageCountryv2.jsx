@@ -269,8 +269,7 @@ const ManageCountryv2 = () => {
         </div>
 
         <div className="">
-          {((!dataFetching && countries?.length) || isAddingNew) >
-            0 && (
+          {((!dataFetching && countries?.length) || isAddingNew) > 0 && (
             <table className="table border-b-table text-center form-field-wrapper">
               <thead>
                 <tr>
@@ -286,7 +285,7 @@ const ManageCountryv2 = () => {
                     <td className="text-left font">{bundle.country_name}</td>
                     <td className="p-3">{bundle.alpha_2_code}</td>
                     <td className="font">{bundle.alpha_3_code}</td>
-                    <td className="font">{bundle.numeric_code}</td>
+                    <td className="font">{bundle.formatted_numeric_code}</td>
                   </tr>
                 ))}
 

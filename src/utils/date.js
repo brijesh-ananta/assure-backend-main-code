@@ -18,10 +18,10 @@ export function convertToMMDDYYYY(dateStr) {
 export function getLastDayOfMonth(dateString) {
   if (!dateString) return "";
   const [month, date, year] = dateString.split("-").map(Number);
-  
+
   if (!year || !month) return "";
   const lastDay = new Date(year, month, 0);
-  
+
   const yyyy = lastDay.getFullYear();
   const mm = String(lastDay.getMonth() + 1).padStart(2, "0");
   const dd = String(lastDay.getDate()).padStart(2, "0");
@@ -63,7 +63,6 @@ export function toYYYYMMDD(dateStr) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-
 export const formatDateTime = (dateString) => {
   try {
     // Fallback for loading/invalid values
@@ -103,4 +102,3 @@ export const formatTodayDateOnly = () => {
     return "Invalid Date";
   }
 };
-

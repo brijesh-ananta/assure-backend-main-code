@@ -44,6 +44,9 @@ const UserListingView = () => {
       const updatedUsers = all.map((item) => {
         let userStatus = "inactive";
 
+        let roleLabel =
+          roleMapping[item.role_id] || item?.user_type || "Unknown Role";
+        let displayName = item.firstName + " " + item.lastName;
         if (item.is_locked === 1) {
           userStatus = "locked";
         } else if (item.isDeleted === 1) {
@@ -54,7 +57,7 @@ const UserListingView = () => {
           userStatus = "blocked";
         }
 
-        return { ...item, userStatus };
+        return { ...item, userStatus, roleLabel, displayName };
       });
 
       setAllUsers(updatedUsers);
@@ -68,13 +71,14 @@ const UserListingView = () => {
     let filtered = allUsers;
 
     if (testerName.trim()) {
-      filtered = filtered.filter(
-        (u) =>
+      filtered = filtered.filter((u) => {
+        return (
           (u.firstName + " " + u.lastName)
             .toLowerCase()
             .includes(testerName.trim().toLowerCase()) ||
           u.username.toLowerCase().includes(testerName.trim().toLowerCase())
-      );
+        );
+      });
     }
     if (email.trim()) {
       filtered = filtered.filter((u) =>
@@ -116,11 +120,12 @@ const UserListingView = () => {
           ),
         },
         {
-          key: "name",
+          key: "displayName",
           label: "Name",
           width: "150px",
           sortable: true,
-          renderCell: (item) => <>{item.firstName + " " + item.lastName}</>,
+
+          renderCell: (item) => <>{item.displayName}</>,
         },
         {
           key: "role_id",
@@ -128,7 +133,9 @@ const UserListingView = () => {
           width: "120px",
           sortable: true,
           renderCell: (item) => (
-            <>{roleMapping[item.role_id] || item?.user_type ||  "Unknown Role"}</>
+            <>
+              {roleMapping[item.role_id] || item?.user_type || "Unknown Role"}
+            </>
           ),
         },
         {
@@ -245,7 +252,7 @@ const UserListingView = () => {
           columns={tableConfig.columns}
           expandable={tableConfig.options.expandable}
           emptyState={
-            <div className="text-center p-5 font fa-1x">No Card found.</div>
+            <div className="text-center p-5 font fa-1x">No User found.</div>
           }
         />
       </div>

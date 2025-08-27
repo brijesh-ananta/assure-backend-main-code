@@ -47,7 +47,11 @@ function IssuerList() {
 
   const fetchAllIssuers = useCallback(async () => {
     try {
-      const resp = await apiService.issuers.getByEnv(environment, "All", cardType);
+      const resp = await apiService.issuers.getByEnv(
+        environment,
+        "All",
+        cardType
+      );
       setAllIssuers(resp || []);
     } catch (error) {
       console.error("Error fetching all issuers:", error);
@@ -70,7 +74,8 @@ function IssuerList() {
         setStatusCounts({
           Draft: fetchedIssuers.filter((i) => i.status === "draft").length,
           Active: fetchedIssuers.filter((i) => i.status === "active").length,
-          Inactive: fetchedIssuers.filter((i) => i.status === "inactive").length,
+          Inactive: fetchedIssuers.filter((i) => i.status === "inactive")
+            .length,
         });
       } catch (error) {
         console.error("Error fetching issuer counts:", error);
@@ -83,7 +88,7 @@ function IssuerList() {
     let result = [...allIssuers];
 
     if (statusFilter !== "All") {
-      result = result.filter(item => item.status === statusFilter);
+      result = result.filter((item) => item.status === statusFilter);
     }
 
     if (searchTerm) {
@@ -112,7 +117,11 @@ function IssuerList() {
       { key: "status", sortable: true },
       { key: "iisc", sortable: true },
       { key: "issuer_name", sortable: true },
-      { key: "test_card_type", sortable: true, accessor: (item) => item.card_type },
+      {
+        key: "test_card_type",
+        sortable: true,
+        accessor: (item) => item.card_type,
+      },
       { key: "createdBy", sortable: true },
       { key: "created_at", sortable: true },
     ];
@@ -140,18 +149,22 @@ function IssuerList() {
 
   const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
-  const currentItems = filteredAndSortedData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredAndSortedData.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredAndSortedData.length / entriesPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const firstPage = () => setCurrentPage(1);
   const lastPage = () => setCurrentPage(totalPages);
 
   const handleEnvironmentChange = (e) => {
     setEnvironment(e.target.value);
-    setcardType('Pos');
+    setcardType("Pos");
     setCurrentPage(1);
   };
 
@@ -193,43 +206,105 @@ function IssuerList() {
     return environments;
   }, [user]);
 
-  const tableColumns = useMemo(() => ([
-    { key: "issuer_unique_id", label: "Issuer ID", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}>
-        {item.issuer_unique_id}
-      </Link>
-    )},
-    { key: "status", label: "Status", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit", textTransform: 'capitalize' }}>
-        {item.status}
-      </Link>
-    )},
-    { key: "iisc", label: "IISC", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit" }}>
-        {item.iisc}
-      </Link>
-    )},
-    { key: "issuer_name", label: "Issuer Name", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit" }}>
-        {item.issuer_name}
-      </Link>
-    )},
-    { key: "card_type", label: "Card Type", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit" }}>
-        {item.card_type}
-      </Link>
-    )},
-    { key: "createdBy", label: "Created By", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit" }}>
-        {item.createdBy}
-      </Link>
-    )},
-    { key: "created_at", label: "Date Created", sortable: true, renderCell: (item) => (
-      <Link to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`} style={{ textDecoration: "none", color: "inherit" }}>
-        {item.created_at ? item.created_at.slice(0, 10) : ""}
-      </Link>
-    )},
-  ]), []);
+  const tableColumns = useMemo(
+    () => [
+      {
+        key: "issuer_unique_id",
+        label: "Issuer ID",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+          >
+            {item.issuer_unique_id}
+          </Link>
+        ),
+      },
+      {
+        key: "status",
+        label: "Status",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+              textTransform: "capitalize",
+            }}
+          >
+            {item.status}
+          </Link>
+        ),
+      },
+      {
+        key: "iisc",
+        label: "IISC",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {item.iisc}
+          </Link>
+        ),
+      },
+      {
+        key: "issuer_name",
+        label: "Issuer Name",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {item.issuer_name}
+          </Link>
+        ),
+      },
+      {
+        key: "card_type",
+        label: "Card Type",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {item.card_type}
+          </Link>
+        ),
+      },
+      {
+        key: "createdBy",
+        label: "Created By",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {item.createdBy}
+          </Link>
+        ),
+      },
+      {
+        key: "created_at",
+        label: "Date Created",
+        sortable: true,
+        renderCell: (item) => (
+          <Link
+            to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            {item.created_at ? item.created_at.slice(0, 10) : ""}
+          </Link>
+        ),
+      },
+    ],
+    []
+  );
 
   const statuses = [
     { label: "Draft", key: "draft", count: statusCounts.Draft },
@@ -239,7 +314,6 @@ function IssuerList() {
 
   return (
     <>
-     
       {userRole === 1 && (
         <div className="notification mangeissuer mb-lg-0 mb-3 py-lg-3 py-2">
           <div className="container-fluid">
@@ -257,7 +331,10 @@ function IssuerList() {
                       onChange={handleEnvironmentChange}
                       id="flexRadioDefaultProd"
                     />
-                    <label className="form-check-label" htmlFor="flexRadioDefaultProd">
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexRadioDefaultProd"
+                    >
                       Prod
                     </label>
                   </div>
@@ -273,7 +350,10 @@ function IssuerList() {
                       onChange={handleEnvironmentChange}
                       id="flexRadioDefault2"
                     />
-                    <label className="form-check-label" htmlFor="flexRadioDefault2">
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexRadioDefault2"
+                    >
                       QA
                     </label>
                   </div>
@@ -324,13 +404,21 @@ function IssuerList() {
               <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0">
                 <a
                   className="btn save-btn"
-                  onClick={() => navigate(`/dashboard/bin-list?environment=${environment}&terminalType=${cardType}`)}
+                  onClick={() =>
+                    navigate(
+                      `/dashboard/bin-list?environment=${environment}&terminalType=${cardType}`
+                    )
+                  }
                 >
                   Test Card BIN
                 </a>
                 <button
                   className="btn save-btn"
-                  onClick={() => navigate(`/dashboard/test-card-issuer/add?environment=${environment}&terminalType=${cardType}`)}
+                  onClick={() =>
+                    navigate(
+                      `/dashboard/test-card-issuer/add?environment=${environment}&terminalType=${cardType}`
+                    )
+                  }
                 >
                   Add Test Card Issuer
                 </button>
@@ -351,7 +439,9 @@ function IssuerList() {
                   onClick={() => handleStatusFilter(status.key)}
                   style={{ cursor: "pointer" }}
                 >
-                  <span className={`card-custom-shadow-1 totavalue ${statusFilter === status.key ? "active-value" : ""}`}>
+                  <span
+                    className={`card-custom-shadow-1 totavalue ${statusFilter === status.key ? "active-value" : ""}`}
+                  >
                     {status.count}
                   </span>
                   <p>{status.label}</p>
@@ -363,7 +453,9 @@ function IssuerList() {
                 onClick={() => handleStatusFilter("All")}
                 style={{ cursor: "pointer" }}
               >
-                <span className={`card-custom-shadow-1 totavalue ${statusFilter === "All" ? "active-value" : ""}`}>
+                <span
+                  className={`card-custom-shadow-1 totavalue ${statusFilter === "All" ? "active-value" : ""}`}
+                >
                   {Object.values(statusCounts).reduce(
                     (total, count) => total + count,
                     0
@@ -408,64 +500,72 @@ function IssuerList() {
 
             <div className="table-responsive">
               {/* REMOVED WHITESPACE BETWEEN TABLE/TR TAGS */}
-              <table className="table"><thead>
-                <tr>
-                  {tableColumns.map((column) => (
-                    <th
-                      key={column.key}
-                      className={`table-header ${column.sortable ? "sortable" : ""}`}
-                      onClick={() => column.sortable && handleSort(column.key)}
-                      style={{
-                        cursor: column.sortable ? "pointer" : "default",
-                        width: column.width || "auto",
-                        minWidth: column.minWidth || "100px",
-                        backgroundColor: "#f8f9fa",
-                        borderBottom: "4px solid #dee2e6",
-                      }}
-                    >
-                      <div className="d-flex align-items-center gap-1">
-                        <span className="text-nowrap">{column.label}</span>
-                        {column.sortable && (
-                          <span className="sort-icon">
-                            {renderSortIcon(column.key)}
-                          </span>
-                        )}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead><tbody>
-                {currentItems.length > 0 ? (
-                  currentItems.map((item) => (
-                    <tr key={item.issuer_id} className="table-row">{
-                      tableColumns.map((column) => (
-                        <td
-                          key={`${item.issuer_id}-${column.key}`}
-                          className="text-capitalize"
-                        >
-                          {column.renderCell ? column.renderCell(item) : item[column.key]}
-                        </td>
-                      ))}</tr>
-                  ))
-                ) : (
+              <table className="table">
+                <thead>
                   <tr>
-                    <td colSpan={tableColumns.length} className="font p-4 text-center">
-                      No Issuer found.
-                    </td>
+                    {tableColumns.map((column) => (
+                      <th
+                        key={column.key}
+                        className={`table-header ${column.sortable ? "sortable" : ""}`}
+                        onClick={() =>
+                          column.sortable && handleSort(column.key)
+                        }
+                        style={{
+                          cursor: column.sortable ? "pointer" : "default",
+                          width: column.width || "auto",
+                          minWidth: column.minWidth || "100px",
+                          backgroundColor: "#f8f9fa",
+                          borderBottom: "4px solid #dee2e6",
+                        }}
+                      >
+                        <div className="d-flex align-items-center gap-1">
+                          <span className="text-nowrap">{column.label}</span>
+                          {column.sortable && (
+                            <span className="sort-icon">
+                              {renderSortIcon(column.key)}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    ))}
                   </tr>
-                )}
-              </tbody></table>
+                </thead>
+                <tbody>
+                  {currentItems.length > 0 ? (
+                    currentItems.map((item) => (
+                      <tr key={item.issuer_id} className="table-row">
+                        {tableColumns.map((column) => (
+                          <td
+                            key={`${item.issuer_id}-${column.key}`}
+                            className="text-capitalize"
+                          >
+                            {column.renderCell
+                              ? column.renderCell(item)
+                              : item[column.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={tableColumns.length}
+                        className="font p-4 text-center"
+                      >
+                        No Issuer found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
 
             <div className="row mt-4">
               <div className="col-md-6">
                 <p>
                   Showing {indexOfFirstItem + 1} to{" "}
-                  {Math.min(
-                    indexOfLastItem,
-                    filteredAndSortedData?.length
-                  )}{" "}
-                  of {filteredAndSortedData?.length} entries
+                  {Math.min(indexOfLastItem, filteredAndSortedData?.length)} of{" "}
+                  {filteredAndSortedData?.length} entries
                 </p>
               </div>
               <div className="col-md-6">
@@ -474,14 +574,22 @@ function IssuerList() {
                     <li
                       className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                     >
-                      <button type="button" className="page-link" onClick={firstPage}>
+                      <button
+                        type="button"
+                        className="page-link"
+                        onClick={firstPage}
+                      >
                         <icons.firstPage className="w-4 h-4" />
                       </button>
                     </li>
                     <li
                       className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                     >
-                      <button type="button" className="page-link" onClick={prevPage}>
+                      <button
+                        type="button"
+                        className="page-link"
+                        onClick={prevPage}
+                      >
                         <icons.prevPage className="w-4 h-4" />
                       </button>
                     </li>
@@ -518,7 +626,10 @@ function IssuerList() {
                         );
                         if (start > 2) {
                           pageButtons.push(
-                            <li key="start-ellipsis" className="page-item disabled">
+                            <li
+                              key="start-ellipsis"
+                              className="page-item disabled"
+                            >
                               <span className="page-link">...</span>
                             </li>
                           );
@@ -547,7 +658,10 @@ function IssuerList() {
                       if (end < totalPages) {
                         if (end < totalPages - 1) {
                           pageButtons.push(
-                            <li key="end-ellipsis" className="page-item disabled">
+                            <li
+                              key="end-ellipsis"
+                              className="page-item disabled"
+                            >
                               <span className="page-link">...</span>
                             </li>
                           );
@@ -577,7 +691,11 @@ function IssuerList() {
                         currentPage === totalPages ? "disabled" : ""
                       }`}
                     >
-                      <button type="button" className="page-link" onClick={nextPage}>
+                      <button
+                        type="button"
+                        className="page-link"
+                        onClick={nextPage}
+                      >
                         <icons.nextPage className="w-4 h-4" />
                       </button>
                     </li>
@@ -586,7 +704,11 @@ function IssuerList() {
                         currentPage === totalPages ? "disabled" : ""
                       }`}
                     >
-                      <button type="button" className="page-link" onClick={lastPage}>
+                      <button
+                        type="button"
+                        className="page-link"
+                        onClick={lastPage}
+                      >
                         <icons.lastPage className="w-4 h-4" />
                       </button>
                     </li>
@@ -597,7 +719,6 @@ function IssuerList() {
           </div>
         </div>
       </section>
-
     </>
   );
 }

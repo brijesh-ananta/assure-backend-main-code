@@ -28,8 +28,16 @@ function CardAssignmentV2({
   const encryptionKey = import.meta.env.VITE_ENCKEY;
   const [isLoading, setIsLoading] = useState(false);
   const [systemDataRows, setSystemDataRows] = useState({});
+  const [individualLimit, setIndividualLimit] = useState(0);
+  const [totalLimit, setTotalLimit] = useState(0);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const testInfo = JSON.parse(requestInfoData?.testInfo || "{}");
+    setIndividualLimit(testInfo?.individualTransactionLimit ?? 0);
+    setTotalLimit(testInfo?.totalTransactionLimit ?? 0);
+  }, [requestInfoData?.testInfo]);
 
   useEffect(() => {
     if (shippingDetails.length > 0) {
@@ -78,7 +86,7 @@ function CardAssignmentV2({
       setIsLoading(true);
       try {
         const response = await axiosToken.get(
-          `/card-requests/assign-shipping-details/${cardRequestId}?environment=${environment}&terminalType=${terminalType}`
+          `/card-requests/assign-shipping-details/${cardRequestId}?environment=${environment}&terminalType=${terminalType}&flag=true`
         );
 
         if (
@@ -186,6 +194,8 @@ function CardAssignmentV2({
         testname: card?.tester.name,
         testemail: card?.tester.email,
         userId: card.tester.id,
+        individualTransactionLimit: individualLimit || null,
+        totalTransactionLimit: totalLimit || null,
       };
 
       const response = await axiosToken.post(`/user-cards`, cardPayload);
@@ -227,6 +237,31 @@ function CardAssignmentV2({
   const isObjectEmpty = useCallback((obj) => {
     return Object.keys(obj).length > 0;
   }, []);
+
+  const parseStoredDateForPicker = (value) => {
+    if (!value) return null;
+
+    if (value instanceof Date && !isNaN(value)) return value;
+
+    if (typeof value === "string") {
+      if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
+        const d = new Date(value);
+        if (isNaN(d)) return null;
+
+        return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+      }
+
+      if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+        const [mm, dd, yyyy] = value.split("-").map(Number);
+        return new Date(yyyy, mm - 1, dd);
+      }
+
+      const d = new Date(value);
+      if (!isNaN(d)) return d;
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -425,43 +460,32 @@ function CardAssignmentV2({
 
                             <div className="row">
                               <div className="d-flex col-6 col-md-3 align-items-center gap-1">
-                                <label className="font">Offline Days</label>
+                                <label className="font">
+                                  {" "}
+                                  Individual Txn Limit
+                                </label>
                                 <input
                                   name="offline_days"
                                   placeholder="2"
                                   disabled={cardAssigned || isCompleted}
                                   type="text"
+                                  value={individualLimit || ""}
                                   onChange={(e) =>
-                                    handleInputChange(
-                                      "offline_days",
-                                      e.target.value,
-                                      card.id,
-                                      tester.id
-                                    )
-                                  }
-                                  value={
-                                    systemDataRows[card.id]?.offline_days || ""
+                                    setIndividualLimit(e.target.value)
                                   }
                                   className="form-control formcontrol small-input"
                                 />
                               </div>
                               <div className="d-flex col-6 col-md-3 align-items-center gap-1">
-                                <label className="font">Offline Usage</label>
+                                <label className="font">Total Txn Limit</label>
                                 <input
                                   name="offline_usage"
                                   placeholder="5"
                                   type="text"
                                   disabled={cardAssigned || isCompleted}
+                                  value={totalLimit || ""}
                                   onChange={(e) =>
-                                    handleInputChange(
-                                      "offline_usage",
-                                      e.target.value,
-                                      card.id,
-                                      tester.id
-                                    )
-                                  }
-                                  value={
-                                    systemDataRows[card.id]?.offline_usage || ""
+                                    setTotalLimit(e.target.value)
                                   }
                                   className="form-control formcontrol small-input"
                                 />
@@ -488,15 +512,19 @@ function CardAssignmentV2({
                                 />
                               </div>
                               <div className="d-flex col-6 col-md-4 align-items-center gap-1">
-                                <label className="font">Last Use Date</label>
+                                <label className="font">Last Use Date </label>
                                 <DatePicker
                                   selected={
-                                    systemDataRows[card.id]?.last_use_date ||
+                                    parseStoredDateForPicker(
+                                      systemDataRows[card.id]?.last_use_date
+                                    ) ||
                                     lastUsedDate ||
                                     ""
-                                    }
+                                  }
+                                  maxDate={cardDetails?.expDate}
                                   onChange={(date) => {
                                     const formatted = dateToMMDDYYYY(date); // MM-DD-YYYY format
+
                                     handleInputChange(
                                       "last_use_date",
                                       formatted,

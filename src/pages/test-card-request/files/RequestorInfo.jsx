@@ -254,7 +254,7 @@ function RequestorInfo({
       return false;
     }
 
-    if (requestInfo.email && !/\S+@\S+\.\S+/.test(requestInfo.email)) {
+    if (!requestInfo.email && !/\S+@\S+\.\S+/.test(requestInfo.email)) {
       toast.error("Please enter a valid email address.");
       return false;
     }
@@ -757,7 +757,8 @@ function RequestorInfo({
                         {index + 1}. {formattedDate} ({comment?.user_name}) -{" "}
                         <span className="text-capitalize">
                           {comment?.status}
-                        </span>{" "}
+                        </span>
+                        {" , "}
                         Comment: &quot;{comment?.comment}&quot;
                       </div>
                     );

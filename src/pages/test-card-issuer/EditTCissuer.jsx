@@ -16,8 +16,8 @@ function EditTCissuer() {
   const [environment, setEnvironment] = useState(envID); // Default to Prod ("1")
   const { user } = useAuth(); // user now contains profile info
   const userRole = user?.role; // assuming role is stored in user object
-  const [initialSecuredConnection, setInitialSecuredConnection] = useState(null);
-
+  const [initialSecuredConnection, setInitialSecuredConnection] =
+    useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFormDirty, setIsFormDirty] = useState(false);
@@ -35,7 +35,7 @@ function EditTCissuer() {
     contact_person: "",
     contact_email: "",
     status: "draft",
-    initialSecuredConnection : "no"
+    initialSecuredConnection: "no",
   });
 
   const [errors, setErrors] = useState({});
@@ -88,7 +88,8 @@ function EditTCissuer() {
 
     if (
       formData.test_card_type === "Pos" &&
-      formData.confirm_secured_connection !== "yes" && formData.status !== "draft"
+      formData.confirm_secured_connection !== "yes" &&
+      formData.status !== "draft"
     ) {
       errs.confirm_secured_connection =
         "For POS test card type, Confirm Secured Connection must be 'yes'.";
@@ -120,14 +121,21 @@ function EditTCissuer() {
       e.preventDefault();
       setIsLoading(true);
       try {
-        const response = await axiosToken.put(`/issuers/${issuer.id}`, formData);
+        const response = await axiosToken.put(
+          `/issuers/${issuer.id}`,
+          formData
+        );
         alert(response.data.message);
         setIsLoading(false);
         window.location.href = "/dashboard/test-card-issuer";
       } catch (error) {
         setIsLoading(false);
         console.error("Error adding issuer:", error);
-        if (error.response && error.response.data && error.response.data.error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
           alert(error.response.data.error);
         } else {
           alert(error.message || "An error occurred.");
@@ -355,7 +363,9 @@ function EditTCissuer() {
                         value={"no"}
                         onChange={handleInputChange}
                         checked={formData.confirm_secured_connection === "no"}
-                        disabled={userRole !== 1 || initialSecuredConnection === "yes"}
+                        disabled={
+                          userRole !== 1 || initialSecuredConnection === "yes"
+                        }
                       />
                       <label className="form-check-label" htmlFor="securedNo">
                         No
@@ -473,7 +483,10 @@ function EditTCissuer() {
                           checked={formData.status === "draft"}
                           disabled={userRole !== 1}
                         />
-                        <label className="form-check-label" htmlFor="statusDraft">
+                        <label
+                          className="form-check-label"
+                          htmlFor="statusDraft"
+                        >
                           DRAFT
                         </label>
                       </div>
@@ -488,7 +501,10 @@ function EditTCissuer() {
                           checked={formData.status === "active"}
                           disabled={userRole !== 1}
                         />
-                        <label className="form-check-label" htmlFor="statusActive">
+                        <label
+                          className="form-check-label"
+                          htmlFor="statusActive"
+                        >
                           Active
                         </label>
                       </div>
@@ -503,7 +519,10 @@ function EditTCissuer() {
                           checked={formData.status === "inactive"}
                           disabled={userRole !== 1}
                         />
-                        <label className="form-check-label" htmlFor="statusDeactivate">
+                        <label
+                          className="form-check-label"
+                          htmlFor="statusDeactivate"
+                        >
                           Deactivate
                         </label>
                       </div>

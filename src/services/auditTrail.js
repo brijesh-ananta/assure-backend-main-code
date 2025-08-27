@@ -16,7 +16,6 @@ class AuditTrailService {
       handleErrorToaster(error);
     }
   }
-
 }
 
 export default new AuditTrailService();

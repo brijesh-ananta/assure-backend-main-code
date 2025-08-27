@@ -5,13 +5,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-function StopFulFillment({
-  requestInfoData,
-  isCompleted,
-  fetchData
-}) {
+function StopFulFillment({ requestInfoData, isCompleted, fetchData }) {
   const initialValues = {
-    comment: requestInfoData?.stopFulfillmentComment || ''
+    comment: requestInfoData?.stopFulfillmentComment || "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -32,7 +28,7 @@ function StopFulFillment({
       column: "stopFulfillment",
       submitData: {
         status: "completed",
-        comment: cleanedComment
+        comment: cleanedComment,
       },
     };
 
@@ -44,7 +40,7 @@ function StopFulFillment({
 
       toast.success("Fulfillment stopped");
       resetForm();
-      fetchData()
+      fetchData();
     } catch (error) {
       console.error(error);
     }
@@ -93,7 +89,11 @@ function StopFulFillment({
               </div>
 
               <div className="d-flex gap-5 justify-content-end mt-5">
-                <button disabled={isCompleted} type="button" className="btn cancel-btn">
+                <button
+                  disabled={isCompleted}
+                  type="button"
+                  className="btn cancel-btn"
+                >
                   Cancel
                 </button>
                 <button

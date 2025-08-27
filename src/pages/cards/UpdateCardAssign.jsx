@@ -202,7 +202,10 @@ function UpdateCardAssign({ card, handleSaveUser }) {
           }
         }
       }
-      if (!testInfoData.countryCodes || testInfoData.countryCodes.length === 0) {
+      if (
+        !testInfoData.countryCodes ||
+        testInfoData.countryCodes.length === 0
+      ) {
         toast.error("At least one country code is required.");
         return false;
       }
@@ -519,7 +522,8 @@ function UpdateCardAssign({ card, handleSaveUser }) {
                         Remaining Balance
                       </label>
                       <div className="position-relative w-75">
-                        {(testInfoData.totalTransactionLimit || 0) - (card.amountUsed || 80)}
+                        {(testInfoData.totalTransactionLimit || 0) -
+                          (card.amountUsed || 80)}
                       </div>
                     </div>
                   </div>
@@ -654,17 +658,17 @@ function UpdateCardAssign({ card, handleSaveUser }) {
             </div>
             <div className="text-end mt-3" style={{ marginBottom: "10px" }}>
               {/* userRole must be 1 */}
-               {userRole === 1 && (
-              <button
-                className={`btn-add mb-3 ${isLoading ? "disabled" : ""}`}
-                type="button"
-                onClick={handleSave}
-                disabled={isLoading}
-                style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
-              >
-                {isLoading ? "Saving..." : "Save"}
-              </button>
-            )}
+              {userRole === 1 && (
+                <button
+                  className={`btn-add mb-3 ${isLoading ? "disabled" : ""}`}
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isLoading}
+                  style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+                >
+                  {isLoading ? "Saving..." : "Save"}
+                </button>
+              )}
             </div>
           </div>
         </div>

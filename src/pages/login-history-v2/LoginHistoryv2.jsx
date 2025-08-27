@@ -6,10 +6,18 @@ import "./loginhistoryv2.css";
 import apiService from "../../services";
 
 function formatDateTime(isoString) {
-  if (!isoString)  return { date: 'N/A', time: 'N/A', };
+  if (!isoString) return { date: "N/A", time: "N/A" };
+
   const dateObj = new Date(isoString);
 
-  const date = dateObj.toISOString().split("T")[0];
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const year = String(dateObj.getFullYear());
+
+  const localDate = `${month}-${day}-${year}`;
+  const date = localDate || "N/A";
+  // const time = dateObj.toLocaleTimeString("en-GB", {
+  //   hour12: false,
 
   const time = dateObj.toISOString().split("T")[1].split(".")[0];
 
@@ -63,7 +71,7 @@ const LoginHistoryv2 = () => {
           label: "Device",
           width: "120px",
           renderCell: (item) => {
-            return item?.device_id || "N/A";
+            return item?.user_type || "N/A";
           },
         },
         {
@@ -72,7 +80,7 @@ const LoginHistoryv2 = () => {
           width: "120px",
           renderCell: (item) => {
             return item?.ip_address || "N/A";
-          }
+          },
         },
       ],
       options: {

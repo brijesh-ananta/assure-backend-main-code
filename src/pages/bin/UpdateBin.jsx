@@ -71,7 +71,11 @@ const UpdateBin = () => {
                   disabled
                   id="flexRadioDefault1"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="flexRadioDefault1">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="flexRadioDefault1"
+                >
                   Prod
                 </label>
               </div>
@@ -85,7 +89,11 @@ const UpdateBin = () => {
                   disabled
                   id="flexRadioDefault2"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="flexRadioDefault2">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="flexRadioDefault2"
+                >
                   QA
                 </label>
               </div>
@@ -102,7 +110,11 @@ const UpdateBin = () => {
                   disabled
                   id="cardType1"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="cardType1">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="cardType1"
+                >
                   POS
                 </label>
               </div>
@@ -116,7 +128,11 @@ const UpdateBin = () => {
                   disabled
                   id="cardType2"
                 />
-                <label style={{ marginBottom: 0 }} className="form-check-label" htmlFor="cardType2">
+                <label
+                  style={{ marginBottom: 0 }}
+                  className="form-check-label"
+                  htmlFor="cardType2"
+                >
                   Ecomm
                 </label>
               </div>
@@ -126,21 +142,20 @@ const UpdateBin = () => {
       </div>
       <section className="form-field-wrapper form-container">
         <form onSubmit={formik.handleSubmit} className="row">
-          
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Bin</p>
             <div className="col-5 p-0">
               <p className="form-control-plaintext mb-0">{binData.bin}</p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Card Type</p>
             <div className="col-5 p-0">
               <p className="form-control-plaintext mb-0">{binData.card_type}</p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Bin Product</p>
             <div className="col-5 p-0">
@@ -157,35 +172,43 @@ const UpdateBin = () => {
               </select>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Pan Length</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.pan_length}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.pan_length}
+              </p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer Name</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_name}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_name}
+              </p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer ID</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_unique_id}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_unique_id}
+              </p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">Issuer Code</p>
             <div className="col-5 p-0">
-              <p className="form-control-plaintext mb-0">{binData.issuer_code}</p>
+              <p className="form-control-plaintext mb-0">
+                {binData.issuer_code}
+              </p>
             </div>
           </div>
-          
+
           <div className="col-6 row align-items-center mb-3">
             <p className="font col-4 pe-4 text-right m-0">IISC</p>
             <div className="col-5 p-0">
@@ -201,7 +224,11 @@ const UpdateBin = () => {
                 { label: "Inactive", value: "inactive" },
               ].map((status) => (
                 <labellabel
-                  style={{ marginBottom: 0, gap: "0.1rem", marginRight: "4rem" }}
+                  style={{
+                    marginBottom: 0,
+                    gap: "0.1rem",
+                    marginRight: "4rem",
+                  }}
                   key={status.value}
                   className="radio-label d-flex align-items-center"
                 >
@@ -226,15 +253,24 @@ const UpdateBin = () => {
           </div>
           <div className="col-12 row align-items-center mb-3 mt-4">
             <div className="col-12 p-0 d-flex justify-content-end form-actions">
-              <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate("/dashboard/bin-list")}>Cancel</button>
-              <button type="submit" className="btn save-btn" disabled={isLoading}>
+              <button
+                type="button"
+                className="btn btn-secondary ms-2"
+                onClick={() => navigate("/dashboard/bin-list")}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn save-btn"
+                disabled={isLoading}
+              >
                 {isLoading ? "Saving..." : "Update Bin"}
               </button>
             </div>
           </div>
         </form>
       </section>
-      
     </>
   );
 };

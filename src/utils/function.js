@@ -1,4 +1,4 @@
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 
 export const handleErrorToaster = (error) => {
   const errors = error?.response?.data?.errors;
@@ -10,7 +10,7 @@ export const handleErrorToaster = (error) => {
     });
   } else if (errors?.data && errors?.message) {
     const missingFields = errors.data.missingFields?.join(", ") || "";
-    toast.error(`${errors?.message || ''} ${missingFields}`);
+    toast.error(`${errors?.message || ""} ${missingFields}`);
   } else if (message) {
     toast.error(message?.message || message);
   } else {
@@ -18,8 +18,7 @@ export const handleErrorToaster = (error) => {
   }
 };
 
-
-export function getUrlWithParams(path, search = '') {
+export function getUrlWithParams(path, search = "") {
   return `${path}${location.search || search}`;
 }
 

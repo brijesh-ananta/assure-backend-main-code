@@ -39,7 +39,7 @@ export function dateToMMYYYY(date) {
 
   const yyyy = date.getFullYear();
   return `${mm}-${yyyy}`;
-}   
+}
 
 // Converts MM-DD-YYYY string to Date object
 export function mmddyyyyToDate(str) {
@@ -73,7 +73,6 @@ function toYYYYMM(dateStr) {
   return `${month}${shortYear}`;
 }
 
-
 const AddCard = () => {
   const encryptionKey = import.meta.env.VITE_ENCKEY;
   const { binId } = useParams();
@@ -85,6 +84,7 @@ const AddCard = () => {
   const [importingData, setImportingData] = useState(false);
   const [, setIssuer] = useState({});
   const [importedData, setImportedData] = useState();
+  const [fieldsdisabled, setfielddisabled] = useState(false);
 
   const navigate = useNavigate();
 
@@ -96,7 +96,64 @@ const AddCard = () => {
 
   const [importDataSuccessful, setImportDataSuccessful] = useState(false);
 
+  const validateRequiredFields = (values, cardType) => {
+    const errors = {};
+
+    if (!values.cardNumber?.trim()) {
+      errors.cardNumber = "Card number is required";
+    }
+
+    if (values.cardNumber.slice(0, values.bin.length) !== values.bin) {
+      errors.cardNumber = "Card number must start with the BIN";
+    }
+
+    if (!values.seqNumber?.trim()) {
+      errors.seqNumber = "Sequence number is required";
+    }
+
+    if (!values.validThru?.trim()) {
+      errors.validThru = "Valid thru date is required";
+    }
+
+    if (!values.cvv?.trim()) {
+      errors.cvv = "CVV is required";
+    }
+
+    if (cardType === "Ecomm" && !values.name?.trim()) {
+      errors.name = "Name on card is required";
+    }
+
+    if (cardType === "Ecomm" && !values.address?.trim()) {
+      errors.address = "Address is required";
+    }
+
+    if (cardType === "Ecomm" && !values.city?.trim()) {
+      errors.address = "City is required";
+    }
+
+    if (cardType === "Ecomm" && !values.state?.trim()) {
+      errors.address = "State is required";
+    }
+
+    if (cardType === "Ecomm" && !values.country?.trim()) {
+      errors.address = "Country is required";
+    }
+    if (cardType === "Ecomm" && !values.postalCode?.trim()) {
+      errors.address = "Postal Code is required";
+    }
+    return errors;
+  };
+
   const handleFinalSubmit = async (values, handleSubmit, addMore = false) => {
+    const errors = validateRequiredFields(formik.values, cardType);
+
+    if (Object.keys(errors).length > 0) {
+      // Show first error message
+      const firstError = Object.values(errors)[0];
+      toast.error(firstError);
+      return;
+    }
+
     if (cardType === "Ecomm") {
       const body = {
         binId,
@@ -107,9 +164,11 @@ const AddCard = () => {
         ...formik.values,
         cardType: "Ecomm",
       };
+      console.log("bin--->", formik.values.bin);
 
       try {
         const result = await apiService.card.createCard(body);
+        console.log(result);
         if (result?.success) {
           toast.success("Ecomm Card created successfully");
           if (!addMore) {
@@ -181,6 +240,8 @@ const AddCard = () => {
   };
 
   const handleAddMoreClick = async () => {
+    setfielddisabled(false);
+    await handleFinalSubmit(formik.values, formik.handleSubmit, true);
     resetPage();
   };
 
@@ -324,7 +385,7 @@ const AddCard = () => {
           status: card.status || "",
         });
         setImportedData(data);
-
+        setfielddisabled(true);
         setDecryptedCardDataObj(card);
         setImportDataSuccessful(true);
       }
@@ -334,15 +395,16 @@ const AddCard = () => {
     setImportingData(false);
   };
 
-  useEffect(() => {
-    if (cardType === "Ecomm" && formik.values.validThru) {
-      const lastDay = toMMDDYYYY(getLastDayOfMonth(formik.values.validThru));
-      if (formik.values.expDate !== lastDay) {
-        formik.setFieldValue("expDate", lastDay);
-      }
-    }
-    // eslint-disable-next-line
-  }, [cardType, formik.values.validThru]);
+  // useEffect(() => {
+  //   if (cardType === "Ecomm" && formik.values.validThru) {
+  //     const lastDay = toMMDDYYYY(getLastDayOfMonth(formik.values.validThru));
+  //     if (formik.values.expDate !== lastDay) {
+  //       console.log("321--->",lastDay)
+  //       formik.setFieldValue("expDate", lastDay);
+  //     }
+  //   }
+  //   // eslint-disable-next-line
+  // }, [cardType, formik.values.validThru]);
 
   const fetchBin = useCallback(async () => {
     if (!binId || !environment) return;
@@ -367,7 +429,7 @@ const AddCard = () => {
       fetchBin();
     }
   }, [binId, fetchBin, environment]);
-
+  console.log(formik.values.bin);
   const getTerminalType = useCallback(() => {
     const data = terminalTypeMappingOption.find((a) => a.value === "Ecomm");
 
@@ -416,13 +478,21 @@ const AddCard = () => {
                   className="form-control formcontrol"
                   type={showCardNumber ? "text" : "password"}
                   placeholder="9999 99XX XXXX XX99 9999"
+                  disabled={fieldsdisabled}
                   inputMode="numeric"
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "");
-                    formik.setFieldValue("cardNumber", value);
+                    const input = e.target;
+                    const start = input.selectionStart;
+                    const rawValue = input.value.replace(/\D/g, "");
+                    formik.setFieldValue("cardNumber", rawValue, false);
+                    requestAnimationFrame(() => {
+                      input.setSelectionRange(start, start);
+                    });
                   }}
-                  value={formatMaskedCardNumber(formik.values.cardNumber,"full")}
-
+                  value={formatMaskedCardNumber(
+                    formik.values.cardNumber,
+                    "full"
+                  )}
                 />
                 <span onClick={() => setShowCardNumber(!showCardNumber)}>
                   {showCardNumber ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -446,6 +516,7 @@ const AddCard = () => {
                   formik.setFieldValue("seqNumber", value);
                 }}
                 value={formik.values.seqNumber}
+                disabled={fieldsdisabled}
               />
             </div>
           </div>
@@ -459,10 +530,18 @@ const AddCard = () => {
                 selected={mmyyyyToDate(formik.values.validThru)}
                 onChange={(date) => {
                   const str = dateToMMYYYY(date);
-                 
+
                   formik.setFieldValue("validThru", str);
                   if (cardType === "Ecomm" && str) {
-                    formik.setFieldValue("expDate", str);
+                    const lastDayOfMonth = new Date(
+                      date.getFullYear(),
+                      date.getMonth() + 1,
+                      0
+                    );
+
+                    const expDateStr = dateToMMDDYYYY(lastDayOfMonth);
+                    console.log("expdate---->", expDateStr);
+                    formik.setFieldValue("expDate", expDateStr);
                   }
                 }}
                 dateFormat="MM-yyyy"
@@ -471,6 +550,7 @@ const AddCard = () => {
                 name="validThru"
                 showMonthYearPicker
                 minDate={new Date()}
+                disabled={fieldsdisabled}
               />
             </div>
 
@@ -493,6 +573,7 @@ const AddCard = () => {
                     formik.setFieldValue("cvv", value);
                   }}
                   value={formik.values.cvv}
+                  disabled={fieldsdisabled}
                 />
                 <span onClick={() => setShowCVV(!showCVV)}>
                   {showCVV ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -544,7 +625,7 @@ const AddCard = () => {
                   />
                 </div>
 
-                <div className="form-group-add-card">
+                {/* <div className="form-group-add-card">
                   <label className="font" style={{ width: "6rem" }}>
                     Exp. Date
                   </label>
@@ -558,9 +639,9 @@ const AddCard = () => {
                     placeholderText="MM-DD-YYYY"
                     className="form-control formcontrol"
                     name="expDate"
-                    disabled={cardType !== "Ecomm"}
+                    disabled={cardType !== "Ecomm" || fieldsdisabled}
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="row">
@@ -576,7 +657,7 @@ const AddCard = () => {
                     onChange={formik.handleChange}
                     value={formik.values.address}
                     style={{ minWidth: "35%", flex: 0, marginRight: "1rem" }}
-                    disabled={cardType != "Ecomm"}
+                    disabled={cardType != "Ecomm" || fieldsdisabled}
                   />
 
                   <input
@@ -586,7 +667,7 @@ const AddCard = () => {
                     onChange={formik.handleChange}
                     value={formik.values.city}
                     style={{ minWidth: "28.5%", flex: 0 }}
-                    disabled={cardType != "Ecomm"}
+                    disabled={cardType != "Ecomm" || fieldsdisabled}
                   />
                 </div>
               </div>
@@ -599,7 +680,7 @@ const AddCard = () => {
                   onChange={formik.handleChange}
                   value={formik.values.state}
                   style={{ minWidth: "39.5%", flex: 0 }}
-                  disabled={cardType != "Ecomm"}
+                  disabled={cardType != "Ecomm" || fieldsdisabled}
                 />
                 <input
                   name="country"
@@ -608,7 +689,7 @@ const AddCard = () => {
                   onChange={formik.handleChange}
                   value={formik.values.country}
                   style={{ minWidth: "32.5%", flex: 0 }}
-                  disabled={cardType != "Ecomm"}
+                  disabled={cardType != "Ecomm" || fieldsdisabled}
                 />
                 <input
                   name="postalCode"
@@ -616,7 +697,7 @@ const AddCard = () => {
                   placeholder="Postal Code"
                   onChange={formik.handleChange}
                   value={formik.values.postalCode}
-                  disabled={cardType != "Ecomm"}
+                  disabled={cardType != "Ecomm" || fieldsdisabled}
                 />
               </div>
 
@@ -660,19 +741,7 @@ const AddCard = () => {
             >
               Cancel
             </Link>
-            {showAddMore && (
-              <div className="buttons">
-                <button
-                  type="button"
-                  className="btn save-btn z-3"
-                  onClick={() => {
-                    handleAddMoreClick();
-                  }}
-                >
-                  Add more
-                </button>
-              </div>
-            )}
+
             {(importDataSuccessful || cardType === "Ecomm") && !showAddMore ? (
               <>
                 <button
@@ -694,6 +763,21 @@ const AddCard = () => {
                   Import Data
                 </button>
               )
+            )}
+            {showAddMore || cardType === "Ecomm" ? (
+              <div className="buttons">
+                <button
+                  type="button"
+                  className="btn save-btn z-3"
+                  onClick={() => {
+                    handleAddMoreClick();
+                  }}
+                >
+                  Add more
+                </button>
+              </div>
+            ) : (
+              <></>
             )}
           </div>
         </form>

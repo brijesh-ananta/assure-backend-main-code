@@ -102,19 +102,23 @@ const BinList = () => {
     // Search Term Filter (simplified for common fields)
     if (searchTerm) {
       const searchValue = searchTerm.toLowerCase().trim();
-      result = result.filter(
-        (item) =>
-          item.bin_id?.toString().toLowerCase().includes(searchValue) ||
-          item.bin_status?.toLowerCase().includes(searchValue) ||
-          item.bin?.toLowerCase().includes(searchValue) ||
-          item.pan_length?.toString().toLowerCase().includes(searchValue) ||
-          item.bin_product?.toLowerCase().includes(searchValue) ||
-          item.card_type?.toLowerCase().includes(searchValue) ||
-          item.issuer_unique_id?.toLowerCase().includes(searchValue) ||
-          item.issuer_name?.toLowerCase().includes(searchValue) ||
-          item.created_by_name?.toLowerCase().includes(searchValue) ||
-          item.env?.toLowerCase().includes(searchValue)
-      );
+      result = result?.filter((item) => {
+        const stringValues = Object.values(item)
+          .flatMap((val) => {
+            if (typeof val === "string") {
+              try {
+                const parsed = JSON.parse(val);
+                return JSON.stringify(parsed).toLowerCase();
+              } catch {
+                return val.toLowerCase();
+              }
+            }
+            return val?.toString().toLowerCase() || "";
+          })
+          .join(" ");
+
+        return stringValues?.includes(searchValue);
+      });
     }
 
     // Sorting

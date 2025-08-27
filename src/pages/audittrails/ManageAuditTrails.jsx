@@ -50,7 +50,13 @@ function ManageAuditTrails() {
   // Fetch data from server
   useEffect(() => {
     setLoading(true);
-    const { currentPage, entriesPerPage, searchTerm, sortColumn, sortDirection } = serverState;
+    const {
+      currentPage,
+      entriesPerPage,
+      searchTerm,
+      sortColumn,
+      sortDirection,
+    } = serverState;
     const params = {
       page: currentPage,
       limit: entriesPerPage,
@@ -79,7 +85,7 @@ function ManageAuditTrails() {
       ...state,
       currentPage: state.currentPage || 1,
     }));
-  }, [])
+  }, []);
 
   return (
     <section>

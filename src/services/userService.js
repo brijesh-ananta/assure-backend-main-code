@@ -42,7 +42,6 @@ class UserService {
       handleErrorToaster(error);
     }
   }
-  
 }
 
 export default new UserService();

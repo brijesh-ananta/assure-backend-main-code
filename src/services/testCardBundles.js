@@ -19,7 +19,7 @@ class TestCardBundlesService {
 
   async create(body) {
     try {
-      const result = await axiosToken.post('/test-card-bundles', body);
+      const result = await axiosToken.post("/test-card-bundles", body);
       if (result.status === 200 || result.status === 201) {
         return result.data;
       } else {
@@ -42,7 +42,6 @@ class TestCardBundlesService {
       handleErrorToaster(error);
     }
   }
-  
 }
 
 export default new TestCardBundlesService();

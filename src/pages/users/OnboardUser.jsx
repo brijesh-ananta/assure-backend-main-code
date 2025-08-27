@@ -29,7 +29,9 @@ function OnboardUser() {
   const handleEnvironmentChange = (e) => {
     const value = e.target.value;
     if (selectedEnvironments.includes(value)) {
-      setSelectedEnvironments(selectedEnvironments.filter((item) => item !== value));
+      setSelectedEnvironments(
+        selectedEnvironments.filter((item) => item !== value)
+      );
     } else {
       setSelectedEnvironments([...selectedEnvironments, value]);
     }
@@ -60,7 +62,10 @@ function OnboardUser() {
     if (passwordType === "admin" && !password.trim()) {
       newErrors.password = "Password is required for admin generated password";
     }
-    if (!(selectedUserRole === "1" || selectedUserRole === "4") && selectedEnvironments.length === 0) {
+    if (
+      !(selectedUserRole === "1" || selectedUserRole === "4") &&
+      selectedEnvironments.length === 0
+    ) {
       newErrors.environments = "At least one environment is required";
     }
 
@@ -96,13 +101,16 @@ function OnboardUser() {
       window.location.href = "/dashboard/user-management";
     } catch (error) {
       console.error("Error onboarding user:", error);
-      alert(error.response?.data?.error || error.message || "An error occurred.");
+      alert(
+        error.response?.data?.error || error.message || "An error occurred."
+      );
       setIsLoading(false);
     }
   };
 
   // Determine if environments should be disabled
-  const isEnvironmentDisabled = selectedUserRole === "1" || selectedUserRole === "4";
+  const isEnvironmentDisabled =
+    selectedUserRole === "1" || selectedUserRole === "4";
 
   return (
     <>
@@ -290,7 +298,10 @@ function OnboardUser() {
                         checked={selectedUserRole === "2"}
                         onChange={handleUserRoleChange}
                       />
-                      <label className="form-check-label" htmlFor="roleRequestUser">
+                      <label
+                        className="form-check-label"
+                        htmlFor="roleRequestUser"
+                      >
                         Test Card Request User
                       </label>
                     </div>
@@ -304,7 +315,10 @@ function OnboardUser() {
                         checked={selectedUserRole === "3"}
                         onChange={handleUserRoleChange}
                       />
-                      <label className="form-check-label" htmlFor="roleViewUser">
+                      <label
+                        className="form-check-label"
+                        htmlFor="roleViewUser"
+                      >
                         Test Card Request View User
                       </label>
                     </div>
@@ -414,12 +428,16 @@ function OnboardUser() {
                   >
                     Cancel
                   </button>
-                    <button type="submit" className="btn-add" disabled={isLoading}>
-                      {isLoading && (
-                        <span className="spinner-border spinner-border-sm me-2"></span>
-                      )}
-                      Add User
-                    </button>
+                  <button
+                    type="submit"
+                    className="btn-add"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                    )}
+                    Add User
+                  </button>
                 </div>
               </div>
             </div>

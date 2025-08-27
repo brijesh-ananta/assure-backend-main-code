@@ -216,24 +216,22 @@ const ViewProfile = () => {
     return false;
   }
 
-const downloadFile = async (url) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("File download failed");
-    const blob = await response.blob();
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = `${new Date().toString()}.xml`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(link.href);
-  } catch (error) {
-    alert("Download failed: " + error.message);
-  }
-};
-
-
+  const downloadFile = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("File download failed");
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${new Date().toString()}.xml`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(link.href);
+    } catch (error) {
+      alert("Download failed: " + error.message);
+    }
+  };
 
   return (
     <div className="container gap-3 mt-5">
@@ -274,7 +272,9 @@ const downloadFile = async (url) => {
             </div>
             <div className="col-12 gap-1 row">
               <label className="font col-4 text-right">Status</label>
-              <div className="col-4 text-2 fa-1x text-capitalize">{data?.status}</div>
+              <div className="col-4 text-2 fa-1x text-capitalize">
+                {data?.status}
+              </div>
             </div>
             <div className="col-12 gap-1 row">
               <label className="font col-4 text-right">Profile Name</label>
@@ -285,8 +285,8 @@ const downloadFile = async (url) => {
               <div className="col-7 d-flex gap-4 text-2 fa-1x underline font text-4">
                 {data.xml_file_url ? (
                   <span
-                      onClick={() => downloadFile(data.xml_file_url)}
-                      className="cursor-pointer"
+                    onClick={() => downloadFile(data.xml_file_url)}
+                    className="cursor-pointer"
                   >
                     Download current
                   </span>
@@ -311,7 +311,9 @@ const downloadFile = async (url) => {
             </div>
             <div className="col-12 gap-1 row">
               <label className="font col-4 text-right">Profile Editor</label>
-              <div className="col-4 text-2 fa-1x ">{data?.profileEditorEmail}</div>
+              <div className="col-4 text-2 fa-1x ">
+                {data?.profileEditorEmail}
+              </div>
             </div>
             <>
               <div className="col-12 gap-1 row z-3">

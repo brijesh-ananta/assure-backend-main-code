@@ -79,7 +79,8 @@ function AddTCissuer() {
     // If test_card_type is 'pos', then confirm_secured_connection must be "yes".
     if (
       formData.test_card_type === "Pos" &&
-      formData.confirm_secured_connection !== "yes" && formData.status !== "draft"
+      formData.confirm_secured_connection !== "yes" &&
+      formData.status !== "draft"
     ) {
       errs.confirm_secured_connection =
         "For POS test card type, Confirm Secured Connection must be 'yes'.";
@@ -132,10 +133,9 @@ function AddTCissuer() {
     }
   };
 
-
   const handleBack = () => {
     window.location.href = "/dashboard/test-card-issuer";
-  }
+  };
   return (
     <>
       <Header title={"Test Card Issuer"} />
@@ -173,7 +173,6 @@ function AddTCissuer() {
                 </label>
               </div>
             </div>
-            
           </div>
         </div>
       </div>
@@ -271,7 +270,10 @@ function AddTCissuer() {
                         onChange={handleInputChange}
                         checked={formData.test_card_type === "Ecomm"}
                       />
-                      <label className="form-check-label" htmlFor="cardTypeEcomm">
+                      <label
+                        className="form-check-label"
+                        htmlFor="cardTypeEcomm"
+                      >
                         Ecomm
                       </label>
                     </div>
@@ -302,11 +304,9 @@ function AddTCissuer() {
               </div>
               {/* if test_card_type == Pos */}
               {formData.test_card_type === "Pos" && (
-                  <div className="col-12 col-lg-6 d-lg-flex align-items-center justify-content-start">
+                <div className="col-12 col-lg-6 d-lg-flex align-items-center justify-content-start">
                   <mark>
-                    <span className="me-lg-5 font">
-                    secure connection?
-                    </span>
+                    <span className="me-lg-5 font">secure connection?</span>
                   </mark>
                   <div className="d-lg-flex formcard">
                     <div className="form-check me-3 d-flex gap-4 align-items-center">
@@ -337,11 +337,9 @@ function AddTCissuer() {
                         No
                       </label>
                     </div>
-                    
                   </div>
                 </div>
               )}
-            
             </div>
 
             <div className="login-page d-lg-flex row">
@@ -493,31 +491,33 @@ function AddTCissuer() {
                 </div>
               </div>
 
-
               <div className="login-page d-lg-flex row mb-5">
-              <div className="col-12 col-lg-6 pe-lg-5 me-0">
-                <div className="d-flex justify-content-end mt-4">
-                  <button type="button"  onClick={handleBack} className="btn btn-secondary me-3">
-                    Cancel
-                  </button>
-                  <div className="btn-section text-lg-center">
-                  {userRole == 1 && (
-                  <button
-                    type="button"
-                    className="btn-add mx-auto"
-                    onClick={handleValidate}
-                  >
-                    {isLoading && (
-                          <span className="spinner-border spinner-border-sm me-2"></span>
-                        )}
-                    Add Issuer
-                  </button>
-                )}
+                <div className="col-12 col-lg-6 pe-lg-5 me-0">
+                  <div className="d-flex justify-content-end mt-4">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="btn btn-secondary me-3"
+                    >
+                      Cancel
+                    </button>
+                    <div className="btn-section text-lg-center">
+                      {userRole == 1 && (
+                        <button
+                          type="button"
+                          className="btn-add mx-auto"
+                          onClick={handleValidate}
+                        >
+                          {isLoading && (
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                          )}
+                          Add Issuer
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-              
             </div>
           </form>
         </div>

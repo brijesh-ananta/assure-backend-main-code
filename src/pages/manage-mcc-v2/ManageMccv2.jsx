@@ -404,7 +404,9 @@ const ManageMccv2 = () => {
                           valueField="id"
                           className="form-control formcontrol max-w-240"
                           style={{ padding: "0.5rem" }}
-                          optionRenderer={(a) => <span className="text-black">{a.item.name},</span>}
+                          optionRenderer={(a) => (
+                            <span className="text-black">{a.item.name},</span>
+                          )}
                           searchable
                           multi
                           name="brands"

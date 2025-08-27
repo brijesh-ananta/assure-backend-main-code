@@ -19,6 +19,7 @@ const SearchCard = () => {
   const [cardNumber, setCardNumber] = useState("");
   const [issuerName, setIssuerName] = useState("");
   const [issuers, setIssuers] = useState([]);
+  const [loading, setloading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -133,17 +134,21 @@ const SearchCard = () => {
             </span>
           ),
         },
-         {
-          key: "otb",
-          label: "OTB",
-          width: "120px",
-          sortable: true,
-          renderCell: (item) => (
-            <span style={{ textTransform: "capitalize" }}>
-              ${item?.otb|| "-"}
-            </span>
-          ),
-        },
+        ...(cardType === "Pos"
+          ? [
+              {
+                key: "otb",
+                label: "OTB",
+                width: "120px",
+                sortable: true,
+                renderCell: (item) => (
+                  <span style={{ textTransform: "capitalize" }}>
+                    ${item?.otb || "-"}
+                  </span>
+                ),
+              },
+            ]
+          : []),
         {
           key: "region",
           label: "Region",
@@ -182,10 +187,11 @@ const SearchCard = () => {
         },
       },
     }),
-    []
+    [cardType]
   );
 
   const fetchCards = useCallback(async () => {
+    setloading(true);
     try {
       const params = {
         environment,
@@ -250,6 +256,7 @@ const SearchCard = () => {
     } catch (error) {
       console.error(error);
     }
+    setloading(false);
   }, [
     environment,
     cardType,
@@ -383,6 +390,7 @@ const SearchCard = () => {
                 className="form-control formcontrol"
                 style={{ padding: "0.5rem", minWidth: "274px" }}
                 searchable
+                multi={false}
                 placeholder="Select Issuer"
                 onChange={(e) => {
                   const data = e?.length ? e[0] : {};
@@ -405,7 +413,9 @@ const SearchCard = () => {
           columns={tableConfig.columns}
           expandable={tableConfig.options.expandable}
           emptyState={
-            <div className="text-center p-5 font fa-1x">No Card found.</div>
+            <div className="text-center p-5 font fa-1x">
+              {loading ? "Loading ... " : "No Card found."}
+            </div>
           }
         />
       </div>

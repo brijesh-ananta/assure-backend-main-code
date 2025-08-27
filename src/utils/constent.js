@@ -5,8 +5,8 @@ export const environmentMappingOption = [
 ];
 
 export const terminalTypeMappingOption = [
-  { label: "POS", value: 'Pos' },
-  { label: "ECOMM", value: 'Ecomm' }
+  { label: "POS", value: "Pos" },
+  { label: "ECOMM", value: "Ecomm" },
 ];
 
 export const environmentMapping = { 1: "Prod", 2: "QA", 3: "Cert" };
@@ -22,8 +22,8 @@ export const STATUS_ACTIVE = "active";
 export const STATUS_ARCHIVE = "archive";
 
 export const colorMapping = {
-  "assign_card": "Assign Card",
-  "approved": "Approved",
-  "shipped": "Ship Card",
-  "submitted": "Submitted",
-}
+  assign_card: "Assign Card",
+  approved: "Approved",
+  shipped: "Ship Card",
+  submitted: "Submitted",
+};

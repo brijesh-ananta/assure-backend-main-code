@@ -122,8 +122,12 @@ function Footer({ audit = false, tableName, recordId }) {
                     </span>
                   </p>
                   <p className="col-6 row justify-content-end">
-                    <strong className="col-4 text-right">Last Update Date:</strong>{" "}
-                    <span className="col-5 d-flex">{auditData.lastUpdateDate}</span>
+                    <strong className="col-4 text-right">
+                      Last Update Date:
+                    </strong>{" "}
+                    <span className="col-5 d-flex">
+                      {auditData.lastUpdateDate}
+                    </span>
                   </p>
                 </div>
                 <div className="col-md-12 row">

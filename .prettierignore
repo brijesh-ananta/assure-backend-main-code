@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.env
+package-lock.json
+yarn.lock
+public/New Folder With Items/
+*.scss

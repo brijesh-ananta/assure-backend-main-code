@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { formatMaskedCardNumber } from "../../../utils/function";
 import "./style.css";
+import { useAuth } from "../../../utils/AuthContext";
 
 const getCardNetwork = (cardNumber = "") => {
   const trimmed = cardNumber.replace(/\s|-/g, "");
@@ -64,7 +65,7 @@ export const cardStyles = {
 
 const PosCard = (props) => {
   const { data } = props;
-
+  const { user } = useAuth();
   const cardDetails = data?.decryptedCardDetails;
   const [showCardNumber, setShowCardNumber] = useState(false);
 
@@ -117,9 +118,18 @@ const PosCard = (props) => {
                 ? formatMaskedCardNumber(cardDetails?.cardNumber, "full")
                 : formatMaskedCardNumber(cardDetails?.cardNumber)}
             </span>
-            <span className="eye-icon">
-              <i className="fas fa-eye" onClick={handleToggleCardNumber}></i>
-            </span>
+            {user.role === 2 ? (
+              <></>
+            ) : (
+              <>
+                <span className="eye-icon">
+                  <i
+                    className="fas fa-eye"
+                    onClick={handleToggleCardNumber}
+                  ></i>
+                </span>
+              </>
+            )}
           </div>
           <div className="card-details px-3">
             <div className="expiry m-auto d-flex align-items-center">
@@ -133,16 +143,32 @@ const PosCard = (props) => {
               </span>
             </div>
           </div>
+
           <div className="card-holder font fa-1x">
             {cardDetails?.nameOnCard ||
               cardDetails?.name ||
               cardDetails?.cardholder_name}
           </div>
+
           <div className="right-bottom-box">
+            <div className="seq text-right">
+              <span className="font"> PIN# &nbsp;</span>{" "}
+              <span className="font text-right">
+                {cardDetails?.pin || cardDetails?.pinNumber} <br />{" "}
+              </span>
+            </div>
+
+            <div className="seq text-right">
+              <span className="font"> CVV# &nbsp;</span>{" "}
+              <span className="font text-right">
+                {cardDetails?.cvv} <br />{" "}
+              </span>
+            </div>
             <div className="seq text-right">
               <span className="font"> Seq# &nbsp;</span>{" "}
               <span className="font text-right">
-                {cardDetails?.seqNumber || cardDetails?.sequence_number} <br />{" "}
+                {cardDetails?.seqNumber || cardDetails?.sequence_number}{" "}
+                <br />{" "}
               </span>
             </div>
             <p className="text-right font">

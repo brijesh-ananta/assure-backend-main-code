@@ -20,7 +20,7 @@ function Fullfilment() {
   const status = location.state?.status;
   const [tcStatus, setTcStatus] = useState(status);
 
-  const [snStatusVerify, setSnStatusVerify] = useState('');
+  const [snStatusVerify, setSnStatusVerify] = useState("");
 
   const handleRequest = () => {
     navigate(`/dashboard/test-card-request/requestor-info/${cardRequestId}`, {
@@ -122,10 +122,13 @@ function Fullfilment() {
       errors.tcsmeComments = "TCSME Comments field is required.";
     }
     // here check status must be returned or approved otherwise error
-    if (fulfilmentData.status != "returned" && fulfilmentData.status != "approved") {
+    if (
+      fulfilmentData.status != "returned" &&
+      fulfilmentData.status != "approved"
+    ) {
       errors.status = "Status field is required.";
     }
-    
+
     return errors;
   };
 
@@ -144,7 +147,7 @@ function Fullfilment() {
       return;
     }
 
-    if (snStatusVerify != '1') {
+    if (snStatusVerify != "1") {
       alert("Please verify SN status.");
       return;
     }
@@ -158,13 +161,13 @@ function Fullfilment() {
       );
       alert(response.data.message);
       setTcStatus(response.data.status);
-      if(response.data.status == "approved"){
+      if (response.data.status == "approved") {
         navigate(`/dashboard/test-card-request/assignment/${cardRequestId}`, {
-          state: { environment, terminalType, status: 'approved' },
+          state: { environment, terminalType, status: "approved" },
         });
-      } else if(response.data.status == "returned"){
+      } else if (response.data.status == "returned") {
         navigate(`/dashboard/request-history`, {
-          state: { environment, terminalType, status: 'returned' },
+          state: { environment, terminalType, status: "returned" },
         });
       }
     } catch (error) {
@@ -261,7 +264,14 @@ function Fullfilment() {
                 <span className="activebg"></span>Submitted
               </li>
               <li className="d-flex flex-column justify-content-center align-items-center">
-              <span className={tcStatus == "approved" || tcStatus == "assign_card" ? "activebg" : ""}></span>Approved
+                <span
+                  className={
+                    tcStatus == "approved" || tcStatus == "assign_card"
+                      ? "activebg"
+                      : ""
+                  }
+                ></span>
+                Approved
               </li>
               <li className="d-flex flex-column justify-content-center align-items-center">
                 <span></span>Assigned
@@ -419,7 +429,10 @@ function Fullfilment() {
                                       id="inlineRadio1"
                                       value="approved"
                                       checked={
-                                        fulfilmentData.status === "approved" || fulfilmentData.status == "assign_card" || fulfilmentData.status == "shipped"
+                                        fulfilmentData.status === "approved" ||
+                                        fulfilmentData.status ==
+                                          "assign_card" ||
+                                        fulfilmentData.status == "shipped"
                                       }
                                       onChange={handleChange}
                                     />
@@ -518,7 +531,11 @@ function Fullfilment() {
                   }}
                 >
                   <h2 className="accordion-header">
-                    <button className="accordion-button" type="button" onClick={handleShipment} >
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={handleShipment}
+                    >
                       <p className="mb-0 text-center d-block w-100">
                         Shipment Tracking
                       </p>

@@ -23,7 +23,7 @@ const apiService = {
   countries: CountriesService,
   mccCode: MccCodeService,
   brands: BrandsService,
-  requests: RequestsService
+  requests: RequestsService,
 };
 
 export default apiService;

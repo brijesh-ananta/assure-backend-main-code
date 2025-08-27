@@ -3,9 +3,11 @@ import axiosToken from "../utils/axiosToken";
 const TestCaseService = {
   // Already present
   getTestCasesList: async (environment, cardType) => {
-  const response = await axiosToken.get(`/test-cases?environment=${environment}&cardType=${cardType}`);
-  return response.data; // ✅ This means the calling code should expect `response.data`, i.e., the array.
-},
+    const response = await axiosToken.get(
+      `/test-cases?environment=${environment}&testCase=${cardType}`
+    );
+    return response.data; // ✅ This means the calling code should expect `response.data`, i.e., the array.
+  },
 
   // New: Get a test case by ID
   getTestCaseById: async (id) => {
@@ -29,8 +31,7 @@ const TestCaseService = {
   deleteTestCase: async (id) => {
     const response = await axiosToken.delete(`/test-cases/${id}`);
     return response.data;
-  }
+  },
 };
-
 
 export default TestCaseService;

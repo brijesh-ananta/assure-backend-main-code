@@ -148,7 +148,10 @@ function UserSearchFilter({ userType }) {
           reason: user.reason,
         };
 
-        const response = await axiosToken.put(`/users/${user.user_id}`, payload);
+        const response = await axiosToken.put(
+          `/users/${user.user_id}`,
+          payload
+        );
         alert(response.data.message || "s updated successfully.");
         window.location.reload();
       } catch (err) {
@@ -178,7 +181,11 @@ function UserSearchFilter({ userType }) {
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                 />
-                <img className="postiop" src="/images/search.svg" alt="search" />
+                <img
+                  className="postiop"
+                  src="/images/search.svg"
+                  alt="search"
+                />
               </div>
             </div>
           </div>
@@ -196,7 +203,11 @@ function UserSearchFilter({ userType }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <img className="postiop" src="/images/search.svg" alt="search" />
+                <img
+                  className="postiop"
+                  src="/images/search.svg"
+                  alt="search"
+                />
               </div>
             </div>
           </div>
@@ -215,7 +226,11 @@ function UserSearchFilter({ userType }) {
                     value={testPartner}
                     onChange={(e) => setTestPartner(e.target.value)}
                   />
-                  <img className="postiop" src="/images/search.svg" alt="search" />
+                  <img
+                    className="postiop"
+                    src="/images/search.svg"
+                    alt="search"
+                  />
                 </div>
               </div>
             )}
@@ -227,7 +242,9 @@ function UserSearchFilter({ userType }) {
                 <button
                   type="button"
                   className="btn-add py-2"
-                  onClick={() => (userRole === 1 ? setShowLockedOnly(!showLockedOnly) : null)}
+                  onClick={() =>
+                    userRole === 1 ? setShowLockedOnly(!showLockedOnly) : null
+                  }
                   disabled={userRole !== 1}
                 >
                   <img className="me-2" src="/images/lock.svg" alt="lock" />
@@ -257,7 +274,10 @@ function UserSearchFilter({ userType }) {
                     checked={userEnv === "prod"}
                     disabled={userRole !== 1}
                   />
-                  <label className="form-check-label" htmlFor="flexRadioDefault1">
+                  <label
+                    className="form-check-label"
+                    htmlFor="flexRadioDefault1"
+                  >
                     Prod
                   </label>
                 </div>
@@ -272,7 +292,10 @@ function UserSearchFilter({ userType }) {
                     id="flexRadioDefault2"
                     disabled={userRole !== 1}
                   />
-                  <label className="form-check-label" htmlFor="flexRadioDefault2">
+                  <label
+                    className="form-check-label"
+                    htmlFor="flexRadioDefault2"
+                  >
                     QA
                   </label>
                 </div>
@@ -311,12 +334,16 @@ function UserSearchFilter({ userType }) {
                                     name={`isLocked-${user.user_id}`}
                                     disabled
                                   />
-                                  <label className="form-check-label">Locked</label>
+                                  <label className="form-check-label">
+                                    Locked
+                                  </label>
                                 </div>
                               </div>
                             </th>
                             <th scope="col">
-                              <span>{roleMapping[user.role_id] || "Unknown Role"}</span>
+                              <span>
+                                {roleMapping[user.role_id] || "Unknown Role"}
+                              </span>
                             </th>
                             <th scope="col">
                               <button
@@ -438,7 +465,10 @@ function UserSearchFilter({ userType }) {
                                       ? setUsers((prev) =>
                                           prev.map((u) =>
                                             u.user_id === user.user_id
-                                              ? { ...u, firstName: e.target.value }
+                                              ? {
+                                                  ...u,
+                                                  firstName: e.target.value,
+                                                }
                                               : u
                                           )
                                         )
@@ -464,7 +494,10 @@ function UserSearchFilter({ userType }) {
                                       ? setUsers((prev) =>
                                           prev.map((u) =>
                                             u.user_id === user.user_id
-                                              ? { ...u, lastName: e.target.value }
+                                              ? {
+                                                  ...u,
+                                                  lastName: e.target.value,
+                                                }
                                               : u
                                           )
                                         )
@@ -484,13 +517,18 @@ function UserSearchFilter({ userType }) {
                                 <select
                                   className="form-select formcontrol"
                                   value={user.role_id}
-                                  disabled={user.role_id === 5 || userRole !== 1}
+                                  disabled={
+                                    user.role_id === 5 || userRole !== 1
+                                  }
                                   onChange={(e) =>
                                     userRole === 1
                                       ? setUsers((prev) =>
                                           prev.map((u) =>
                                             u.user_id === user.user_id
-                                              ? { ...u, role_id: e.target.value }
+                                              ? {
+                                                  ...u,
+                                                  role_id: e.target.value,
+                                                }
                                               : u
                                           )
                                         )
@@ -499,7 +537,10 @@ function UserSearchFilter({ userType }) {
                                 >
                                   <option value="">Select Role</option>
                                   {roles.map((role) => (
-                                    <option key={role.role_id} value={role.role_id}>
+                                    <option
+                                      key={role.role_id}
+                                      value={role.role_id}
+                                    >
                                       {role.role_name}
                                     </option>
                                   ))}
@@ -525,7 +566,12 @@ function UserSearchFilter({ userType }) {
                                         ? setUsers((prev) =>
                                             prev.map((u) =>
                                               u.user_id === user.user_id
-                                                ? { ...u, prod: e.target.checked ? 1 : 0 }
+                                                ? {
+                                                    ...u,
+                                                    prod: e.target.checked
+                                                      ? 1
+                                                      : 0,
+                                                  }
                                                 : u
                                             )
                                           )
@@ -552,7 +598,12 @@ function UserSearchFilter({ userType }) {
                                         ? setUsers((prev) =>
                                             prev.map((u) =>
                                               u.user_id === user.user_id
-                                                ? { ...u, qa: e.target.checked ? 1 : 0 }
+                                                ? {
+                                                    ...u,
+                                                    qa: e.target.checked
+                                                      ? 1
+                                                      : 0,
+                                                  }
                                                 : u
                                             )
                                           )
@@ -579,7 +630,12 @@ function UserSearchFilter({ userType }) {
                                         ? setUsers((prev) =>
                                             prev.map((u) =>
                                               u.user_id === user.user_id
-                                                ? { ...u, test: e.target.checked ? 1 : 0 }
+                                                ? {
+                                                    ...u,
+                                                    test: e.target.checked
+                                                      ? 1
+                                                      : 0,
+                                                  }
                                                 : u
                                             )
                                           )
@@ -615,7 +671,9 @@ function UserSearchFilter({ userType }) {
                     <div className="yellowcolor mb-lg-4 mb-2">
                       <div className="d-lg-flex align-items-center justify-content-between mb-3 gap-3">
                         <div className="d-flex align-items-center flex-grow-1 bg-light-theme-orange border border-dark">
-                          <p className="m-0 me-3 fontuse fontcolor">User Status</p>
+                          <p className="m-0 me-3 fontuse fontcolor">
+                            User Status
+                          </p>
                           <div className="d-flex formcard">
                             <div className="form-check me-3 d-flex gap-2 align-items-center">
                               <input
@@ -625,7 +683,9 @@ function UserSearchFilter({ userType }) {
                                 id={`status-block-${user.user_id}`}
                                 value="0"
                                 defaultChecked={user.isActive === 0}
-                                onChange={() => handleUserStatusChange(user.user_id, 0)}
+                                onChange={() =>
+                                  handleUserStatusChange(user.user_id, 0)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -643,7 +703,9 @@ function UserSearchFilter({ userType }) {
                                 id={`status-active-${user.user_id}`}
                                 value="1"
                                 defaultChecked={user.isActive === 1}
-                                onChange={() => handleUserStatusChange(user.user_id, 1)}
+                                onChange={() =>
+                                  handleUserStatusChange(user.user_id, 1)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -656,7 +718,9 @@ function UserSearchFilter({ userType }) {
                           </div>
                         </div>
                         <div className="d-flex align-items-center flex-grow-1 bg-light-theme-orange border border-dark">
-                          <p className="m-0 me-3 fontuse fontcolor">Account Status</p>
+                          <p className="m-0 me-3 fontuse fontcolor">
+                            Account Status
+                          </p>
                           <div className="d-flex formcard">
                             <div className="form-check me-3 d-flex gap-2 align-items-center">
                               <input
@@ -666,7 +730,9 @@ function UserSearchFilter({ userType }) {
                                 id={`acc-locked-${user.user_id}`}
                                 value="1"
                                 defaultChecked={user.is_locked === 1}
-                                onChange={() => handleAccountStatusChange(user.user_id, 1)}
+                                onChange={() =>
+                                  handleAccountStatusChange(user.user_id, 1)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -684,7 +750,9 @@ function UserSearchFilter({ userType }) {
                                 id={`acc-unlock-${user.user_id}`}
                                 value="0"
                                 defaultChecked={user.is_locked === 0}
-                                onChange={() => handleAccountStatusChange(user.user_id, 0)}
+                                onChange={() =>
+                                  handleAccountStatusChange(user.user_id, 0)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -697,7 +765,9 @@ function UserSearchFilter({ userType }) {
                           </div>
                         </div>
                         <div className="d-flex align-items-center flex-grow-1 bg-light-theme-orange border border-dark">
-                          <p className="m-0 me-3 fontuse fontcolor">Delete User</p>
+                          <p className="m-0 me-3 fontuse fontcolor">
+                            Delete User
+                          </p>
                           <div className="d-flex formcard">
                             <div className="form-check me-3 d-flex gap-2 align-items-center">
                               <input
@@ -707,7 +777,9 @@ function UserSearchFilter({ userType }) {
                                 id={`delete-yes-${user.user_id}`}
                                 value="1"
                                 defaultChecked={user.isDeleted === 1}
-                                onChange={() => handleDeleteChange(user.user_id, 1)}
+                                onChange={() =>
+                                  handleDeleteChange(user.user_id, 1)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -725,7 +797,9 @@ function UserSearchFilter({ userType }) {
                                 id={`delete-no-${user.user_id}`}
                                 value="0"
                                 defaultChecked={user.isDeleted === 0}
-                                onChange={() => handleDeleteChange(user.user_id, 0)}
+                                onChange={() =>
+                                  handleDeleteChange(user.user_id, 0)
+                                }
                                 disabled={userRole !== 1}
                               />
                               <label
@@ -738,7 +812,9 @@ function UserSearchFilter({ userType }) {
                           </div>
                         </div>
                       </div>
-                      {(user.isActive === 0 || user.is_locked == 1 || user.isDeleted == 1) && (
+                      {(user.isActive === 0 ||
+                        user.is_locked == 1 ||
+                        user.isDeleted == 1) && (
                         <textarea
                           placeholder="Provide reason for update: mandatory for changing user status and deleting user"
                           className="form-control formcontrol"
@@ -770,7 +846,11 @@ function UserSearchFilter({ userType }) {
                         </button>
                       )}
                     </div>
-                    <AuditTrails audit={true} tableName="users" recordId={user.user_id} />
+                    <AuditTrails
+                      audit={true}
+                      tableName="users"
+                      recordId={user.user_id}
+                    />
                   </div>
                 </div>
               </div>

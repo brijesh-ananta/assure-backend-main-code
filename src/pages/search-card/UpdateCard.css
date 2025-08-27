@@ -43,11 +43,10 @@
 .card-options-wrapper {
   width: 100%;
 }
-.otb{
+.otb {
   background-color: #fff3c6;
-    border: 1px solid #222;
+  border: 1px solid #222;
   border-radius: 8px;
-
 }
 .card-options {
   background-color: #fff3c6;
@@ -107,7 +106,7 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.6);
 }
 
-.card-reason-input{
+.card-reason-input {
   width: 100%;
   background-color: white;
   padding: 1rem 0.2rem;

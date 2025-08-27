@@ -4,12 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { dateToMMDDYYYY, mmddyyyyToDate } from "../maintain-card-stock/AddCard";
+import {
+  dateToMMDDYYYY,
+  mmddyyyyToDate,
+  dateToMMYYYY,
+  mmyyyyToDate,
+} from "../maintain-card-stock/AddCard";
 import apiService from "../../services";
 import * as Yup from "yup";
 import axiosToken from "../../utils/axiosToken";
 import { toYYYYMMDD } from "../../utils/date";
 import { decryptAesGcm } from "../../utils/encryptDecrypt";
+import { formatMaskedCardNumber } from "../../utils/function";
 
 const validationSchema = Yup.object().shape({
   cardNumber: Yup.string().required("Card number is required"),
@@ -50,6 +56,51 @@ const AssignCardManually = () => {
   const [tester, setTester] = useState(null);
   const [requestCardFeature, setRequestCardFeature] = useState(null);
   const [systemDataRows, setSystemDataRows] = useState({});
+  const [globalSystemData, setGlobalSystemData] = useState([]);
+  const [environment, setEnvironment] = useState(1);
+  const [endDate, setendDate] = useState(null);
+
+  //    useEffect(() => {
+  //     if (shippingDetails.length > 0) {
+  //       const updatedRows = {};
+
+  //       for (let i = 0; i < shippingDetails.length; i++) {
+  //         const card = shippingDetails[i];
+
+  //         const uniqueId = card?.id;
+
+  //         const offlineDaysValue =
+  //           card?.card?.offlineDays ||
+  //           systemDataRows[uniqueId]?.offline_days ||
+  //           globalSystemData?.offline_days ||
+  //           "";
+  //         const offlineUsageValue =
+  //           card?.card?.onlineUsages ||
+  //           systemDataRows[uniqueId]?.offline_usage ||
+  //           globalSystemData?.offline_usage ||
+  //           "";
+  //         const totalUsageValue =
+  //           card?.card?.totalUsage ||
+  //           systemDataRows[uniqueId]?.total_usage ||
+  //           globalSystemData?.total_usage ||
+  //           "";
+  //         const lastUseDateValue =
+  //           card?.card?.LastUseDate ||
+  //           systemDataRows[uniqueId]?.last_use_date ||
+  //           globalSystemData?.last_use_date ||
+  //           "";
+
+  //         updatedRows[uniqueId] = {
+  //           offline_days: offlineDaysValue,
+  //           offline_usage: offlineUsageValue,
+  //           total_usage: totalUsageValue,
+  //           last_use_date: lastUseDateValue,
+  //         };
+  //       }
+
+  //       setSystemDataRows(updatedRows);
+  //     }
+  //   }, [shippingDetails, globalSystemData]);
 
   const handleFinalSubmit = async (values) => {
     setFetching(true);
@@ -101,6 +152,11 @@ const AssignCardManually = () => {
 
     try {
       const data = await apiService.requests.getById(requestId);
+      const testinfo = JSON.parse(data?.testInfo) || {};
+
+      setEnvironment(data?.environment || 1);
+      setendDate(testinfo?.endDate || null);
+
       const parsedTesterDetails = JSON.parse(data?.testerDetails);
       const testers = parsedTesterDetails?.testers || [];
 
@@ -197,6 +253,25 @@ const AssignCardManually = () => {
       toast.error("An error occurred while assigning the cards.");
     }
   };
+  useEffect(() => {
+    async function fetchSystemDetault() {
+      if (environment) {
+        try {
+          const response = await axiosToken.get(
+            `/system-defaults?environment=${environment}`
+          );
+          if (response.data && response.data.length > 0) {
+            setGlobalSystemData(response.data[0]);
+          }
+        } catch (error) {
+          console.error("Error fetching system defaults:", error);
+        }
+      }
+    }
+    fetchSystemDetault();
+  }, [environment]);
+  console.log(cardDetails);
+  console.log(systemDataRows);
 
   return (
     <>
@@ -223,7 +298,10 @@ const AssignCardManually = () => {
                         const value = e.target.value.replace(/\D/g, "");
                         formik.setFieldValue("cardNumber", value);
                       }}
-                      value={formik.values.cardNumber}
+                      value={formatMaskedCardNumber(
+                        formik.values.cardNumber,
+                        "full"
+                      )}
                     />
                     <span onClick={() => setShowCardNumber(!showCardNumber)}>
                       {showCardNumber ? (
@@ -240,33 +318,6 @@ const AssignCardManually = () => {
                   )}
                 </div>
               </div>
-
-              <div className="form-group-add-card align-items-center">
-                <label className="font" style={{ width: "8rem" }}>
-                  Valid Thru
-                </label>
-                <div className="d-flex flex-column ">
-                  <DatePicker
-                    selected={mmddyyyyToDate(formik.values.validThru)}
-                    onChange={(date) => {
-                      const str = dateToMMDDYYYY(date);
-                      formik.setFieldValue("validThru", str);
-                    }}
-                    dateFormat="MM-dd-yyyy"
-                    placeholderText="MM-DD-YYYY"
-                    className="form-control formcontrol"
-                    name="validThru"
-                  />
-                  {formik.touched.validThru && formik.errors.validThru && (
-                    <div className="text-danger mt-2">
-                      {formik.errors.validThru}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="row labeled-row">
               <div className="form-group-add-card">
                 <label
                   className="font text-right"
@@ -295,7 +346,33 @@ const AssignCardManually = () => {
                   )}
                 </div>
               </div>
+            </div>
 
+            <div className="row labeled-row">
+              <div className="form-group-add-card align-items-center">
+                <label className="font" style={{ width: "8rem" }}>
+                  Valid Thru
+                </label>
+                <div className="d-flex flex-column ">
+                  <DatePicker
+                    selected={mmyyyyToDate(formik.values.validThru)}
+                    onChange={(date) => {
+                      const str = dateToMMYYYY(date);
+                      formik.setFieldValue("validThru", str);
+                    }}
+                    dateFormat="MM-yyyy"
+                    placeholderText="MM-YYYY"
+                    className="form-control formcontrol"
+                    name="validThru"
+                    showMonthYearPicker
+                  />
+                  {formik.touched.validThru && formik.errors.validThru && (
+                    <div className="text-danger mt-2">
+                      {formik.errors.validThru}
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="form-group-add-card">
                 <label
                   className="font text-right"
@@ -466,12 +543,11 @@ const AssignCardManually = () => {
                   <label className="font">Offline Days</label>
                   <input
                     name="offline_days"
-                    placeholder="2"
                     type="text"
                     onChange={(e) =>
                       handleInputChange("offline_days", e.target.value)
                     }
-                    value={systemDataRows?.offline_days || ""}
+                    value={globalSystemData?.offline_days || ""}
                     className="form-control formcontrol small-input"
                   />
                 </div>
@@ -484,7 +560,7 @@ const AssignCardManually = () => {
                     onChange={(e) =>
                       handleInputChange("offline_usage", e.target.value)
                     }
-                    value={systemDataRows?.offline_usage || ""}
+                    value={globalSystemData?.offline_usage || ""}
                     className="form-control formcontrol small-input"
                   />
                 </div>
@@ -497,7 +573,7 @@ const AssignCardManually = () => {
                     onChange={(e) =>
                       handleInputChange("total_usage", e.target.value)
                     }
-                    value={systemDataRows?.total_usage || ""}
+                    value={globalSystemData?.total_usage || ""}
                     className="form-control formcontrol small-input"
                   />
                 </div>
@@ -512,6 +588,7 @@ const AssignCardManually = () => {
                     dateFormat="MM-dd-yyyy"
                     placeholderText="MM-DD-YYYY"
                     className="form-control formcontrol"
+                    value={endDate}
                   />
                 </div>
               </div>

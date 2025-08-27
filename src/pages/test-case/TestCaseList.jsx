@@ -1,4 +1,10 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useSearchParams,
+} from "react";
 import { useNavigate, Link } from "react-router-dom";
 import TestCaseService from "../../services/TestCase";
 import { useAuth } from "../../utils/AuthContext";
@@ -35,7 +41,7 @@ const TestCaseList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState("test_case_id");
   const [sortDirection, setSortDirection] = useState("desc");
-
+  const [testcase, settestcase] = useState("Contact");
   const icons = {
     sortAsc: ChevronUp,
     sortDesc: ChevronDown,
@@ -51,7 +57,7 @@ const TestCaseList = () => {
     try {
       const response = await TestCaseService.getTestCasesList(
         environment,
-        cardType
+        testcase
       );
       setAllTestCases(response.data || []); // <-- FIXED: Use `response.data`, not full `response`
     } catch (error) {
@@ -59,7 +65,7 @@ const TestCaseList = () => {
       setAllTestCases([]);
     }
     setLoading(false);
-  }, [environment, cardType]);
+  }, [environment, testcase]);
 
   useEffect(() => {
     fetchAllTestCases();
@@ -70,7 +76,7 @@ const TestCaseList = () => {
       try {
         const allFetchedTestCases = await TestCaseService.getTestCasesList(
           environment,
-          cardType
+          testcase
         );
 
         setStatusCounts({
@@ -89,7 +95,7 @@ const TestCaseList = () => {
       }
     };
     fetchCounts();
-  }, [environment, cardType]);
+  }, [environment, testcase]);
 
   const filteredAndSortedData = useMemo(() => {
     let result = [...allTestCases];
@@ -104,20 +110,29 @@ const TestCaseList = () => {
       const searchValue = searchTerm.toLowerCase().trim();
       result = result.filter(
         (item) =>
-          item.test_case_id?.toString().toLowerCase().includes(searchValue) ||
-          item.title?.toLowerCase().includes(searchValue) ||
+          item.test_cases_unique_id
+            ?.toString()
+            .toLowerCase()
+            .includes(searchValue) ||
+          item.short_description?.toLowerCase().includes(searchValue) ||
           item.status?.toLowerCase().includes(searchValue) ||
-          item.created_by?.toLowerCase().includes(searchValue) ||
-          item.env?.toLowerCase().includes(searchValue)
+          item.terminal_type?.toLowerCase().includes(searchValue) ||
+          item.testing_scope?.toLowerCase().includes(searchValue) ||
+          item.pin_entry_capability_text?.toLowerCase().includes(searchValue) ||
+          item.cashback_pin_text?.toLowerCase().includes(searchValue) ||
+          item.created_at?.toString().toLowerCase().includes(searchValue)
       );
     }
 
     const columns = [
       { key: "test_case_id", sortable: true },
-      { key: "title", sortable: true },
+      { key: "short_description", sortable: true },
       { key: "status", sortable: true },
-      { key: "created_by", sortable: true },
-      { key: "env", sortable: true },
+      { key: "terminal_type", sortable: true },
+      { key: "testing_scope", sortable: true },
+      { key: "pin_entry_capability_text", sortable: true },
+      { key: "cashback_pin_text", sortable: true },
+      { key: "created_at", sortable: true },
     ];
 
     if (sortColumn) {
@@ -158,7 +173,7 @@ const TestCaseList = () => {
 
   const handleEnvironmentChange = (e) => {
     setEnvironment(e.target.value);
-    setCardType("Pos");
+    //setCardType("Pos");
     setCurrentPage(1);
   };
 
@@ -167,6 +182,11 @@ const TestCaseList = () => {
     setCurrentPage(1);
   };
 
+  const handleTestCaseChange = (e) => {
+    settestcase(e.target.value);
+    setCurrentPage(1);
+  };
+  console.log(testcase);
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
     setCurrentPage(1);
@@ -205,13 +225,17 @@ const TestCaseList = () => {
         key: "test_cases_unique_id",
         label: "Test Case ID",
         sortable: true,
-        renderCell: (item) => item.test_cases_unique_id,
+        renderCell: (item) => (
+          <Link to={`/dashboard/test-case/view/${item.id}?recordId=${item.id}`}>
+            {item.test_cases_unique_id}
+          </Link>
+        ),
       },
       {
         key: "status",
         label: "Status",
         sortable: true,
-        renderCell: (item) => item.status,
+        renderCell: (item) => item.status_text,
       },
       {
         key: "terminal_type",
@@ -219,35 +243,36 @@ const TestCaseList = () => {
         sortable: true,
         renderCell: (item) => item.terminal_type,
       },
-      {
-        key: "testing_type",
-        label: "Testing Type",
-        sortable: true,
-        renderCell: (item) => item.testing_type,
-      },
+
       {
         key: "testing_scope",
-        label: "Scope",
+        label: "Testing Scope",
         sortable: true,
         renderCell: (item) => item.testing_scope,
       },
       {
-        key: "pin_entry_capability",
-        label: "PIN Entry",
+        key: "pin_entry_capability_text",
+        label: "PIN Capability",
         sortable: true,
-        renderCell: (item) => item.pin_entry_capability,
+        renderCell: (item) => item.pin_entry_capability_text,
       },
       {
-        key: "created_by",
-        label: "Created By",
+        key: "cashback_pin_text",
+        label: "Cashback Pin",
         sortable: true,
-        renderCell: (item) => item.created_by,
+        renderCell: (item) => item.cashback_pin_text,
       },
       {
-        key: "environment_id",
-        label: "Env ID",
+        key: "short_description",
+        label: "Description",
         sortable: true,
-        renderCell: (item) =>environmentMapping[ item.environment_id],
+        renderCell: (item) => item.short_description,
+      },
+      {
+        key: "created_at",
+        label: "Created Date",
+        sortable: true,
+        renderCell: (item) => new Date(item.created_at).toLocaleDateString(),
       },
     ],
     []
@@ -292,34 +317,48 @@ const TestCaseList = () => {
 
           {/* Card Type Radio Buttons */}
           <div className="d-lg-flex formcard card-custom-shadow-1 custom-bg-to-left p-2 rounded-3">
-            <span className="me-3 font">Card Type</span>
+            <span className="me-3 font">Test Scope</span>
             <div className="form-check me-3 d-flex gap-2 align-items-center">
               <input
                 className="form-check-input"
                 type="radio"
-                name="cardType"
-                value={"Pos"}
-                checked={cardType === "Pos" || environment === "2"}
-                onChange={handleCardTypeChange}
-                id="cardType1"
+                name="testCase"
+                value={"Contact"}
+                checked={testcase === "Contact"}
+                onChange={handleTestCaseChange}
+                id="testcase1"
               />
-              <label className="form-check-label" htmlFor="cardType1">
-                POS
+              <label className="form-check-label" htmlFor="testcase1">
+                Contact
               </label>
             </div>
-            <div className="form-check d-flex gap-2 align-items-center">
+            <div className="form-check me-3 d-flex gap-2 align-items-center">
               <input
                 className="form-check-input"
                 type="radio"
-                name="cardType"
-                value={"Ecomm"}
-                checked={cardType === "Ecomm" && environment !== "2"}
-                onChange={handleCardTypeChange}
-                id="cardType2"
-                disabled={environment === "2"}
+                name="testcase"
+                value={"Contactless"}
+                checked={testcase === "Contactless"}
+                onChange={handleTestCaseChange}
+                id="testcase2"
               />
-              <label className="form-check-label" htmlFor="cardType2">
-                Ecomm
+              <label className="form-check-label" htmlFor="testcase2">
+                Contactless
+              </label>
+            </div>
+
+            <div className="form-check  d-flex gap-2 align-items-center">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="testcase"
+                value={"Both"}
+                checked={testcase === "Both"}
+                onChange={handleTestCaseChange}
+                id="testcase3"
+              />
+              <label className="form-check-label" htmlFor="testcase3">
+                Both
               </label>
             </div>
           </div>
@@ -328,9 +367,7 @@ const TestCaseList = () => {
           <button
             className="btn save-btn"
             onClick={() =>
-              navigate(
-                `/dashboard/test-case/add?environment=${environment}&cardType=${cardType}`
-              )
+              navigate(`/dashboard/test-case/add?environment=${environment}`)
             }
           >
             Add New Test Case
@@ -472,7 +509,9 @@ const TestCaseList = () => {
                           <td
                             key={`${item.id}-${column.key}`}
                             onClick={() =>
-                              navigate(`/dashboard/test-case/view/${item.id}`)
+                              navigate(
+                                `/dashboard/test-case/view/${item.id}?recordId=${item.id}`
+                              )
                             }
                             style={{ cursor: "pointer" }}
                           >

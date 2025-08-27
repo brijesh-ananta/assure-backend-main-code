@@ -61,6 +61,7 @@ const CustomTable = ({
 
       if (searchTerm) {
         const searchValue = searchTerm.toLowerCase().trim();
+
         result = result?.filter((item) => {
           const stringValues = Object.values(item)
             .flatMap((val) => {
@@ -100,7 +101,16 @@ const CustomTable = ({
 
       setFilteredData(result);
     }
-  }, [searchTerm, sortColumn, sortDirection, isServerSide, entriesPerPage, currentPage, data, columns]);
+  }, [
+    searchTerm,
+    sortColumn,
+    sortDirection,
+    isServerSide,
+    entriesPerPage,
+    currentPage,
+    data,
+    columns,
+  ]);
 
   useEffect(() => {
     if (isServerSide && onStateChange) {
@@ -217,7 +227,7 @@ const CustomTable = ({
                 (column, index) =>
                   !column.hide && (
                     <th
-                      key={column.key} // Corrected: Using column.key for stability
+                      key={`${column.key}-${index}`} // Corrected: Using column.key for stability
                       className={`${headerClass} ${
                         column.sortable ? "sortable" : ""
                       }`}
@@ -243,11 +253,13 @@ const CustomTable = ({
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((item) => {
+            {currentItems.map((item, index) => {
               const isExpanded = expandedRows[item.id]; // Use your unique row identifier
 
               return (
-                <Fragment key={item.issuer_id}> {/* Corrected: Added Fragment with unique key */}
+                <Fragment key={`items-${index}`}>
+                  {" "}
+                  {/* Corrected: Added Fragment with unique key */}
                   <tr
                     className={rowClass}
                     onClick={() => onRowClick && onRowClick(item)}
@@ -283,8 +295,12 @@ const CustomTable = ({
                     )}
                   </tr>
                   {isExpanded && (
-                    <tr key={`${item.issuer_id}-expanded`}> {/* Corrected: Unique key for expanded row */}
-                      <td colSpan={columns.length + (isExpandable ? 1 : 0)}> {/* Added 1 to colspan if expandable */}
+                    <tr key={`${item.issuer_id}-expanded`}>
+                      {" "}
+                      {/* Corrected: Unique key for expanded row */}
+                      <td colSpan={columns.length + (isExpandable ? 1 : 0)}>
+                        {" "}
+                        {/* Added 1 to colspan if expandable */}
                         {expandable.renderContent(item)}
                       </td>
                     </tr>

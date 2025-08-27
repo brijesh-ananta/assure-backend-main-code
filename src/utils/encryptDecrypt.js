@@ -1,8 +1,8 @@
 export async function decryptAesGcm({
-  cipherText, 
+  cipherText,
   ivKey,
   authTagB64,
-  userKey
+  userKey,
 }) {
   try {
     const ciphertext = Uint8Array.from(atob(cipherText), (c) =>

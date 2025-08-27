@@ -30,12 +30,12 @@ function TerminalInfo({
         ...prevData,
         ...parsedTermInfo,
       }));
+      fetchTestCaseData(parsedTermInfo);
     }
-    fetchTestCaseData();
   }, [requestInfoData]);
 
   const fetchTestCaseData = async (datainfo = terminalInfoData) => {
-     setLoading(true);
+    setLoading(true);
 
     const flattenedData = {
       terminalType: datainfo.terminalType,
@@ -46,13 +46,11 @@ function TerminalInfo({
       cashbackPIN: datainfo.cashbackPIN,
       status: "active",
     };
-  
-
     try {
       const response = await axiosToken.get(
         `/test-cases/filter/terminal?terminalType=${flattenedData.terminalType}&testingScope=${flattenedData.testingScope}&pinEntryCapability=${flattenedData.pinEntryCapability}&paymentTechnology=${flattenedData.paymentTechnology}&cashbackPIN=${flattenedData.cashbackPIN}&status=active`
       );
-    
+
       if (response.status == 200) {
         settestCaseData(response?.data?.data);
       }
@@ -64,6 +62,7 @@ function TerminalInfo({
     }
   };
 
+  console.log("terminal data----->", terminalInfoData);
   const handleSubmit = async (e, goNext = false) => {
     if (!validateForm()) return;
     setLoading(true);
@@ -122,6 +121,7 @@ function TerminalInfo({
       toast.error("Please select a Testing Scope.");
       return false;
     }
+
     if (!terminalInfoData.paymentTechnology) {
       toast.error("Please select a Payment Technology.");
       return false;
@@ -130,13 +130,57 @@ function TerminalInfo({
       toast.error("Please select PIN Entry Capability.");
       return false;
     }
- 
+
     if (!terminalInfoData.cashbackPIN) {
       toast.error("Please select Cashback PIN.");
       return false;
     }
 
     return true; // If all validations pass
+  };
+  console.log(testcaseData);
+
+  const isContactOnlyTerminal = (type) => {
+    const restrictedTypes = ["Transit", "TOM/SoftPOS"];
+    return restrictedTypes.includes(type);
+  };
+
+  const handleTestingScopeChange = (scope, checked) => {
+    const isRestricted = isContactOnlyTerminal(terminalInfoData.terminalType);
+    if (isRestricted && scope === "Contact") return;
+
+    let current = terminalInfoData.testingScope;
+
+    // Normalize to array
+    let currentArray = [];
+    if (current === "Both") {
+      currentArray = ["Contact", "Contactless"];
+    } else if (typeof current === "string") {
+      currentArray = [current];
+    }
+
+    // Update selection
+    let updatedArray = checked
+      ? [...new Set([...currentArray, scope])]
+      : currentArray.filter((item) => item !== scope);
+
+    let newValue = "";
+    if (
+      updatedArray.includes("Contact") &&
+      updatedArray.includes("Contactless")
+    ) {
+      newValue = "Both";
+    } else if (updatedArray.length === 1) {
+      newValue = updatedArray[0];
+    }
+
+    const updatedData = {
+      ...terminalInfoData,
+      testingScope: newValue,
+    };
+
+    setTerminalInfoData(updatedData);
+    fetchTestCaseData(updatedData);
   };
 
   return (
@@ -188,26 +232,38 @@ function TerminalInfo({
           </span>
 
           <div className="row formcard col-7 ps-3 ms-1">
-            {["Contact", "Contactless", "Both"].map((scope) => (
-              <div key={scope} className="form-check col-3">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="testingScope"
-                  value={scope}
-                  checked={terminalInfoData.testingScope === scope}
-                  onChange={handleChange}
-                  disabled={
-                    (requestInfoData.status != "draft" &&
-                      requestInfoData.status != "returned" &&
-                      requestInfoData.status != undefined) ||
-                    !isRequester ||
-                    canEdit
-                  }
-                />
-                <label className="form-check-label ms-3">{scope}</label>
-              </div>
-            ))}
+            {["Contact", "Contactless"].map((scope) => {
+              const isRestricted = isContactOnlyTerminal(
+                terminalInfoData.terminalType
+              );
+              const isDisabledScope =
+                (scope === "Contact" && isRestricted) ||
+                (requestInfoData.status !== "draft" &&
+                  requestInfoData.status !== "returned" &&
+                  requestInfoData.status !== undefined) ||
+                !isRequester ||
+                canEdit;
+
+              return (
+                <div key={scope} className="form-check col-3">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    name="testingScope"
+                    value={scope}
+                    checked={
+                      terminalInfoData.testingScope === scope ||
+                      terminalInfoData.testingScope === "Both"
+                    }
+                    onChange={(e) =>
+                      handleTestingScopeChange(scope, e.target.checked)
+                    }
+                    disabled={isDisabledScope}
+                  />
+                  <label className="form-check-label ms-3">{scope}</label>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -217,7 +273,7 @@ function TerminalInfo({
           </span>
 
           <div className="row formcard col-7 ps-3 ms-1">
-            {["Spec 1", "Spec 2"].map((spec) => (
+            {["DPAS 1.0", "DPAS Connect"].map((spec) => (
               <div key={spec} className="form-check col-3">
                 <input
                   className="form-check-input"

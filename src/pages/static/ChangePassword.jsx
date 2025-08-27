@@ -23,7 +23,7 @@ function ChangePassword() {
 
   const navigate = useNavigate();
 
-  // Strong password regex: 
+  // Strong password regex:
   // - At least 8 characters
   // - At least one uppercase letter
   // - At least one lowercase letter

@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const CardProfilesLayout = ({children}) => {
-  return (
-    <>
-    {children}
-    </>
-  )
-}
+const CardProfilesLayout = ({ children }) => {
+  return <>{children}</>;
+};
 
-export default CardProfilesLayout
+export default CardProfilesLayout;

@@ -50,19 +50,19 @@ function Testinformation() {
     });
   };
 
-    // handleCardAssignment
-    const handleCardAssignment = () => {
-      navigate(`/dashboard/test-card-request/assignment/${cardRequestId}`, {
-        state: { environment, terminalType, status: tcStatus },
-      });
-    };
+  // handleCardAssignment
+  const handleCardAssignment = () => {
+    navigate(`/dashboard/test-card-request/assignment/${cardRequestId}`, {
+      state: { environment, terminalType, status: tcStatus },
+    });
+  };
 
-    // handleShipment
-    const handleShipment = () => {
-      navigate(`/dashboard/test-card-request/shipment/${cardRequestId}`, {
-        state: { environment, terminalType, status: tcStatus },
-      });
-    };
+  // handleShipment
+  const handleShipment = () => {
+    navigate(`/dashboard/test-card-request/shipment/${cardRequestId}`, {
+      state: { environment, terminalType, status: tcStatus },
+    });
+  };
 
   const [disableCountryCodes, setDisableCountryCodes] = useState(false);
   const [testInfo, setTestInfo] = useState({
@@ -269,7 +269,6 @@ function Testinformation() {
     }
   };
 
-
   return (
     <>
       <Header title={headerTitle} />
@@ -346,7 +345,11 @@ function Testinformation() {
                 <button
                   className="accordion-button"
                   type="button"
-                  style={{ cursor: "pointer" , pointerEvents: "auto", opacity: "1" }}
+                  style={{
+                    cursor: "pointer",
+                    pointerEvents: "auto",
+                    opacity: "1",
+                  }}
                   onClick={handleRequest}
                 >
                   <p className="mb-0 text-center d-block w-100">
@@ -518,20 +521,20 @@ function Testinformation() {
                           </div>
                           {/* hide if environment is Test */}
                           {testInfo.environment != 3 && (
-                          <div className="col-12 col-lg-3 me-lg-4 me-0">
-                            <div className="d-lg-flex align-items-center">
-                              <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2">
-                                End Date
-                              </label>
-                              <input
-                                type="date"
-                                name="endDate"
-                                className="form-control formcontrol"
-                                value={testInfo.endDate}
-                                onChange={handleChange}
-                              />
+                            <div className="col-12 col-lg-3 me-lg-4 me-0">
+                              <div className="d-lg-flex align-items-center">
+                                <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2">
+                                  End Date
+                                </label>
+                                <input
+                                  type="date"
+                                  name="endDate"
+                                  className="form-control formcontrol"
+                                  value={testInfo.endDate}
+                                  onChange={handleChange}
+                                />
+                              </div>
                             </div>
-                          </div>
                           )}
                         </div>
                       </div>
@@ -755,7 +758,7 @@ function Testinformation() {
             </div>
 
             {/* if tcStatus != "draft" hide this */}
-            {(tcStatus != "draft" && tcStatus != "new") && (
+            {tcStatus != "draft" && tcStatus != "new" && (
               <>
                 {/* Fulfilment */}
                 <div
@@ -796,7 +799,11 @@ function Testinformation() {
                   }}
                 >
                   <h2 className="accordion-header">
-                    <button className="accordion-button" type="button" onClick={handleCardAssignment}>
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={handleCardAssignment}
+                    >
                       <p className="mb-0 text-center d-block w-100">
                         Card Assignment
                       </p>
@@ -819,7 +826,11 @@ function Testinformation() {
                   }}
                 >
                   <h2 className="accordion-header">
-                    <button className="accordion-button" type="button" onClick={handleShipment}>
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={handleShipment}
+                    >
                       <p className="mb-0 text-center d-block w-100">
                         Shipment Tracking
                       </p>

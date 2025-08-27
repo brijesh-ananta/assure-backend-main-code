@@ -8,7 +8,7 @@ function ResetPassWord() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const VITE_SITE_NAME = import.meta.env.VITE_SITE_NAME;
-  const [params] = useSearchParams()
+  const [params] = useSearchParams();
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,14 +20,16 @@ function ResetPassWord() {
 
   const [checkToken, setCheckToken] = useState(false);
   //   get token from url
-  const RPWDtoken = params.get('token')
+  const RPWDtoken = params.get("token");
 
   // check token is valid or not expire
   const check_Token = async () => {
     try {
       setIsProcessing(true); // Start processing spinner
       setCheckToken(false);
-      const response = await axiosToken.post("/users/check-token", {token: RPWDtoken});
+      const response = await axiosToken.post("/users/check-token", {
+        token: RPWDtoken,
+      });
       if (response.data.success === true) {
         setCheckToken(true);
         //setLoginSuccess(response.data.message || "Password reset token is valid");

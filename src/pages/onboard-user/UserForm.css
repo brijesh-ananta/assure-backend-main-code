@@ -93,7 +93,7 @@
   gap: 2rem;
 }
 
-.form-actions button:disabled{
+.form-actions button:disabled {
   background-color: #f8d8bf;
 }
 
@@ -176,8 +176,6 @@
   align-items: center;
   font-size: 0.9rem;
 }
-
-
 
 .card-options-wrapper {
   width: 100%;

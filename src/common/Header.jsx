@@ -289,9 +289,11 @@ const Header = ({ title, page }) => {
 
             {/* User Info & Logout */}
             <div className="d-flex flex-column login-con">
-              {console.log(user)}
               <div className="d-lg-flex align-items-center mb-1">
-                <span className="me-3">Welcome Back, {user.firstName + " " + user.lastName}</span>
+                <span className="me-3">
+                  Welcome Back
+                  {user.firstName ? `, ${user.firstName} ${user.lastName}` : ""}
+                </span>
                 <div className="d-flex align-items-center gap-3">
                   <Link to={"/dashboard"}>
                     <img src="/images/home.svg" alt="Home" />
@@ -306,8 +308,8 @@ const Header = ({ title, page }) => {
               </div>
               <p className="m-0 d-flex justify-content-end">
                 <span className="me-2">Last Log-in:</span>
-                {user.lastLogin && user.lastLogin != "N/A"
-                  ? formatDateTime(user.lastLogin || new Date())
+                {user.last_login && user.last_login != "N/A"
+                  ? formatDateTime(user.last_login || new Date())
                   : formatTodayDateOnly()}{" "}
                 EST
               </p>

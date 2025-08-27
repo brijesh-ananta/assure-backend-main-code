@@ -35,7 +35,6 @@
   flex: 1;
 }
 
-
 .add-card-wrapper .input-wrapper span {
   position: absolute;
   right: 0.75rem;
@@ -98,6 +97,6 @@
 
 input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }

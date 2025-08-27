@@ -205,11 +205,12 @@ const AssignCard = () => {
     }
 
     if (+totalTransactionLimit > +(cardData.otb || cardData?.OTB || 0)) {
-      toast.error(`Total transaction limit cannot exceed the available OTB (${cardData?.OTB || cardData?.otb}).`
-      )
-      return
+      toast.error(
+        `Total transaction limit cannot exceed the available OTB (${cardData?.OTB || cardData?.otb}).`
+      );
+      return;
     }
-    
+
     const payload = {
       cardID: cardData?.cardid,
       userId: data?.created_by,
@@ -284,8 +285,8 @@ const AssignCard = () => {
         userCardData?.LastUseDate
           ? userCardData.LastUseDate.slice(0, 10)
           : globalSystemData?.last_use_date
-          ? globalSystemData.last_use_date.slice(0, 10)
-          : ""
+            ? globalSystemData.last_use_date.slice(0, 10)
+            : ""
       );
     } else if (Object.keys(globalSystemData).length) {
       setOfflineDays(globalSystemData?.offline_days ?? "");

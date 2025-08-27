@@ -11,6 +11,9 @@ import { dateToMMDDYYYY, mmddyyyyToDate } from "../maintain-card-stock/AddCard";
 import PosCard from "../../components/cards/pos/PosCard";
 import EcommCard from "../../components/cards/ecomm/EcommCard";
 import { decryptAesGcm } from "../../utils/encryptDecrypt";
+import AssignmentHistory from "./AssignmentHistory";
+import CardUsageHistory from "./CardUsageHistory";
+import { toYYYYMMDD } from "../../utils/date";
 
 const status = ["unassigned", "deleted", "blocked"];
 
@@ -45,6 +48,56 @@ const UpdateCard = () => {
     pinNumber: "",
   });
 
+  // parse "MM-DD-YYYY" or "MM/DD/YYYY" or "YYYY-MM-DD" or ISO -> Date or null
+  // parse "MMYY" (e.g. "0429"), "MM-YY", full ISO (YYYY-MM-DD) or MM-DD-YYYY -> Date or null
+  const mmYYToDate = (s) => {
+    console.log("321", s);
+    if (!s) return null;
+    const str = String(s).trim();
+
+    // full ISO or YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}T/.test(str) || /^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const d = new Date(str);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    // MM-DD-YYYY or MM/DD/YYYY
+    if (/^\d{2}[-\/]\d{2}[-\/]\d{4}$/.test(str)) {
+      return mmddyyyyToDate(str);
+    }
+
+    // MM-YYYY or MM/YYYY (4-digit year)
+    const m4 = str.match(/^(\d{2})[-\/](\d{4})$/);
+    if (m4) {
+      const month = parseInt(m4[1], 10) - 1;
+      const year = parseInt(m4[2], 10);
+      const d = new Date(year, month, 1);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    // MMYY or MM-YY or MM/YY (2-digit year)
+    const m = str.match(/^(\d{2})[-\/]?(\d{2})$/);
+    if (m) {
+      const month = parseInt(m[1], 10) - 1;
+      let year = parseInt(m[2], 10);
+      year += year < 100 ? 2000 : 0; // 2-digit year -> 20xx
+      const d = new Date(year, month, 1);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    return null;
+  };
+
+  // Format Date -> "MMYY" (for DB)
+  const dateToMMYY = (date) => {
+    if (!date) return "";
+    const d = date instanceof Date ? date : new Date(date);
+    if (Number.isNaN(d.getTime())) return "";
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${mm}${yy}`; // e.g. "0429"
+  };
+
   const leftSideButtons = useMemo(
     () => [
       {
@@ -64,6 +117,25 @@ const UpdateCard = () => {
     [cardDetails.status]
   );
 
+  const rightSideButtons = useMemo(
+    () => [
+      {
+        label: "Assignment History",
+        onClick: () => {
+          setLeftSideButton("Assignment History");
+        },
+      },
+      {
+        label: "Card Usage History",
+        onClick: () => {
+          setLeftSideButton("Card Usage History");
+        },
+        disabled: cardType === "Ecomm",
+      },
+    ],
+    [cardDetails.status]
+  );
+
   const handleEnvironmentChange = (e) => {
     setEnvironment(e.target.value);
   };
@@ -75,6 +147,7 @@ const UpdateCard = () => {
   const fetchCard = async () => {
     try {
       const card = await apiService.card.getById(id);
+      console.log(card);
       if (card.cardDetails) {
         try {
           const userCiperText = localStorage.getItem("ciperText");
@@ -159,6 +232,7 @@ const UpdateCard = () => {
           seqNumber: formData?.seqNumber || "",
           cvv: formData?.cvv || "",
           validThru: formData?.validThru || "",
+          expDate: formData?.expDate || "",
           name: formData?.name || "",
           address: formData.address || "",
           city: formData.city || "",
@@ -202,7 +276,10 @@ const UpdateCard = () => {
       toast.error("Postal code cannot be negative or empty.");
       return false;
     }
-
+    if (cardStatus.toString().length == 0) {
+      toast.error("Please select card status");
+      return false;
+    }
     if (Object.keys(errors).length > 0) {
       Object.values(errors).forEach((error) => toast.error(error));
       return false;
@@ -286,7 +363,17 @@ const UpdateCard = () => {
           </div>
         </div>
       </div>
-      <SideButtons placement="left" buttons={leftSideButtons} />
+      <SideButtons
+        activeLabel={leftSideButton}
+        placement="left"
+        buttons={leftSideButtons}
+      />
+
+      <SideButtons
+        placement="right"
+        buttons={rightSideButtons}
+        activeLabel={leftSideButton}
+      />
       {leftSideButton === "Card Details" ? (
         <>
           <div
@@ -346,7 +433,7 @@ const UpdateCard = () => {
                       {cardDetails?.decryptedCardDetails?.expDate}
                     </span>
                   </div>
-                  {environment == "1" && cardType === "Pos" && (
+                  {cardType === "Pos" && (
                     <div className="row align-items-center">
                       <label className="col-4 font text-right">PIN</label>
                       <span className="font col-5">
@@ -363,7 +450,7 @@ const UpdateCard = () => {
                       </span>
                     </div>
                   )}
-                  {cardDetails?.otb ? (
+                  {cardDetails?.otb && cardDetails.cardType === "Pos" ? (
                     <>
                       <div className="row mt-3">
                         <label className="col-4 text-right">OTB</label>
@@ -420,21 +507,49 @@ const UpdateCard = () => {
                       </div>
                     </div>
                     <div className="col-4 d-flex gap-3 align-items-center">
-                      <label>Valid Thru</label>
+                      <label>Valid Thru </label>
+                      {/* <p>{JSON.stringify(cardDetails)}</p> */}
                       <span className="">
                         <DatePicker
-                          selected={mmddyyyyToDate(formData.validThru)}
+                          selected={mmYYToDate(
+                            formData.validThru ||
+                              cardDetails?.decryptedCardDetails?.validThru ||
+                              cardDetails?.Valid_Thru ||
+                              cardDetails?.decryptedCardDetails?.Valid_Thru ||
+                              cardDetails?.decryptedCardDetails?.expDate ||
+                              cardDetails?.decryptedCardDetails?.exp_date ||
+                              ""
+                          )}
                           onChange={(date) => {
-                            const str = dateToMMDDYYYY(date);
-                            setFormData({
-                              ...formData,
-                              validThru: str,
-                            });
+                            if (!date) return;
+
+                            // MMYY for DB storage
+                            const mmYY = dateToMMYY(date);
+
+                            // Last day of that month
+                            const lastDayOfMonth = new Date(
+                              date.getFullYear(),
+                              date.getMonth() + 1,
+                              0
+                            );
+                            const expDateStr = dateToMMDDYYYY(lastDayOfMonth);
+
+                            // Update both values at once
+                            setFormData((prev) => ({
+                              ...prev,
+                              validThru: mmYY,
+                              expDate: expDateStr,
+                            }));
+
+                            console.log("validThru (MMYY):", mmYY);
+                            console.log("expDate (MM-DD-YYYY):", expDateStr);
                           }}
-                          dateFormat="MM-dd-yyyy"
-                          placeholderText="MM-DD-YYYY"
+                          dateFormat="MM-yyyy"
+                          placeholderText="MM-YYYY"
                           className="form-control formcontrol"
                           name="validThru"
+                          showMonthYearPicker
+                          minDate={new Date()}
                         />
                       </span>
                     </div>
@@ -572,6 +687,7 @@ const UpdateCard = () => {
                         value="blocked"
                         checked={cardStatus === "blocked"}
                         onChange={(e) => setCardStatus(e.target.value)}
+                        required={cardStatus.length === 0}
                       />
                       <span className="font mb-0">Block</span>
                     </label>
@@ -583,6 +699,7 @@ const UpdateCard = () => {
                         className="form-check-input p-2 mt-0"
                         checked={cardStatus === "active"}
                         onChange={(e) => setCardStatus(e.target.value)}
+                        required={cardStatus.length === 0}
                       />
                       <span className="font mb-0">Active</span>
                     </label>
@@ -638,13 +755,29 @@ const UpdateCard = () => {
             </div>
           </div>
         </>
-      ) : (
+      ) : leftSideButton === "Assigned Card Controls" ? (
         <>
           <AssignedCardDetails
             key={refreshKey}
             card={cardDetails}
             fetchData={fetchCard}
             environment={environment}
+          />
+        </>
+      ) : leftSideButton === "Assignment History" ? (
+        <>
+          <AssignmentHistory
+            data={cardDetails}
+            open={true}
+            cardType={cardType}
+          />
+        </>
+      ) : (
+        <>
+          <AssignmentHistory
+            data={cardDetails}
+            open={false}
+            cardType={cardType}
           />
         </>
       )}

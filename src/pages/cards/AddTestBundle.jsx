@@ -283,7 +283,8 @@ function AddTestBundle() {
                 />
               </div>
               <p>
-                Are you sure you want to update this Card Bundle with the above details?
+                Are you sure you want to update this Card Bundle with the above
+                details?
               </p>
             </div>
             <div className="modal-footer">

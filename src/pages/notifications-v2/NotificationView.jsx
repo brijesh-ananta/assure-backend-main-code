@@ -19,21 +19,25 @@ function NotificationView() {
     notice.status === "returned"
       ? "returned"
       : notice.status === "approved"
-      ? "approved"
-      : notice.status === "draft"
-      ? "draft"
-      : notice.status === "deleted"
-      ? "deleted"
-      : notice.status === "submitted"
-      ? "submitted"
-      : ""
+        ? "approved"
+        : notice.status === "draft"
+          ? "draft"
+          : notice.status === "deleted"
+            ? "deleted"
+            : notice.status === "submitted"
+              ? "submitted"
+              : ""
   );
   const [rejectReason, setRejectReason] = useState(notice.reject_reason || "");
-  const [notificationText, setNotificationText] = useState(notice.notification_text || "");
+  const [notificationText, setNotificationText] = useState(
+    notice.notification_text || ""
+  );
   const [pdfFile, setPdfFile] = useState(null);
 
   // Determine if the notification is editable (not approved or expired)
-  const isEditable = !["approved", "expired", "deleted"].includes(notice.status);
+  const isEditable = !["approved", "expired", "deleted"].includes(
+    notice.status
+  );
 
   const handleCancel = () => {
     window.history.back();
@@ -57,7 +61,9 @@ function NotificationView() {
     }
 
     if (!selectedAction) {
-      alert("Please select an action (Draft, Submitted, Approve, Reject, or Delete).");
+      alert(
+        "Please select an action (Draft, Submitted, Approve, Reject, or Delete)."
+      );
       return;
     }
     if (selectedAction === "returned" && !rejectReason.trim()) {
@@ -69,7 +75,10 @@ function NotificationView() {
       setLoading(true);
       const formData = new FormData();
       formData.append("status", selectedAction);
-      formData.append("reject_reason", selectedAction === "returned" ? rejectReason : "");
+      formData.append(
+        "reject_reason",
+        selectedAction === "returned" ? rejectReason : ""
+      );
       formData.append("notification_text", notificationText);
       if (pdfFile) {
         formData.append("file", pdfFile);
@@ -82,7 +91,7 @@ function NotificationView() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      
+
       alert(response.data.message);
       window.location.href = "/dashboard/manage-notifications";
     } catch (error) {
@@ -265,71 +274,75 @@ function NotificationView() {
                       checked={selectedAction === "submitted"}
                       onChange={(e) => setSelectedAction(e.target.value)}
                     />
-                    <label className="form-check-label" htmlFor="submittedRadio">
+                    <label
+                      className="form-check-label"
+                      htmlFor="submittedRadio"
+                    >
                       Submitted
                     </label>
                   </div>
                   {/* Approved */}
                   {/* userRole must be 4 */}
                   {userRole === 4 && (
-                  <div className="form-check d-flex gap-2 align-items-center">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="action"
-                      id="approveRadio"
-                      value="approved"
-                      checked={selectedAction === "approved"}
-                      // disable if userRole is not 4
-                      disabled={userRole !== 4}
-
-                      onChange={(e) => setSelectedAction(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor="approveRadio">
-                      Approve
-                    </label>
-                  </div>
+                    <div className="form-check d-flex gap-2 align-items-center">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="action"
+                        id="approveRadio"
+                        value="approved"
+                        checked={selectedAction === "approved"}
+                        // disable if userRole is not 4
+                        disabled={userRole !== 4}
+                        onChange={(e) => setSelectedAction(e.target.value)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="approveRadio"
+                      >
+                        Approve
+                      </label>
+                    </div>
                   )}
                   {/* Rejected */}
                   {/* userRole must be 4 */}
                   {userRole === 4 && (
-                  <div className="form-check d-flex gap-2 align-items-center">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="action"
-                      id="returnRadio"
-                      value="returned"
-                      checked={selectedAction === "returned"}
-                      onChange={(e) => setSelectedAction(e.target.value)}
-                      // disable if userRole is not 4
-                      disabled={userRole !== 4}
-                    />
-                    <label className="form-check-label" htmlFor="returnRadio">
-                      Reject (Return)
-                    </label>
-                  </div>
+                    <div className="form-check d-flex gap-2 align-items-center">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="action"
+                        id="returnRadio"
+                        value="returned"
+                        checked={selectedAction === "returned"}
+                        onChange={(e) => setSelectedAction(e.target.value)}
+                        // disable if userRole is not 4
+                        disabled={userRole !== 4}
+                      />
+                      <label className="form-check-label" htmlFor="returnRadio">
+                        Reject (Return)
+                      </label>
+                    </div>
                   )}
                   {/* Delete */}
                   {/* userRole must be 4 */}
                   {userRole === 4 && (
-                  <div className="form-check d-flex gap-2 align-items-center">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="action"
-                      id="deleteRadio"
-                      value="deleted"
-                      checked={selectedAction === "deleted"}
-                      onChange={(e) => setSelectedAction(e.target.value)}
-                      // disable if userRole is not 4
-                      disabled={userRole !== 4}
-                    />
-                    <label className="form-check-label" htmlFor="deleteRadio">
-                      Delete
-                    </label>
-                      
-                  </div>
+                    <div className="form-check d-flex gap-2 align-items-center">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="action"
+                        id="deleteRadio"
+                        value="deleted"
+                        checked={selectedAction === "deleted"}
+                        onChange={(e) => setSelectedAction(e.target.value)}
+                        // disable if userRole is not 4
+                        disabled={userRole !== 4}
+                      />
+                      <label className="form-check-label" htmlFor="deleteRadio">
+                        Delete
+                      </label>
+                    </div>
                   )}
                 </div>
               </div>

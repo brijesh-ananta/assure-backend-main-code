@@ -52,7 +52,8 @@ function AddNotification() {
     if (!form.startDate) newErrors.startDate = "Start date is required.";
     if (!form.endDate) newErrors.endDate = "End date is required.";
     if (!form.short_title) newErrors.short_title = "Short title is required.";
-    if (form.short_title && form.short_title.length > 55) newErrors.short_title = "Short title must be at most 55 characters.";
+    if (form.short_title && form.short_title.length > 55)
+      newErrors.short_title = "Short title must be at most 55 characters.";
     if (!form.notificationText)
       newErrors.notificationText = "Notification text is required.";
     if (form.startDate && form.endDate && form.startDate > form.endDate) {
@@ -77,7 +78,7 @@ function AddNotification() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success(
-        `Notification ${response.data.notification_number || ''} successfully posted.`
+        `Notification ${response.data.notification_number || ""} successfully posted.`
       );
       navigate("/dashboard/manage-notifications");
     } catch (error) {
@@ -227,9 +228,7 @@ function AddNotification() {
                     <label className="form-check-label fw-bold flex-shrink-0 mb-0 me-3 mb-lg-0 mb-2">
                       Status :
                     </label>
-                    <span className=" ">
-                      New
-                    </span>
+                    <span className=" ">New</span>
                   </div>
                 </div>
               </div>
@@ -291,12 +290,13 @@ function AddNotification() {
                 <button
                   type="button"
                   className="btn btn-add btn-gray mb-lg-0 mb-3"
-                  onClick={() => navigate("/dashboard/manage-notifications")}>
+                  onClick={() => navigate("/dashboard/manage-notifications")}
+                >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  style={{backgroundColor:'#fff2cc',color:'black'}}
+                  style={{ backgroundColor: "#fff2cc", color: "black" }}
                   className="btn btn-add mb-lg-0 mb-3"
                   onClick={handleDraft}
                   disabled={loading}
@@ -306,7 +306,8 @@ function AddNotification() {
                 <button
                   type="submit"
                   className="btn btn-add"
-                  disabled={loading} >
+                  disabled={loading}
+                >
                   Submit
                 </button>
               </div>

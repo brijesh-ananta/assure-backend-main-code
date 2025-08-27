@@ -36,7 +36,7 @@ function SystemDefaults() {
         "/system-defaults?environment=" + env
       );
       if (data?.length) {
-        console.log(data)
+        console.log(data);
         setSystemDefaults(data[0]);
         setRecordId(data[0].id);
       } else {
@@ -61,8 +61,8 @@ function SystemDefaults() {
   const handleSave = async () => {
     try {
       setLoading(true);
-      delete systemDefaults.encryption_method
-      
+      delete systemDefaults.encryption_method;
+
       if (recordId) {
         await axiosToken.put(`/system-defaults/${recordId}`, {
           ...systemDefaults,
@@ -282,10 +282,10 @@ function SystemDefaults() {
                     style={{ width: "250px" }}
                     value={systemDefaults?.encryption_method}
                     onChange={(e) => {
-                        setSystemDefaults({
+                      setSystemDefaults({
                         ...systemDefaults,
                         encryption_method: Number(e.target.value),
-                      })
+                      });
                     }}
                   >
                     <option value={0}>

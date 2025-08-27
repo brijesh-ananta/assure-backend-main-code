@@ -11,7 +11,7 @@ const EnvHeader = ({
   isSubmitDisabled = false,
   showSubmit = true,
   submitLabel = "Submit New Request",
-  disableHeader = false
+  disableHeader = false,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -154,13 +154,13 @@ const EnvHeader = ({
           </div>
 
           {showSubmit && (
-              <button
-                className={`btn save-btn py-2${isSubmitDisabled ? " disabled" : ""}`}
-                onClick={onSubmit}
-                disabled={isSubmitDisabled}
-              >
-                {submitLabel}
-              </button>
+            <button
+              className={`btn save-btn py-2${isSubmitDisabled ? " disabled" : ""}`}
+              onClick={onSubmit}
+              disabled={isSubmitDisabled}
+            >
+              {submitLabel}
+            </button>
           )}
         </div>
       </div>

@@ -11,10 +11,8 @@ const TestingPartnerAddDetail = () => {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
-    partner_name: Yup.string()
-      .required("Partner name is required."),
-    contact_person: Yup.string()
-      .required("Contact person is required."),
+    partner_name: Yup.string().required("Partner name is required."),
+    contact_person: Yup.string().required("Contact person is required."),
     email: Yup.string()
       .email("Please enter a valid email address.")
       .required("Email is required."),
@@ -33,7 +31,7 @@ const TestingPartnerAddDetail = () => {
       try {
         const payload = { ...values, created_by: user.user_id };
         const response = await axiosToken.post("/partners", payload);
-        toast.success(response?.data.message || 'Testing partner added');
+        toast.success(response?.data.message || "Testing partner added");
         navigate("/dashboard/testing-partner");
       } catch (err) {
         toast.error(err.response?.data?.error || "An error occurred.");
@@ -157,7 +155,7 @@ const TestingPartnerAddDetail = () => {
           </button>
         </div>
       </form>
-       <ToastContainer
+      <ToastContainer
         position="bottom-right"
         autoClose={1800}
         hideProgressBar={false}

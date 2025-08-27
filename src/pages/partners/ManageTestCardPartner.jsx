@@ -80,7 +80,10 @@ function ManageTestCardPartner() {
           dataTable = $(tableRef.current).DataTable({
             responsive: true,
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            lengthMenu: [
+              [10, 25, 50, -1],
+              [10, 25, 50, "All"],
+            ],
           });
         }
       }
@@ -110,13 +113,12 @@ function ManageTestCardPartner() {
     <>
       <Header title={headerTitle} />
       {userRole === 1 && (
-      <div className="notification mangeissuer mb-lg-0 mb-3 py-lg-3 py-2">
-        <div className="container-fluid">
-          <div className="d-lg-flex align-items-center justify-content-between w-100">
-            <span></span>
-           
+        <div className="notification mangeissuer mb-lg-0 mb-3 py-lg-3 py-2">
+          <div className="container-fluid">
+            <div className="d-lg-flex align-items-center justify-content-between w-100">
+              <span></span>
+
               <div>
-             
                 <Link
                   className="btn-add py-2"
                   to={`/dashboard/testing-partner/add-partner`}
@@ -124,17 +126,15 @@ function ManageTestCardPartner() {
                   Add Testing Partner
                 </Link>
               </div>
-            
+            </div>
           </div>
         </div>
-      </div>
       )}
       <section>
         <div className="notification">
           <div className="container-fluid">
             {/* Status summary */}
             <ul className="list-unstyled d-flex stepform flex-wrap justify-content-lg-between justify-content-center gap-4 mb-lg-5 col-lg-6">
-             
               {statuses.map((status) => (
                 <li
                   key={status.key}
@@ -142,19 +142,25 @@ function ManageTestCardPartner() {
                   onClick={() => handleStatusFilter(status.key)}
                   style={{ cursor: "pointer" }}
                 >
-                  <span className={`totavalue ${statusFilter === status.key ? "active-value" : ""}`}>
+                  <span
+                    className={`totavalue ${statusFilter === status.key ? "active-value" : ""}`}
+                  >
                     {status.count}
                   </span>
                   <p>{status.label}</p>
                 </li>
               ))}
-               <li
+              <li
                 className="d-flex justify-content-center flex-column text-center gap-2"
                 onClick={() => handleStatusFilter("All")}
                 style={{ cursor: "pointer" }}
               >
-                <span className={`totavalue ${statusFilter === "All" ? "active-value" : ""}`}>
-                  {statusCounts.Draft + statusCounts.Active + statusCounts.Inactive}
+                <span
+                  className={`totavalue ${statusFilter === "All" ? "active-value" : ""}`}
+                >
+                  {statusCounts.Draft +
+                    statusCounts.Active +
+                    statusCounts.Inactive}
                 </span>
                 <p>All</p>
               </li>
@@ -195,7 +201,9 @@ function ManageTestCardPartner() {
                         <td>{partner.status.toUpperCase()}</td>
                         <td>{partner.partner_name}</td>
                         <td>{partner.createdBy}</td>
-                        <td>{new Date(partner.created_at).toLocaleDateString()}</td>
+                        <td>
+                          {new Date(partner.created_at).toLocaleDateString()}
+                        </td>
                       </tr>
                     ))
                   ) : (

@@ -46,8 +46,8 @@ function Steps({
                   terminalType == "Ecomm" || environment == 3
                     ? "arrow-blocked"
                     : requestInfoData?.termInfo != null
-                    ? "activebg"
-                    : ""
+                      ? "activebg"
+                      : ""
                 }  d-flex align-items-center justify-content-center`}
               >
                 {terminalType == "Ecomm" || environment == 3 ? (
@@ -83,8 +83,8 @@ function Steps({
                   isPhysicalCard == "no" || terminalType == "Ecomm"
                     ? "arrow-blocked"
                     : requestInfoData?.shipDetails != null
-                    ? "activebg"
-                    : ""
+                      ? "activebg"
+                      : ""
                 }  d-flex align-items-center justify-content-center`}
               >
                 {isPhysicalCard != "no" && <div className="step-item"></div>}
@@ -122,8 +122,8 @@ function Steps({
               >
                 <div className="step-item"></div>
                 {afterSubmitStatus.includes(requestInfoData?.status) && (
-                    <i className="fas fa-check"></i>
-                  )}
+                  <i className="fas fa-check"></i>
+                )}
               </span>
               Approved
             </li>
@@ -131,19 +131,21 @@ function Steps({
             <li className="d-flex flex-column justify-content-center align-items-center position-relatives">
               <span
                 className={`${
-                  (requestInfoData?.status === "shipped" ||
+                  requestInfoData?.status === "shipped" ||
                   requestInfoData?.status === "assign_card" ||
-                  isCompleted && environment != 3)
+                  (isCompleted && environment != 3)
                     ? "activebg"
                     : environment == 3
-                    ? "arrow-blocked"
-                    : ""
+                      ? "arrow-blocked"
+                      : ""
                 }  d-flex align-items-center justify-content-center`}
               >
                 <div className="step-item"></div>
                 {(requestInfoData?.status === "shipped" ||
                   requestInfoData?.status === "assign_card" ||
-                  isCompleted && environment != 3) && <i className="fas fa-check"></i>}
+                  (isCompleted && environment != 3)) && (
+                  <i className="fas fa-check"></i>
+                )}
               </span>
               Assigned
             </li>
@@ -155,8 +157,8 @@ function Steps({
                   isPhysicalCard == "no"
                     ? "arrow-blocked"
                     : requestInfoData?.shipmentInfo != null || isCompleted
-                    ? "activebg"
-                    : ""
+                      ? "activebg"
+                      : ""
                 } d-flex align-items-center justify-content-center`}
               >
                 {!(

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 /* eslint-disable react/prop-types */
@@ -22,6 +23,29 @@ const VerticalRightSidebar = ({
       search: `?${new URLSearchParams(`step=${index}`).toString()}`,
     });
   };
+
+  const showShipDetails = useMemo(() => {
+    try {
+      const testerDetails =
+        (requestInfoData?.testerDetails &&
+          JSON.parse(requestInfoData?.testerDetails)) ||
+        {};
+
+      const shipDetails =
+        (requestInfoData?.shipDetails &&
+          JSON.parse(requestInfoData?.shipDetails)) ||
+        {};
+
+      const exists =
+        shipDetails?.shipTo === "multiple"
+          ? testerDetails?.testers?.some((t) => t.status === "assigned")
+          : false;
+
+      return exists;
+    } catch {
+      return false;
+    }
+  }, [requestInfoData]);
 
   return (
     <div className="sidebar">
@@ -52,6 +76,7 @@ const VerticalRightSidebar = ({
       {/* Ship Card */}
       {((isPhysicalCard != "no" &&
         afterAssigneStatus.includes(requestInfoData.status)) ||
+        showShipDetails ||
         (environment == 3 && requestInfoData.status == "approved")) && (
         <button
           className={`right-sidebar-item ${activeStep === 8 && "active"}`}

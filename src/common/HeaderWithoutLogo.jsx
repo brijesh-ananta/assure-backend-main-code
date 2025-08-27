@@ -3,9 +3,7 @@ const HeaderWithoutLogo = () => {
 
   return (
     <>
-      <header
-        className="-sticky login-header mb-lg-0 mb-3 z-2"
-      >
+      <header className="-sticky login-header mb-lg-0 mb-3 z-2">
         <div className="logo d-flex align-items-center gap-4">
           <a
             href="#"

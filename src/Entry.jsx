@@ -84,7 +84,6 @@ import UpdateTestCase from "./pages/test-case/UpdateTestCase";
 import AddNewTestCase from "./pages/test-case/CreateTestCase";
 import ViewTestCase from "./pages/test-case/TestCaseDetails";
 
-
 function Entry() {
   const { user = {} } = useAuth();
   const userType = user.role;
@@ -913,7 +912,11 @@ function Entry() {
           path="/dashboard/bin-list/view/:id"
           element={
             <ProtectedRoute>
-              <DashboardLayout audit tableName="bins" headerTitle={"Bin Details"}>
+              <DashboardLayout
+                audit
+                tableName="bins"
+                headerTitle={"Bin Details"}
+              >
                 <ViewBin />
               </DashboardLayout>
             </ProtectedRoute>
@@ -965,7 +968,11 @@ function Entry() {
           path="/dashboard/test-case/update/:id"
           element={
             <ProtectedRoute>
-              <DashboardLayout audit tableName="Test_cases" headerTitle={"Update Test Case"}>
+              <DashboardLayout
+                audit
+                tableName="test_cases"
+                headerTitle={"Update Test Case"}
+              >
                 <UpdateTestCase />
               </DashboardLayout>
             </ProtectedRoute>
@@ -973,16 +980,18 @@ function Entry() {
         />
         <Route
           path="/dashboard/test-case/view/:id"
-          
           element={
             <ProtectedRoute>
-              <DashboardLayout audit tableName="Test_cases" headerTitle={"Test Case Details"}>
+              <DashboardLayout
+                audit
+                tableName="test_cases"
+                headerTitle={"Test Case Details"}
+              >
                 <ViewTestCase />
               </DashboardLayout>
             </ProtectedRoute>
           }
         />
-       
       </Routes>
     </>
   );

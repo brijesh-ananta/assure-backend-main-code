@@ -232,8 +232,14 @@ function TestInfo({
       toast.error("Total transaction limit must be a valid number.");
       return false;
     }
-
-    if (!testInfoData.countryCodes.length && !testInfoData.allCountries) {
+    if (testInfoData.mccCodes.length === 0 && disableMccCodes === false) {
+      toast.error("Please select at least one MCC  code.");
+      return false;
+    }
+    if (
+      testInfoData.countryCodes.length === 0 &&
+      disableCountryCodes === false
+    ) {
       toast.error("Please select at least one country code.");
       return false;
     }
@@ -643,7 +649,7 @@ function TestInfo({
                           </label>
                         </div>
                       </div>
-                      <div className="d-lg-flex gap-4">
+                      <div className="d-lg-flex gap-4 h-100 ">
                         <Multiselect
                           options={countryOptions}
                           selectedValues={

@@ -273,7 +273,6 @@ function Cardshippingdetails() {
       alert("At least one card is required.");
       return false;
     }
-    
 
     if (terminalType === "Pos" || terminalType === "Pos") {
       for (const card of cardDetails) {
@@ -319,13 +318,16 @@ function Cardshippingdetails() {
       return;
     }
 
-    if(terminalType === 'Pos' || terminalType === 'Pos') {
-      if(terminalInfo == null || terminalInfo == "") {
+    if (terminalType === "Pos" || terminalType === "Pos") {
+      if (terminalInfo == null || terminalInfo == "") {
         alert("Please save terminal information first.");
         // navigate to terminal information
-        navigate(`/dashboard/test-card-request/terminal-details/${cardRequestId}`, {
-          state: { environment, terminalType, status: tcStatus },
-        });
+        navigate(
+          `/dashboard/test-card-request/terminal-details/${cardRequestId}`,
+          {
+            state: { environment, terminalType, status: tcStatus },
+          }
+        );
         return;
       }
     }
@@ -764,8 +766,8 @@ function Cardshippingdetails() {
                                     {option === "one"
                                       ? "One Address"
                                       : option === "multiple"
-                                      ? "Multiple Addresses"
-                                      : "Mobile Card Only"}
+                                        ? "Multiple Addresses"
+                                        : "Mobile Card Only"}
                                   </label>
                                 </div>
                               ))}

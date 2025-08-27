@@ -11,7 +11,7 @@ import PasswordInput from "../../components/shared/form-fields/PasswordField";
 
 function ProfileV2() {
   const { user } = useAuth();
-  
+
   const [loading, setLoading] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
 
@@ -99,7 +99,9 @@ function ProfileV2() {
                 <span className="col-6">{roleMapping[user?.role]}</span>
               </div>
               <div className="col-6 row">
-                <span className="font col-4 no-wrap text-right">Test Card Env Access</span>
+                <span className="font col-4 no-wrap text-right">
+                  Test Card Env Access
+                </span>
                 <span className="col-8 d-flex gap-3 ps-5">
                   <div className="form-check me-4 d-flex gap-1 p-0 align-items-center">
                     <input
