@@ -29,7 +29,7 @@ const UpdateUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [partners, setPartners] = useState([]);
   const [selectedPartnerName, setSelectedPartnerName] = useState(null);
-
+  const [isPartnerValid, setIsPartnerValid] = useState(true);
   const [updateUser, setUpdateUser] = useState(false);
   const [shippingAddress, setShippingAddress] = useState({
     name: "",
@@ -223,6 +223,8 @@ const UpdateUser = () => {
     }
   };
 
+  console.log("selected partner--->", selectedPartnerName);
+
   const handleUserRoleChange = (e) => {
     const newRole = e.target.value;
     setSelectedUserRole(newRole);
@@ -258,6 +260,7 @@ const UpdateUser = () => {
     try {
       const response = await axiosToken.get("/partners?status=active");
       setPartners(response.data.partners || []);
+      console.log("partners", response.data.partners);
     } catch (error) {
       console.error("Error fetching partners:", error);
     }
@@ -421,6 +424,26 @@ const UpdateUser = () => {
   //     }
   //   }
   // }, [transformedPartners, user]);
+
+  useEffect(() => {
+    if (selectedPartnerName && partners.length > 0) {
+      // Check if the selected partner exists in the fetched partners list
+      const partnerExists = partners.some(
+        (partner) =>
+          partner.partner_id === selectedPartnerName.partner_id ||
+          partner.pt_id === selectedPartnerName.value ||
+          partner.email?.toLowerCase() ===
+            selectedPartnerName.email?.toLowerCase() ||
+          partner.partner_name?.toLowerCase() ===
+            selectedPartnerName.partner_name?.toLowerCase()
+      );
+
+      setIsPartnerValid(partnerExists);
+    } else {
+      // No partner selected - always allow editing
+      setIsPartnerValid(true);
+    }
+  }, [selectedPartnerName, partners]);
 
   useEffect(() => {
     if (selectedRoles) {
@@ -1234,7 +1257,7 @@ const UpdateUser = () => {
               {!isEditMode && (
                 <button
                   type="button"
-                  disabled={id == user?.user_id}
+                  disabled={id == user?.user_id || !isPartnerValid}
                   className="btn"
                   onClick={handleEditClick}
                 >

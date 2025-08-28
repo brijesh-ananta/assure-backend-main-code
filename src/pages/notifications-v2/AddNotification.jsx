@@ -65,13 +65,17 @@ function AddNotification() {
   const postNotification = async (apiPath) => {
     const formData = new FormData();
     formData.append("userType", form.userType);
-    formData.append("startDate", form.startDate);
-    formData.append("endDate", form.endDate);
+
+    // Send only the date part (YYYY-MM-DD format) without timezone
+    formData.append("startDate", form.startDate); // This is already in YYYY-MM-DD format
+    formData.append("endDate", form.endDate); // This is already in YYYY-MM-DD format
+
     formData.append("short_title", form.short_title);
     formData.append("notificationText", form.notificationText);
     if (form.file) {
       formData.append("file", form.file);
     }
+
     try {
       setLoading(true);
       const response = await axiosToken.post(apiPath, formData, {

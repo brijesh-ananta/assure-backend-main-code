@@ -22,6 +22,7 @@ const UpdateCard = () => {
   const [cardType, setcardType] = useState("Pos");
   const [leftSideButton, setLeftSideButton] = useState("Card Details");
   const [cardDetails, setCardDetails] = useState({});
+  const [cardProfile, setCardProfile] = useState({});
 
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -147,7 +148,8 @@ const UpdateCard = () => {
   const fetchCard = async () => {
     try {
       const card = await apiService.card.getById(id);
-      console.log(card);
+
+      setCardProfile(card?.cardProfile || {});
       if (card.cardDetails) {
         try {
           const userCiperText = localStorage.getItem("ciperText");
@@ -762,6 +764,7 @@ const UpdateCard = () => {
             card={cardDetails}
             fetchData={fetchCard}
             environment={environment}
+            cardProfile={cardProfile}
           />
         </>
       ) : leftSideButton === "Assignment History" ? (

@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { formatMaskedCardNumber } from "../../../utils/function";
 import "./style.css";
 import { cardStyles } from "../pos/PosCard";
-
+import { useAuth } from "../../../utils/AuthContext";
 const getCardNetwork = (cardNumber = "") => {
   const trimmed = cardNumber.replace(/\s|-/g, "");
 
@@ -22,7 +22,7 @@ const EcommCard = (props) => {
   const { data } = props;
   const cardDetails = data?.decryptedCardDetails;
   const [showCardNumber, setShowCardNumber] = useState(false);
-
+  const { user } = useAuth();
   const getCardValidityDate = useCallback((data) => {
     if (!data) return "";
 
@@ -76,7 +76,9 @@ const EcommCard = (props) => {
             ></i>
           </div>
           <div
-            className={`d-flex align-items-end justify-content-end right-comp-image ${network == "mastercard" && "master-card"}`}
+            className={`d-flex align-items-end justify-content-end right-comp-image ${
+              network == "mastercard" && "master-card"
+            }`}
           >
             <img
               src={styles.logo}
@@ -90,9 +92,18 @@ const EcommCard = (props) => {
                 ? formatMaskedCardNumber(cardDetails?.cardNumber, "full")
                 : formatMaskedCardNumber(cardDetails?.cardNumber)}
             </span>
-            <span className="eye-icon">
-              <i className="fas fa-eye" onClick={handleToggleCardNumber}></i>
-            </span>
+            {user.role === 2 || user.role === 3 ? (
+              <></>
+            ) : (
+              <>
+                <span className="eye-icon">
+                  <i
+                    className="fas fa-eye"
+                    onClick={handleToggleCardNumber}
+                  ></i>
+                </span>
+              </>
+            )}
           </div>
           <div className="card-details px-3">
             <div className="expiry m-auto d-flex align-items-center">
@@ -112,12 +123,6 @@ const EcommCard = (props) => {
               cardDetails?.cardholder_name}
           </div>
           <div className="right-bottom-box">
-            <div className="seq text-right">
-              <span className="font"> CVV# &nbsp;</span>{" "}
-              <span className="font text-right">
-                {cardDetails?.cvv} <br />{" "}
-              </span>
-            </div>
             <div className="seq text-right">
               <span className="font"> Seq# &nbsp;</span>{" "}
               <span className="font text-right">

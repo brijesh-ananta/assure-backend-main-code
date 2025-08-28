@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import { useAuth } from "../../../utils/AuthContext";
 import RequestStatusMap from "./RequestStatusMap";
+import { convertUTCtoEST } from "../../../utils/date";
 
 function RequestorInfo({
   requestInfoData,
@@ -653,6 +654,7 @@ function RequestorInfo({
                       <button
                         onClick={async (e) => {
                           try {
+                            e.preventDefault();
                             await handleSave(e, true);
                           } catch (error) {
                             console.error(error);
@@ -733,28 +735,15 @@ function RequestorInfo({
                 <div className="container">
                   <div className="font mb-2">SME Comment/s</div>
                   {requestInfoData.comments.map((comment, index) => {
-                    const date = new Date(comment.created_at);
-                    const formattedDate = `${date
-                      .getDate()
-                      .toString()
-                      .padStart(2, "0")}-${(date.getMonth() + 1)
-                      .toString()
-                      .padStart(2, "0")}-${date.getFullYear()} ${date
-                      .getHours()
-                      .toString()
-                      .padStart(2, "0")}:${date
-                      .getMinutes()
-                      .toString()
-                      .padStart(2, "0")}:${date
-                      .getSeconds()
-                      .toString()
-                      .padStart(2, "0")}`;
+                    console.log(comment.created_at);
+
                     return (
                       <div
                         className="font"
                         key={comment?.request_comment_id || index}
                       >
-                        {index + 1}. {formattedDate} ({comment?.user_name}) -{" "}
+                        {index + 1}. {convertUTCtoEST(comment.created_at)} (
+                        {comment?.user_name}) -{" "}
                         <span className="text-capitalize">
                           {comment?.status}
                         </span>

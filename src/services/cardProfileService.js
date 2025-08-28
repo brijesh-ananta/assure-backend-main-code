@@ -30,10 +30,12 @@ class CardProfileService {
     }
   }
 
-  async create(body) {
+  async create(data) {
     try {
-      const result = await axiosToken.post("/profiles", body, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const result = await axiosToken.post("/profiles", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       if (result.status === 200 || result.status === 201) {
         return result.data;
@@ -46,7 +48,18 @@ class CardProfileService {
   }
   async update(id, data) {
     try {
-      const result = await axiosToken.put(`/profiles/${id}`, data);
+      // Check if data is FormData (for file uploads)
+      const isFormData = data instanceof FormData;
+
+      const config = {};
+      if (isFormData) {
+        // For FormData, set multipart/form-data header
+        config.headers = {
+          "Content-Type": "multipart/form-data",
+        };
+      }
+
+      const result = await axiosToken.put(`/profiles/${id}`, data, config);
       if (result.status === 200 || result.status === 201) {
         return result.data;
       } else {
@@ -111,10 +124,10 @@ class CardProfileService {
     }
   }
 
-  async releaseCard(userCardId, body = {}) {
+  async releaseCard(userCardId, profileId, body = {}) {
     try {
       const result = await axiosToken.post(
-        `/profiles/release-card?userCardId=${userCardId}`,
+        `/profiles/release-card?userCardId=${userCardId}?profileId=${profileId}`,
         body
       );
       if (result.status === 200 || result.status === 201) {

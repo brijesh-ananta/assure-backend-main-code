@@ -3,6 +3,34 @@ import axiosToken from "../../utils/axiosToken";
 import { Link } from "react-router-dom";
 import CustomTable from "../../components/shared/table/CustomTable";
 
+const convertUTCToEST = (utcTimestamp) => {
+  if (!utcTimestamp) return { date: "", time: "" };
+
+  const utcDate = new Date(utcTimestamp);
+
+  // Convert to EST/EDT (automatically handles daylight saving time)
+  const estDate = new Date(
+    utcDate.toLocaleString("en-US", { timeZone: "America/New_York" })
+  );
+
+  // Format date as M/D/YYYY
+  const date = estDate.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  // Format time as H:MM:SS AM/PM
+  const time = estDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  return { date, time };
+};
+
 function ManageAuditTrails() {
   const [auditTrails, setAuditTrails] = useState([]);
   const [total, setTotal] = useState(0);
@@ -32,14 +60,20 @@ function ManageAuditTrails() {
       key: "action_date",
       label: "Date",
       sortable: true,
-      renderCell: (row) => new Date(row.action_time).toLocaleDateString(),
+      renderCell: (row) => {
+        const { date } = convertUTCToEST(row.action_time);
+        return date;
+      },
       minWidth: "120px",
     },
     {
       key: "action_time",
       label: "Time",
       sortable: false,
-      renderCell: (row) => new Date(row.action_time).toLocaleTimeString(),
+      renderCell: (row) => {
+        const { time } = convertUTCToEST(row.action_time);
+        return time;
+      },
       minWidth: "120px",
     },
     { key: "table_name", label: "Application Name", sortable: true },

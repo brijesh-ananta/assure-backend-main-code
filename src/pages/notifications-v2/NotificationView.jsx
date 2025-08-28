@@ -109,7 +109,12 @@ function NotificationView() {
   // Helper to format ISO dates into a readable format
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
-    return new Date(dateStr).toLocaleDateString();
+
+    // Extract date part if it contains time, otherwise return as-is
+    if (dateStr.includes("T")) {
+      return dateStr.split("T")[0]; // "2025-08-29"
+    }
+    return dateStr; // Already in "2025-08-29" format
   };
 
   return (

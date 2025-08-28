@@ -45,7 +45,7 @@ const ManageMccv2 = () => {
   const fetchBrandsData = useCallback(async () => {
     setBrandsDataFetching(true);
     try {
-      const response = await apiService.brands.get({ env });
+      const response = await apiService.brands.getactive({ env });
 
       if (response?.data.length) {
         setBrands(response?.data);

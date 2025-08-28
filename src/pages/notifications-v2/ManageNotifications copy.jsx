@@ -207,7 +207,7 @@ function ManageNotifications() {
                         <td>{notification.status.toUpperCase()}</td>
                         <td>
                           {new Date(
-                            notification.start_date
+                            notification.start_date,
                           ).toLocaleDateString()}
                         </td>
                         <td>
@@ -217,7 +217,7 @@ function ManageNotifications() {
                         <td>{notification.createdBy}</td>
                         <td>
                           {new Date(
-                            notification.created_at
+                            notification.created_at,
                           ).toLocaleDateString()}
                         </td>
                       </tr>

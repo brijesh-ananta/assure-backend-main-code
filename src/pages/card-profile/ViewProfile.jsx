@@ -17,6 +17,7 @@ import {
 } from "../../utils/constent";
 
 // New code here
+
 function getAllowedStatuses(
   currentStatus,
   userRole,
@@ -28,16 +29,20 @@ function getAllowedStatuses(
       // SME assigns card
       return userRole === 1 ? ["testing_card_assigned"] : [];
     case "testing_card_assigned":
-      // only the creator (“card user”) may submit
+      // only the creator ("card user") may submit
       return currentUserId === profileCreator ? ["submitted"] : [];
     case "submitted":
       // Manager approves or rejects
       return userRole === 4 || userRole === 1 ? ["approved", "rejected"] : [];
     case "approved":
       // after approval, both SME and Manager can activate or archive
+      // Remove "submitted" from here - once approved, can't go back to submitted
       return [1, 4].includes(userRole) ? ["active", "archive"] : [];
+    case "active":
+      return [1, 4].includes(userRole) ? ["active", "archive"] : [];
+    case "rejected":
+      return currentUserId === profileCreator ? ["testing"] : [];
     default:
-      // all other statuses are terminal or not user-editable
       return [];
   }
 }
@@ -97,6 +102,13 @@ const ViewProfile = () => {
     [data.status, userRole, currentUserId, profileCreator]
   );
 
+  const featureLabels = {
+    pin_preferred: "Pin Preferred",
+    signature_preferred: "Signature Preferred",
+    transit: "Transit",
+    online_pin: "Online Pin",
+  };
+
   const fetchDetail = useCallback(async () => {
     try {
       const resp = await apiService.cardProfile.getById(id);
@@ -126,6 +138,9 @@ const ViewProfile = () => {
     data?.product,
     envFromQuery,
   ]);
+
+  console.log("data", data);
+  console.log("cardData", cardData);
 
   useEffect(() => {
     if (
@@ -178,13 +193,24 @@ const ViewProfile = () => {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       const formData = new FormData();
-      if (values.profileImage) {
-        formData.append("xml_file", values.profileImage);
+
+      // Debug log to see what we're getting
+      console.log("Form values:", values);
+      console.log("Profile file:", values.profileFile);
+
+      if (values.profileFile && values.profileFile instanceof File) {
+        formData.append("json_file", values.profileFile);
       }
-      if (values.status !== data.status) {
-        formData.append("status", values.status);
+
+      formData.append("status", values.status);
+
+      // Debug log to see FormData contents
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
       }
+
       try {
+        console.log("Submitting form with data:", formData);
         await apiService.cardProfile.update(id, formData);
         toast.success("Profile updated!");
         fetchDetail();
@@ -223,7 +249,9 @@ const ViewProfile = () => {
       const blob = await response.blob();
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = `${new Date().toString()}.xml`;
+      link.download = `${data.profile_name || "profile"}_${
+        new Date().toISOString().split("T")[0]
+      }.json`; // Better filename
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -258,7 +286,7 @@ const ViewProfile = () => {
                 className="col-4 text-2 fa-1x"
                 style={{ textTransform: "capitalize" }}
               >
-                {data?.card_feature}
+                {featureLabels[data?.card_feature]}
               </div>
             </div>
             <div className="col-12 gap-1 row">
@@ -280,35 +308,41 @@ const ViewProfile = () => {
               <label className="font col-4 text-right">Profile Name</label>
               <div className="col-4 text-2 fa-1x"> {data?.profile_name}</div>
             </div>
-            <div className="col-12 gap-1 row">
-              <label className="font col-4 text-right">Profile</label>
-              <div className="col-7 d-flex gap-4 text-2 fa-1x underline font text-4">
-                {data.xml_file_url ? (
-                  <span
-                    onClick={() => downloadFile(data.xml_file_url)}
-                    className="cursor-pointer"
-                  >
-                    Download current
-                  </span>
-                ) : (
-                  "No file uploaded"
-                )}
-                {[STATUS_TESTING, STATUS_CARD_ASSIGNED].includes(
-                  data.status
-                ) && (
-                  <CustomFileUpload
-                    name="profileImage"
-                    value={formik.values.profileImage}
-                    onChange={(name, file) => formik.setFieldValue(name, file)}
-                    onBlur={formik.handleBlur}
-                    error={formik.errors.profileImage}
-                    touched={formik.touched.profileImage}
-                    className="w-100 mt-2 no-wrap p-2"
-                    accept=".xml"
-                  />
-                )}
+
+            {currentUserId === data?.created_by && (
+              <div className="col-12 gap-1 row">
+                <label className="font col-4 text-right">Profile</label>
+                <div className="col-7 d-flex gap-4 text-2 fa-1x underline font text-4">
+                  {data.xml_file_url ? (
+                    <span
+                      onClick={() => downloadFile(data.xml_file_url)}
+                      className="cursor-pointer"
+                    >
+                      Download current
+                    </span>
+                  ) : (
+                    "No file uploaded"
+                  )}
+                  {[STATUS_TESTING, STATUS_CARD_ASSIGNED].includes(
+                    data.status
+                  ) && (
+                    <CustomFileUpload
+                      name="profileFile"
+                      value={formik.values.profileFile}
+                      onChange={(name, file) =>
+                        formik.setFieldValue(name, file)
+                      }
+                      onBlur={formik.handleBlur}
+                      error={formik.errors.profileFile}
+                      touched={formik.touched.profileFile}
+                      className="w-100 mt-2 no-wrap p-2"
+                      accept=".json"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
+
             <div className="col-12 gap-1 row">
               <label className="font col-4 text-right">Profile Editor</label>
               <div className="col-4 text-2 fa-1x ">
@@ -333,7 +367,13 @@ const ViewProfile = () => {
                         checked={formik.values.status === option.value}
                         onChange={formik.handleChange}
                         disabled={
-                          !allowedStatuses.includes(option.value) ||
+                          (option.value === "submitted" &&
+                            (![1, 2].includes(userRole) ||
+                              !allowedStatuses.includes(option.value))) ||
+                          // For all other statuses, check if they're in allowedStatuses
+                          (option.value !== "submitted" &&
+                            !allowedStatuses.includes(option.value)) ||
+                          // Always respect the disabled flag from statusList
                           option.disabled
                         }
                       />
@@ -406,7 +446,7 @@ const ViewProfile = () => {
               <label htmlFor="issuerName" className="font col-4 text-right">
                 Available Cards
               </label>
-              {afterAssigned ? (
+              {afterAssigned && currentUserId === data?.created_by ? (
                 <div className="col-7 text-2 fa-1x d-flex align-items-start gap-3 justify-content-center">
                   <Link
                     to={`/dashboard/card-profile/assign-card/${id}`}
@@ -419,12 +459,7 @@ const ViewProfile = () => {
                 <>
                   <div className="col-7 text-2 fa-1x d-flex align-items-start gap-3 justify-content-center">
                     <span className="font">{cardData?.count || 0}</span>
-                    {canAssignCard(
-                      Number(data?.environment_id || envFromQuery),
-                      userRole,
-                      afterAssigned,
-                      cardData?.count || 0
-                    ) && (
+                    {currentUserId === data?.created_by && (
                       <Link
                         to={`/dashboard/card-profile/assign-card/${id}`}
                         className="btn p-2 w-100 assign-btn"
@@ -461,7 +496,7 @@ const ViewProfile = () => {
             type="submit"
             className="btn save-btn w-25 font"
             disabled={
-              (!formik.dirty && !formik.values.profileImage) ||
+              (!formik.dirty && !formik.values.profileFile) || // Change profileImage to profileFile
               formik.isSubmitting
             }
           >

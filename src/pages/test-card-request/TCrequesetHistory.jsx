@@ -9,7 +9,7 @@ import $ from "jquery";
 import "datatables.net";
 import "datatables.net-bs4/css/dataTables.bootstrap4.min.css";
 import "datatables.net-bs4/js/dataTables.bootstrap4.min.js";
-import { formatDateToLocal } from "../../utils/date";
+import { formatDateToLocal, formatDate } from "../../utils/date";
 import CustomTable from "../../components/shared/table/CustomTable";
 import { toast } from "react-toastify";
 import { environmentMapping } from "../../utils/constent";
@@ -242,7 +242,7 @@ function TCrequesetHistory() {
           sortable: true,
           renderCell: (item) =>
             item.submitted_date && item.submitted_date !== ""
-              ? formatDateToLocal(item.submitted_date)
+              ? formatDate(item.submitted_date)
               : "N/A",
         },
         {
@@ -251,7 +251,7 @@ function TCrequesetHistory() {
           sortable: true,
           renderCell: (item) =>
             item.updated_at && item.updated_at !== ""
-              ? formatDateToLocal(item.updated_at)
+              ? formatDate(item.updated_at)
               : "N/A",
         },
         {

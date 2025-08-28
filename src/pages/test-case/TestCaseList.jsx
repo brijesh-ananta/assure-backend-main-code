@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
+import { formatDate } from "../../utils/date";
 import "../../components/shared/table/style.css";
 import { environmentMapping } from "../../utils/constent";
 
@@ -272,7 +272,8 @@ const TestCaseList = () => {
         key: "created_at",
         label: "Created Date",
         sortable: true,
-        renderCell: (item) => new Date(item.created_at).toLocaleDateString(),
+        renderCell: (item) => formatDate(item.created_at) || "",
+        //renderCell: (item) => formatDateToLocal(item.created_at) || "",
       },
     ],
     []

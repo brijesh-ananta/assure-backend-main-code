@@ -8,7 +8,7 @@ import Notifications from "../common/Notifications";
 
 const Dashboard = () => {
   const [headerTitle, setHeaderTitle] = useState("Test Card Dashboard");
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
 
   const dashboardCards = [
     {
@@ -72,6 +72,7 @@ const Dashboard = () => {
       roles: [1, 4],
     },
     {
+      key: "card_profile",
       text: "Card Profile",
       subText: "Create new, view, and approve Card Profiles",
       link: "/dashboard/card-profile",
@@ -85,8 +86,15 @@ const Dashboard = () => {
     },
   ];
 
-  const userHasAccess = (cardRoles) => {
+  const userHasAccess = (cardRoles, cardKey) => {
     if (!cardRoles) return true;
+
+    // Special case: Card Profile
+    if (cardKey === "card_profile") {
+      return userRole === 1 || userRole === 4 || user?.profile_editor === true;
+    }
+
+    // Default rule: role must match
     return cardRoles.includes(userRole);
   };
 
@@ -100,7 +108,7 @@ const Dashboard = () => {
   // };
 
   const filteredCards = dashboardCards.filter((card) =>
-    userHasAccess(card.roles)
+    userHasAccess(card.roles, card.key)
   );
 
   return (

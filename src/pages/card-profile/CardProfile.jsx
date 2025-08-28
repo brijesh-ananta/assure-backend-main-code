@@ -3,7 +3,7 @@ import CustomTable from "../../components/shared/table/CustomTable";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import apiService from "../../services";
 import { useCallback, useEffect, useState } from "react";
-import { formatDateToLocal } from "../../utils/date";
+import { formatDateToLocal, formatDate } from "../../utils/date";
 import binService from "../../services/bin";
 
 const CardProfile = () => {
@@ -12,6 +12,25 @@ const CardProfile = () => {
   const envFromQuery = params.get("environment");
   const [issuers, setIssuers] = useState([]);
   const navigate = useNavigate();
+
+  // add this mapping object near top of component (after imports or inside CardProfile)
+  const featureLabels = {
+    pin_preferred: "Pin Preferred",
+    signature_preferred: "Signature Preferred",
+    transit: "Transit",
+    online_pin: "Online Pin",
+  };
+
+  // add mapping near top with featureLabels
+  const statusLabels = {
+    testing: "Testing",
+    testing_card_assigned: "Testing Card Assigned",
+    submitted: "Submitted",
+    approved: "Approved",
+    rejected: "Rejected",
+    active: "Active",
+    archive: "Archive",
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -193,7 +212,9 @@ const CardProfile = () => {
               key: "status",
               label: "Status",
               sortable: true,
+              renderCell: (item) => statusLabels[item.status] || item.status,
             },
+
             {
               key: "profile_name",
               label: "Profile Name",
@@ -208,6 +229,7 @@ const CardProfile = () => {
                   {item.profile_name}
                 </span>
               ),
+              sortable: true,
             },
             {
               key: "issuer_name",
@@ -223,12 +245,15 @@ const CardProfile = () => {
               key: "card_feature",
               label: "Feature",
               sortable: true,
+              renderCell: (item) =>
+                featureLabels[item.card_feature] || item.card_feature,
             },
+
             {
               key: "lastChanged",
               label: "Last Changed",
               renderCell: (item) => {
-                return formatDateToLocal(item.updated_at) || "";
+                return formatDate(item.updated_at) || "";
               },
             },
             {

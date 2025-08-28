@@ -562,6 +562,7 @@ function Entry() {
                 audit={true}
                 showEnvHeader
                 headerTitle={"Add new Profile"}
+                disableHeader={true}
               >
                 <AddProfile />
               </DashboardLayout>

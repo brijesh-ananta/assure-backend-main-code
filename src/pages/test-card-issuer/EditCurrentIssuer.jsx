@@ -218,7 +218,6 @@ const EditCurrentIssuer = () => {
         } else {
           // securedConnection === "No"
           // If secured connection is now 'No', status can only be 'Draft'
-          // If secured connection is now 'No', status can only be 'Draft'
           return (
             currentStatus.toLowerCase() === "active" ||
             currentStatus.toLowerCase() === "inactive"
@@ -427,6 +426,7 @@ const EditCurrentIssuer = () => {
                   value={formik.values.issuerCode}
                   className="form-control formcontrol"
                   onChange={isEditing ? formik.handleChange : undefined}
+                  disabled={!isEditing}
                 />
                 {formik.touched.issuerCode && formik.errors.issuerCode && (
                   <div className="text-danger font mt-1">

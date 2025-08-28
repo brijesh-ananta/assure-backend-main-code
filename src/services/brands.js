@@ -16,6 +16,21 @@ class BrandsService {
     }
   }
 
+  async getactive({ env }) {
+    try {
+      const result = await axiosToken.get(
+        `/brands/active-brands?environment=${env}`
+      );
+      if (result.status === 200 || result.status === 201) {
+        return result.data;
+      } else {
+        return result;
+      }
+    } catch (error) {
+      handleErrorToaster(error);
+    }
+  }
+
   async create(data) {
     try {
       const result = await axiosToken.post("/brands", data);

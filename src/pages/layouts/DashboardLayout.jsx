@@ -9,6 +9,7 @@ import {
 } from "../../utils/constent";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import HeaderWithoutLogo from "../../common/HeaderWithoutLogo";
+import { useAuth } from "../../utils/AuthContext";
 
 const buttonPageTitle = {
   cardProfile: "Add New Profile",
@@ -28,7 +29,8 @@ const DashboardLayout = ({
   const [searchParams] = useSearchParams();
   const recordId = searchParams.get("recordId") || null;
   const location = useLocation();
-
+  const { user } = useAuth();
+  console.log(user);
   const getTerminalType = () => {
     const data = terminalTypeMappingOption.find((a) => a.value === "Ecomm");
     data.disabled = true;
@@ -50,7 +52,10 @@ const DashboardLayout = ({
           }}
           disableHeader={disableHeader}
           isSubmitDisabled={false}
-          showSubmit={pageName !== ""}
+          showSubmit={
+            pageName !== "" &&
+            !(pageName === "cardProfile" && user?.profile_editor === false)
+          }
           submitLabel={buttonPageTitle[pageName] || ""}
         />
       )}

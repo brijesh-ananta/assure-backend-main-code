@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 import Sidebar from "../../common/Sidebar";
 import { useAuth } from "../../utils/AuthContext";
-import { formatDateToLocal } from "../../utils/date";
+import { formatDate } from "../../utils/date";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axiosToken from "../../utils/axiosToken";
@@ -81,7 +81,7 @@ function ProfileV2() {
               <div className="col-6 row">
                 <span className="col-4 text-right font">User Since</span>
                 <span className="col-6 ps-3">
-                  {formatDateToLocal(user?.created_at)}
+                  {formatDate(user?.created_at)}
                 </span>
               </div>
             </div>

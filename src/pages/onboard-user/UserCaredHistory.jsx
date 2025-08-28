@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CustomTable from "../../components/shared/table/CustomTable";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { formatDateToLocal } from "../../utils/date";
+import { formatDateToLocal, formatDateMMDDYY } from "../../utils/date";
 import SideButtons from "../../common/SideButtons/SideButtons";
 import apiService from "../../services";
 import { decryptAesGcm } from "../../utils/encryptDecrypt";
@@ -59,7 +59,7 @@ const UserCaredHistory = () => {
           width: "120px",
           sortable: true,
           renderCell: (item) => (
-            <span>{formatDateToLocal(item?.createdDate)}</span>
+            <span>{formatDateMMDDYY(item?.createdDate)}</span>
           ),
         },
         {
@@ -68,7 +68,7 @@ const UserCaredHistory = () => {
           width: "120px",
           sortable: true,
           renderCell: (item) => (
-            <span>{formatDateToLocal(item?.release_date)}</span>
+            <span>{formatDateMMDDYY(item?.release_date)}</span>
           ),
         },
         {
@@ -167,6 +167,7 @@ const UserCaredHistory = () => {
     }
   }, [userId]);
 
+  console.log("carddetails---->", cardHistory);
   useEffect(() => {
     getCardHistory();
   }, [getCardHistory]);
@@ -230,7 +231,7 @@ const UserCaredHistory = () => {
                 <input
                   placeholder="Email Address"
                   className="form-control formcontrol"
-                  value={user?.partnerEmail}
+                  value={user?.email}
                   disabled
                 />
               </div>
@@ -263,7 +264,7 @@ const UserCaredHistory = () => {
                   placeholder="000"
                   className="form-control formcontrol"
                   disabled
-                  value={totalamount || 0}
+                  value={totalUsage || 0}
                 />
               </div>
             </div>
@@ -278,7 +279,7 @@ const UserCaredHistory = () => {
                   placeholder="000"
                   className="form-control formcontrol"
                   disabled
-                  value={totalUsage || 0}
+                  value={totalamount.toFixed(2) || 0}
                 />
               </div>
             </div>

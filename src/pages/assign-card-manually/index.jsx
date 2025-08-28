@@ -210,12 +210,7 @@ const AssignCardManually = () => {
       const { offline_days, offline_usage, total_usage, last_use_date } =
         systemDataRows;
 
-      if (
-        !offline_days?.trim() ||
-        !offline_usage?.trim() ||
-        !total_usage?.trim() ||
-        !last_use_date?.trim()
-      ) {
+      if ((!offline_days, !offline_usage, !total_usage, !last_use_date)) {
         toast.error("Please complete all required fields before proceeding.");
         return;
       }
@@ -253,23 +248,33 @@ const AssignCardManually = () => {
       toast.error("An error occurred while assigning the cards.");
     }
   };
+
   useEffect(() => {
-    async function fetchSystemDetault() {
+    async function fetchSystemDefault() {
       if (environment) {
         try {
           const response = await axiosToken.get(
             `/system-defaults?environment=${environment}`
           );
           if (response.data && response.data.length > 0) {
-            setGlobalSystemData(response.data[0]);
+            const defaults = response.data[0];
+            setGlobalSystemData(defaults);
+            // Initialize systemDataRows with the fetched default values
+            setSystemDataRows({
+              offline_days: defaults.offline_days || "",
+              offline_usage: defaults.offline_usage || "",
+              total_usage: defaults.total_usage || "",
+              last_use_date: defaults.last_use_date || "",
+            });
           }
         } catch (error) {
           console.error("Error fetching system defaults:", error);
         }
       }
     }
-    fetchSystemDetault();
+    fetchSystemDefault();
   }, [environment]);
+
   console.log(cardDetails);
   console.log(systemDataRows);
 

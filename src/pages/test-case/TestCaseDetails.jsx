@@ -114,7 +114,7 @@ const ViewTestCase = () => {
           </div>
 
           <div className="row mt-4">
-            <label className="col-2 font text-right">Bin Status</label>
+            <label className="col-2 font text-right">Test Case Status</label>
             <p className="col-8">{testCase.status}</p>
           </div>
 

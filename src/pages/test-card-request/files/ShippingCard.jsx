@@ -33,6 +33,10 @@ function ShippingCard({
   const [trackingNumberCount, setTrackingNumberCount] = useState(0);
   const [trackingUsageMap, setTrackingUsageMap] = useState({});
 
+  const [multipleAddressApiResponse, setMultipleAddressApiResponse] = useState(
+    []
+  );
+
   const [assignedTester, setAssignedTester] = useState([]);
 
   const [addressDetails, setAddressDetails] = useState([
@@ -298,6 +302,7 @@ function ShippingCard({
           ? [
               {
                 ...addressDetails[0],
+                postalCode: addressDetails[0].zipCode || "",
                 shippingDate: addressDetails[0].shippingDate
                   ? toYYYYMMDD(addressDetails[0].shippingDate)
                   : null,

@@ -8,9 +8,9 @@ const CustomFileUpload = ({
   onBlur,
   error,
   touched,
-  buttonText = "Upload New Profile",
+  buttonText = "Upload JSON Profile",
   className = "",
-  accept = "application/xml",
+  accept = "application/json",
 }) => {
   const inputRef = useRef();
 
@@ -64,9 +64,9 @@ const CustomFileUpload = ({
 
 CustomFileUpload.propTypes = {
   name: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.any,
-  onBlur: PropTypes.any,
+  value: PropTypes.any,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
   error: PropTypes.any,
   touched: PropTypes.any,
   buttonText: PropTypes.string,

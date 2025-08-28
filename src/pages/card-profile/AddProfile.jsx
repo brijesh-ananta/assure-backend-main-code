@@ -31,22 +31,29 @@ const AddProfile = () => {
       issuerName: Yup.string().required("Name is required"),
       product: Yup.string().required("Product is required"),
       featureText: Yup.string().required("Feature Text is required"),
-      profileImage: Yup.mixed().required("Xml file is required"),
+      profileImage: Yup.mixed().required("JSON file is required"),
     }),
+
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
 
-      const formData = new FormData();
-      formData.append("profile_name", profileName);
-      formData.append("product", values.product);
-      formData.append("card_feature", values.featureText);
-      formData.append("issuer_id", values.issuerName);
-      formData.append("brand", values.brand);
-      formData.append("environment_id", envFromQuery || "");
-      formData.append("date_submitted", new Date());
-      formData.append("xml_file", values.profileImage); // or values.profileImage.file if using custom
-
       try {
+        const formData = new FormData();
+
+        // Append form fields
+        formData.append("profile_name", profileName);
+        formData.append("product", values.product);
+        formData.append("card_feature", values.featureText);
+        formData.append("issuer_id", values.issuerName);
+        formData.append("brand", values.brand);
+        formData.append("environment_id", envFromQuery || "");
+        formData.append("date_submitted", new Date().toISOString());
+
+        // Append file
+        if (values.profileImage) {
+          formData.append("json_file", values.profileImage);
+        }
+
         const resp = await apiService.cardProfile.create(formData);
         if (resp?.message === "Profile created successfully") {
           toast.success(resp?.message || "Created");
@@ -54,6 +61,7 @@ const AddProfile = () => {
         }
       } catch (err) {
         console.error(err);
+        toast.error("Creation failed");
       } finally {
         setSubmitting(false);
         setLoading(false);
@@ -80,7 +88,7 @@ const AddProfile = () => {
 
   const fetchBrands = useCallback(async () => {
     try {
-      const data = await apiService.brands.get({ env: envFromQuery });
+      const data = await apiService.brands.getactive({ env: envFromQuery });
 
       setBrands(data?.data.map((b) => b.name));
     } catch (error) {

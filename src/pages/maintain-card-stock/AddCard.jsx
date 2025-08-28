@@ -89,6 +89,7 @@ const AddCard = () => {
   const navigate = useNavigate();
 
   // Get query params
+  console.log("show add more", showAddMore);
   const [params] = useSearchParams();
 
   const environment = params.get("environment");
@@ -241,7 +242,9 @@ const AddCard = () => {
 
   const handleAddMoreClick = async () => {
     setfielddisabled(false);
-    await handleFinalSubmit(formik.values, formik.handleSubmit, true);
+    if (cardType === "Ecomm") {
+      await handleFinalSubmit(formik.values, formik.handleSubmit, true);
+    }
     resetPage();
   };
 

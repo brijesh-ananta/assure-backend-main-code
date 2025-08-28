@@ -7,7 +7,7 @@ import "datatables.net";
 import "datatables.net-bs4/css/dataTables.bootstrap4.min.css";
 import "datatables.net-bs4/js/dataTables.bootstrap4.min.js";
 import CustomTable from "../../components/shared/table/CustomTable";
-import { formatDateToLocal } from "../../utils/date";
+import { formatDateToLocal, formatDate } from "../../utils/date";
 
 function ManageNotifications() {
   const tableRef = useRef(null);
@@ -149,13 +149,20 @@ function ManageNotifications() {
   };
 
   const formatToMMDDYYYY = (isoDate) => {
-    const date = new Date(isoDate);
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
+    if (!isoDate) return "N/A";
+
+    // Since backend sends DATE type, it might come as "2025-08-29" or "2025-08-29T00:00:00.000Z"
+    // Extract just the date part to avoid any timezone issues
+    let datePart;
+    if (isoDate.includes("T")) {
+      datePart = isoDate.split("T")[0]; // "2025-08-29"
+    } else {
+      datePart = isoDate; // Already in "2025-08-29" format
+    }
+
+    const [year, month, day] = datePart.split("-");
     return `${month}/${day}/${year}`;
   };
-
   const tableConfig = useMemo(
     () => ({
       columns: [
@@ -251,7 +258,7 @@ function ManageNotifications() {
           sortable: true,
           renderCell: (item) =>
             item.created_at && item.created_at !== ""
-              ? formatDateToLocal(item.created_at)
+              ? formatDate(item.created_at)
               : "N/A",
         },
       ],
@@ -288,6 +295,7 @@ function ManageNotifications() {
     [expandedRows]
   );
 
+  console.log("filter data--->", filteredNotifications);
   return (
     <>
       <div className="mb-lg-0 mb-3 py-lg-3 py-2 aqua-border-b">

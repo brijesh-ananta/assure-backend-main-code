@@ -12,7 +12,11 @@ import {
   STATUS_REJECTED,
   STATUS_SUBMITTED,
 } from "../../utils/constent";
-import { convertToMMDDYYYY } from "../../utils/date";
+import {
+  convertToMMDDYYYY,
+  formatDate,
+  formatDateMMDDYY,
+} from "../../utils/date";
 import { decryptAesGcm } from "../../utils/encryptDecrypt";
 import PosCard from "../../components/cards/pos/PosCard";
 import axiosToken from "../../utils/axiosToken";
@@ -52,6 +56,7 @@ const AssignCard = () => {
 
   useEffect(() => {
     if (data.status) {
+      console.log("statuts", data.status);
       const allowedStatus = [
         STATUS_CARD_ASSIGNED,
         STATUS_SUBMITTED,
@@ -152,6 +157,11 @@ const AssignCard = () => {
     decryptCardDetails,
     envFromQuery,
   ]);
+
+  console.log("Data:", data);
+  console.log("Card Data:", cardData);
+  console.log("Global System Data:", globalSystemData);
+  console.log(cardData.userCarid);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -262,6 +272,8 @@ const AssignCard = () => {
   useEffect(() => {
     if (allData && allData?.profile && allData?.userCardData?.length) {
       const userCardData = allData?.userCardData[0];
+
+      console.log("userCardData", userCardData);
       setOfflineDays(
         userCardData?.offlineDays ?? globalSystemData?.offline_days ?? ""
       );
@@ -297,19 +309,32 @@ const AssignCard = () => {
       );
       setTotalTransactionLimit(globalSystemData?.total_transaction_limit ?? "");
       setLastUseDate(
-        globalSystemData?.last_use_date
-          ? globalSystemData.last_use_date.slice(0, 10)
-          : ""
+        // Check cardData.LastUseDate first, then fallback to globalSystemData
+        cardData?.LastUseDate
+          ? cardData.LastUseDate.slice(0, 10)
+          : globalSystemData?.last_use_date
+            ? globalSystemData.last_use_date.slice(0, 10)
+            : ""
       );
     }
-  }, [allData, globalSystemData]);
+  }, [allData, globalSystemData, cardData?.LastUseDate]);
+
+  useEffect(() => {
+    if (isCardAssigned && cardData?.LastUseDate && !lastUseDate) {
+      setLastUseDate(cardData.LastUseDate.slice(0, 10));
+    }
+  }, [isCardAssigned, cardData?.LastUseDate, lastUseDate]);
+
+  console.log("lastUseDate", lastUseDate);
 
   const handleReleaseCardClick = async () => {
     try {
+      console.log(allData);
       const resp = await apiService.cardProfile.releaseCard(
-        allData?.userCardData[0]?.userCarid
+        cardData.userCarid,
+        data?.id
       );
-
+      console.log(resp);
       if (resp) {
         toast.success(resp?.message || "Cared released");
         window.location.reload();
@@ -346,7 +371,7 @@ const AssignCard = () => {
                       <input
                         id="profileName"
                         name="profileName"
-                        value={profileUser?.user?.firstName || ""}
+                        value={user?.firstName || ""}
                         className="form-control formcontrol"
                         placeholder="DFC_TCI-Credit_PIN"
                         disabled
@@ -359,7 +384,7 @@ const AssignCard = () => {
                       <input
                         id="profileEmail"
                         name="profileEmail"
-                        value={profileUser?.user?.email}
+                        value={user?.email}
                         className="form-control formcontrol"
                         placeholder="DFC_TCI-Credit_PIN"
                         disabled
@@ -410,9 +435,8 @@ const AssignCard = () => {
                       Exp. Date
                     </span>
                     <div className="col-5 no-wrap font">
-                      {convertToMMDDYYYY(
-                        cardData?.decryptedCardDetails?.expDate
-                      )}
+                      {cardData?.decryptedCardDetails?.expDate ||
+                        cardData?.decryptedCardDetails?.exp_date}
                     </div>
                   </div>
                   <div className="col-12 row w-100">
@@ -506,6 +530,11 @@ const AssignCard = () => {
                     onChange={(e) => setLastUseDate(e.target.value)}
                     className="form-control formcontrol"
                     disabled={isCardAssigned}
+                    min={new Date().toISOString().split("T")[0]}
+                    max={
+                      cardData?.decryptedCardDetails?.expDate ||
+                      cardData?.decryptedCardDetails?.exp_date
+                    }
                   />
                 </div>
               </div>
@@ -555,19 +584,18 @@ const AssignCard = () => {
               )}
 
               <div className="mt-5 d-flex gap-4 align-items-enter justify-content-end">
-                {isCardAssigned &&
-                  canAssignCardButton(envFromQuery, userType) && (
-                    <button
-                      className="btn save-btn"
-                      onClick={() => handleReleaseCardClick()}
-                    >
-                      Release Card
-                    </button>
-                  )}
+                {isCardAssigned && user?.user_id === data?.created_by && (
+                  <button
+                    className="btn save-btn"
+                    onClick={() => handleReleaseCardClick()}
+                  >
+                    Release Card
+                  </button>
+                )}
                 <Link to={"/dashboard/card-profile"} className="btn cancel-btn">
                   Cancel
                 </Link>
-                {canAssignCardButton(envFromQuery, userType) && (
+                {user?.user_id === data?.created_by && (
                   <button
                     disabled={isCardAssigned}
                     className="btn save-btn"

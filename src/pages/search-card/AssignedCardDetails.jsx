@@ -22,11 +22,17 @@ const toFixed = (number) => {
   return (+number).toFixed(2);
 };
 
-const AssignedCardDetails = ({ card = {}, fetchData, environment }) => {
+const AssignedCardDetails = ({
+  card = {},
+  fetchData,
+  environment,
+  cardProfile,
+}) => {
   const testInfoData = parseTestInfoData(card.testInfoData);
   const [countryOptions, setCountryOptions] = useState([]);
   const [mccOptions, setMccOptions] = useState([]);
-  console.log("card", card);
+  //  const [profileName, setProfileName] = useState("");
+
   const initialValues = {
     assignedTo: card.userName || "",
     email: card.userEmail || "",
@@ -199,6 +205,30 @@ const AssignedCardDetails = ({ card = {}, fetchData, environment }) => {
     }
   };
 
+  console.log("last date----------->", formik.values.lastUseDate);
+
+  const downloadFile = (data) => {
+    try {
+      if (!data) {
+        alert("No profile data available to download");
+        return;
+      }
+      const jsonStr = JSON.stringify(data, null, 2); // pretty JSON
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${data.profile_name || "cardProfile"}_${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      alert("Download failed: " + error.message);
+    }
+  };
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -257,6 +287,7 @@ const AssignedCardDetails = ({ card = {}, fetchData, environment }) => {
                     name="lastUseDate"
                     value={formik.values.lastUseDate}
                     onChange={formik.handleChange}
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
@@ -336,6 +367,18 @@ const AssignedCardDetails = ({ card = {}, fetchData, environment }) => {
                   />
                 </div>
               </div>
+              <div className="col-6 row align-items-center">
+                <label className="col-4 font text-right">Profile</label>
+                <div className="col-5">
+                  <button
+                    type="button"
+                    onClick={() => downloadFile(cardProfile)}
+                    className="btn save-btn"
+                  >
+                    Download current
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="row mt-3">
@@ -345,6 +388,7 @@ const AssignedCardDetails = ({ card = {}, fetchData, environment }) => {
                   {formik.values.amountUsed || 0}
                 </span>
               </div>
+
               <div className="row col-6">
                 <label className="col-4 font text-right">
                   Remaining Balance
@@ -531,6 +575,7 @@ AssignedCardDetails.propTypes = {
   card: PropTypes.any,
   fetchData: PropTypes.any,
   environment: PropTypes.string,
+  cardProfile: PropTypes.any,
 };
 
 export default AssignedCardDetails;

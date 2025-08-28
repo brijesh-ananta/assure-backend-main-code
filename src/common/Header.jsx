@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 import axiosToken from "../utils/axiosToken";
 import {
-  formatDateTime,
+  //  formatDateTime,
   formatDateToLocal,
   formatTodayDateOnly,
 } from "../utils/date";
 
 const Header = ({ title, page }) => {
   const { logout, user } = useAuth();
-
+  console.log("user--->", user);
   const [notifications, setNotifications] = useState([]);
   const [statusFilter] = useState("approved");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -32,6 +32,26 @@ const Header = ({ title, page }) => {
   const handleNotificationClick = () => {
     setShowDropdown(!showDropdown);
   };
+
+  function formatDateTime(datetimeString) {
+    if (!datetimeString) return "N/A";
+
+    const dateObj = new Date(datetimeString);
+
+    // Use UTC getters if you want the original UTC time
+    const dd = String(dateObj.getUTCDate()).padStart(2, "0");
+    const mm = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+    const yyyy = dateObj.getUTCFullYear();
+
+    const hh = String(dateObj.getUTCHours()).padStart(2, "0");
+    const min = String(dateObj.getUTCMinutes()).padStart(2, "0");
+    const ss = String(dateObj.getUTCSeconds()).padStart(2, "0");
+
+    return `${mm}/${dd}/${yyyy} ${hh}:${min}:${ss}`;
+  }
+
+  console.log(formatDateTime("2025-08-19T09:57:26.000Z"));
+  // { date: "08-19-2025", time: "09:57:26" }
 
   // Function to fetch notifications
   const fetchNotifications = async () => {

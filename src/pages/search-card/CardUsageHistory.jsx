@@ -4,15 +4,9 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import CustomTable from "../../components/shared/table/CustomTable";
 
-const CardUsageHistory = () => {
-  function formatToMMDDYY(isoDate) {
-    const date = new Date(isoDate);
-    const mm = String(date.getMonth() + 1); // Months are 0-indexed
-    const dd = String(date.getDate()).padStart(2, "0");
-    const yy = String(date.getFullYear()).slice(); // Get last 2 digits
+import { convertUTCToESTTime, formatDateMMDDYY } from "../../utils/date";
 
-    return `${mm}/${dd}/${yy}`;
-  }
+const CardUsageHistory = () => {
   const { id } = useParams();
 
   const [usageHistory, setUsageHistory] = useState({
@@ -54,7 +48,7 @@ const CardUsageHistory = () => {
           renderCell: (item) =>
             item?.Transaction_Date === null
               ? " -"
-              : formatToMMDDYY(item?.Transaction_Date) || "-",
+              : formatDateMMDDYY(item?.Transaction_Date) || "-",
         },
         {
           key: "Transaction_Date",
@@ -62,7 +56,9 @@ const CardUsageHistory = () => {
           width: "150px",
           sortable: true,
           renderCell: (item) =>
-            new Date(item?.Transaction_Date || "-").toLocaleTimeString(),
+            item?.Transaction_Date === null
+              ? " -"
+              : convertUTCToESTTime(item?.Transaction_Date) || "-",
         },
         {
           key: "Txn_Amount",

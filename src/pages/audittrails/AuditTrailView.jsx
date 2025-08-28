@@ -1,19 +1,47 @@
 import { useParams } from "react-router-dom";
-import BeforeAfterDiff from "./BeforeAfterDiff"; // Adjust the import path as needed
+import BeforeAfterDiff from "./BeforeAfterDiff";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import apiService from "../../services";
 
+// Utility function to convert UTC to EST
+const convertUTCToEST = (utcTimestamp) => {
+  if (!utcTimestamp) return { date: "", time: "" };
+
+  const utcDate = new Date(utcTimestamp);
+
+  // Convert to EST/EDT (automatically handles daylight saving time)
+  const estDate = new Date(
+    utcDate.toLocaleString("en-US", { timeZone: "America/New_York" })
+  );
+
+  // Format date as M/D/YYYY
+  const date = estDate.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  // Format time as H:MM:SS AM/PM
+  const time = estDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  return { date, time };
+};
+
 function AuditTrailView() {
   const { id } = useParams();
-
   const [data, setData] = useState({});
 
-  const dateObj = useMemo(
-    () => (data ? new Date(data.action_time) : null),
-    [data]
+  // Convert UTC to EST and format
+  const { date, time } = useMemo(
+    () => convertUTCToEST(data?.action_time),
+    [data?.action_time]
   );
-  const date = dateObj ? dateObj.toLocaleDateString() : "";
-  const time = dateObj ? dateObj.toLocaleTimeString() : "";
+
   const handleBackClick = () => {
     window.history.back();
   };

@@ -7,15 +7,7 @@ import "datatables.net-bs4/css/dataTables.bootstrap4.min.css";
 import "datatables.net-bs4/js/dataTables.bootstrap4.min.js";
 import CustomTable from "../../components/shared/table/CustomTable";
 import { colorMapping, environmentMapping } from "../../utils/constent";
-
-const formatDateToLocal = (date) => {
-  if (!date) return "N/A";
-  try {
-    return new Date(date).toLocaleDateString("en-GB");
-  } catch {
-    return "N/A";
-  }
-};
+import { formatDate } from "../../utils/date";
 
 function TCfulfilment() {
   const [environment, setEnvironment] = useState("All");
@@ -130,12 +122,12 @@ function TCfulfilment() {
         {
           key: "submittedDate",
           label: "Date Submitted",
-          renderCell: (item) => formatDateToLocal(item.submitted_date),
+          renderCell: (item) => formatDate(item.submitted_date),
         },
         {
           key: "updatedDate",
           label: "Last Updated",
-          renderCell: (item) => formatDateToLocal(item.updated_at),
+          renderCell: (item) => formatDate(item.updated_at),
         },
         {
           key: "testObjective",

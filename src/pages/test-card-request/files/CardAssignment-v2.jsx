@@ -146,6 +146,7 @@ function CardAssignmentV2({
     }
   }, [cardRequestId, encryptionKey, environment, terminalType]);
 
+  console.log("shipping data ", shippingDetails);
   useEffect(() => {
     fetchShippingDetails();
 
@@ -228,36 +229,56 @@ function CardAssignmentV2({
     }
   };
 
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+
+    // If it's YYYY-MM-DD format, parse as local date to avoid timezone shift
+    if (
+      typeof dateString === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+    ) {
+      const [year, month, day] = dateString.split("-").map(Number);
+      return new Date(year, month - 1, day); // Creates local date without timezone conversion
+    }
+
+    return new Date(dateString);
+  };
   const lastUsedDate = useMemo(() => {
     const testInfo =
       requestInfoData?.testInfo && JSON.parse(requestInfoData?.testInfo);
-    return testInfo?.endDate || "";
+    console.log("end date ", testInfo?.endDate);
+    return testInfo?.endDate ? parseLocalDate(testInfo.endDate) : null;
   }, [requestInfoData?.testInfo]);
+
+  console.log("systemDataRows", lastUsedDate);
 
   const isObjectEmpty = useCallback((obj) => {
     return Object.keys(obj).length > 0;
   }, []);
 
+  // ✅ always parse as local YYYY-MM-DD without timezone shift
   const parseStoredDateForPicker = (value) => {
     if (!value) return null;
 
+    // If already Date
     if (value instanceof Date && !isNaN(value)) return value;
 
-    if (typeof value === "string") {
-      if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
-        const d = new Date(value);
-        if (isNaN(d)) return null;
+    // If backend sends YYYY-MM-DD
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [year, month, day] = value.split("-").map(Number);
+      return new Date(year, month - 1, day); // local midnight
+    }
 
-        return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-      }
+    // If backend sends MM-DD-YYYY
+    if (typeof value === "string" && /^\d{2}-\d{2}-\d{4}$/.test(value)) {
+      const [mm, dd, yyyy] = value.split("-").map(Number);
+      return new Date(yyyy, mm - 1, dd);
+    }
 
-      if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
-        const [mm, dd, yyyy] = value.split("-").map(Number);
-        return new Date(yyyy, mm - 1, dd);
-      }
-
+    // If ISO string with time → convert to local YYYY-MM-DD
+    if (typeof value === "string" && value.includes("T")) {
       const d = new Date(value);
-      if (!isNaN(d)) return d;
+      return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
     }
 
     return null;
@@ -276,6 +297,7 @@ function CardAssignmentV2({
         ) : (
           <form>
             <div className="accordion" id="testerAccordion">
+              {console.log("shippingDetails", shippingDetails)}
               {(shippingDetails || [])?.map((card, index) => {
                 const cardDetails = card?.decryptedCardDetails || {};
                 const cardAssigned =
@@ -303,7 +325,7 @@ function CardAssignmentV2({
                           aria-controls={`collapse${uniqueId}`}
                         >
                           <div className="d-flex align-items-center w-100">
-                            {cardAssigned ? (
+                            {cardAssigned && card?.card ? (
                               <div className="check-circle me-2">
                                 <i className="fas fa-check"></i>
                               </div>
@@ -521,6 +543,7 @@ function CardAssignmentV2({
                                     lastUsedDate ||
                                     ""
                                   }
+                                  minDate={new Date()}
                                   maxDate={cardDetails?.expDate}
                                   onChange={(date) => {
                                     const formatted = dateToMMDDYYYY(date); // MM-DD-YYYY format

@@ -366,6 +366,7 @@ function NotificationView() {
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     aria-label="Start Date"
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 ) : (
                   <p className="form-control-plaintext">
@@ -400,13 +401,26 @@ function NotificationView() {
               <div className="col-12c">
                 <input
                   type="text"
-                  className="form-control formcontrol"
+                  className={`form-control ${
+                    areFieldsEditable ? "formcontrol" : ""
+                  }`}
                   placeholder="Short Title (max 55 characters)"
                   maxLength={55}
                   value={shortTitle}
                   onChange={(e) => setShortTitle(e.target.value)}
                   readOnly={!areFieldsEditable}
                   aria-label="Short Title"
+                  style={
+                    !areFieldsEditable
+                      ? {
+                          pointerEvents: "none",
+                          cursor: "default",
+
+                          outline: "none",
+                          boxShadow: "none",
+                        }
+                      : {}
+                  }
                 />
               </div>
             </div>
@@ -415,13 +429,26 @@ function NotificationView() {
             <div className="row mb-3">
               <div className="col-12">
                 <textarea
-                  className="form-control formcontrol"
+                  className={`form-control ${
+                    areFieldsEditable ? "formcontrol" : ""
+                  }`}
                   rows="5"
                   readOnly={!areFieldsEditable}
                   value={notificationText}
                   onChange={(e) => setNotificationText(e.target.value)}
                   placeholder="Enter notification text"
                   aria-label="Notification Text"
+                  style={
+                    !areFieldsEditable
+                      ? {
+                          pointerEvents: "none",
+                          cursor: "default",
+
+                          outline: "none",
+                          boxShadow: "none",
+                        }
+                      : {}
+                  }
                 ></textarea>
               </div>
             </div>

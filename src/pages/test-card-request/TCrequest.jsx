@@ -376,7 +376,7 @@ function TCrequest() {
             )}
           </div>
         </section>
-        {user.role === 1 && (
+        {(user.role === 1 || user.role === 2 || user.role === 3) && (
           <VerticalRightSidebar
             activeStep={activeStep}
             handleStepChange={handleSMEStepChange}

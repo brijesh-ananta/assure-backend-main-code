@@ -4,25 +4,29 @@ import SideButtons from "../../common/SideButtons/SideButtons";
 import { useNavigate, useParams } from "react-router-dom";
 import "./loginhistoryv2.css";
 import apiService from "../../services";
+function formatDateTime(datetimeString) {
+  if (!datetimeString) return { date: "N/A", time: "N/A" };
 
-function formatDateTime(isoString) {
-  if (!isoString) return { date: "N/A", time: "N/A" };
+  const dateObj = new Date(datetimeString);
 
-  const dateObj = new Date(isoString);
+  // Use UTC getters
+  const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getUTCDate()).padStart(2, "0");
+  const year = dateObj.getUTCFullYear();
 
-  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-  const day = String(dateObj.getDate()).padStart(2, "0");
-  const year = String(dateObj.getFullYear());
+  const date = `${month}-${day}-${year}`;
 
-  const localDate = `${month}-${day}-${year}`;
-  const date = localDate || "N/A";
-  // const time = dateObj.toLocaleTimeString("en-GB", {
-  //   hour12: false,
+  const hours = String(dateObj.getUTCHours()).padStart(2, "0");
+  const minutes = String(dateObj.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(dateObj.getUTCSeconds()).padStart(2, "0");
 
-  const time = dateObj.toISOString().split("T")[1].split(".")[0];
+  const time = `${hours}:${minutes}:${seconds}`;
 
   return { date, time };
 }
+
+console.log(formatDateTime("2025-08-19T09:57:26.000Z"));
+// { date: "08-19-2025", time: "09:57:26" }
 
 const LoginHistoryv2 = () => {
   const navigate = useNavigate();
@@ -43,11 +47,11 @@ const LoginHistoryv2 = () => {
           },
         },
         {
-          key: "login_time",
+          key: "login_time_est",
           label: "Login Time",
           width: "120px",
           renderCell: (item) => {
-            return formatDateTime(item?.login_time)?.time || "N/A";
+            return formatDateTime(item?.login_time_est)?.time || "N/A";
           },
         },
         {
@@ -59,11 +63,11 @@ const LoginHistoryv2 = () => {
           },
         },
         {
-          key: "logout_time",
+          key: "logout_time_est",
           label: "Logout Time",
           width: "120px",
           renderCell: (item) => {
-            return formatDateTime(item?.logout_time).time || "N/A";
+            return formatDateTime(item?.logout_time_est).time || "N/A";
           },
         },
         {

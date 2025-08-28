@@ -6,16 +6,10 @@ import CustomTable from "../../components/shared/table/CustomTable";
 import { toMMDDYYYY } from "../maintain-card-stock/AddCard";
 import CardUsageHistory from "./CardUsageHistory";
 import { formatMaskedCardNumber } from "../../utils/function";
+
+import { formatDateMMDDYY } from "../../utils/date";
+
 const AssignmentHistory = ({ data, open, cardType }) => {
-  function formatToMMDDYY(isoDate) {
-    const date = new Date(isoDate);
-    const mm = String(date.getMonth() + 1); // Months are 0-indexed
-    const dd = String(date.getDate()).padStart(2, "0");
-    const yy = String(date.getFullYear()).slice(); // Get last 2 digits
-
-    return `${mm}/${dd}/${yy}`;
-  }
-
   const { id } = useParams();
 
   const [assignmentHistory, setAssignmentHistory] = useState({
@@ -108,7 +102,7 @@ const AssignmentHistory = ({ data, open, cardType }) => {
           renderCell: (item) =>
             item?.DateAssigned === null
               ? " -"
-              : formatToMMDDYY(item?.DateAssigned) || "-",
+              : formatDateMMDDYY(item?.DateAssigned) || "-",
         },
         {
           key: "DateRealsed",
@@ -118,7 +112,7 @@ const AssignmentHistory = ({ data, open, cardType }) => {
           renderCell: (item) =>
             item?.DateReleased === null
               ? " -"
-              : formatToMMDDYY(item?.DateReleased) || "-",
+              : formatDateMMDDYY(item?.DateReleased) || "-",
         },
         { key: "CardUsed", label: "Card Used", width: "150px", sortable: true },
         {
@@ -248,7 +242,7 @@ const AssignmentHistory = ({ data, open, cardType }) => {
                 <span className="w-50 font">
                   {assignmentHistory.total_used_amount === "-"
                     ? "-"
-                    : `$${assignmentHistory.total_used_amount}`}
+                    : `$${assignmentHistory.total_used_amount.toFixed(2)}`}
                 </span>
               </div>
             </>

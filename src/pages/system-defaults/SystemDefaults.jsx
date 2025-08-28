@@ -121,7 +121,7 @@ function SystemDefaults() {
                   id="flexRadioDefault1"
                   checked={env === "1"}
                   onChange={handleEnvironmentChange}
-                  disabled={userRole !== 1} // Disable radio buttons if userRole != 1
+                  disabled={userRole !== 1 && userRole !== 4} // Disable radio buttons if userRole != 1
                 />
                 <label className="form-check-label" htmlFor="flexRadioDefault1">
                   Prod
@@ -136,7 +136,7 @@ function SystemDefaults() {
                   value="2"
                   checked={env === "2"}
                   onChange={handleEnvironmentChange}
-                  disabled={userRole !== 1} // Disable radio buttons if userRole != 1
+                  disabled={userRole !== 1 && userRole !== 4} // Disable radio buttons if userRole != 1
                 />
                 <label className="form-check-label" htmlFor="flexRadioDefault2">
                   QA
@@ -186,7 +186,6 @@ function SystemDefaults() {
                       })
                     }
                   />
-                  <span>days</span>
                 </div>
               </div>
             </div>
@@ -386,7 +385,7 @@ function SystemDefaults() {
             >
               Cancel
             </button>
-            {userRole === 1 && (
+            {(userRole === 1 || userRole === 4) && (
               <button className="w-150p btn save-btn" onClick={handleSave}>
                 {loading && (
                   <span className="spinner-border spinner-border-sm me-2"></span>

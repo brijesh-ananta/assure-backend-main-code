@@ -155,7 +155,7 @@ function TerminalInfo({
     let currentArray = [];
     if (current === "Both") {
       currentArray = ["Contact", "Contactless"];
-    } else if (typeof current === "string") {
+    } else if (typeof current === "string" && current !== "") {
       currentArray = [current];
     }
 
@@ -173,6 +173,7 @@ function TerminalInfo({
     } else if (updatedArray.length === 1) {
       newValue = updatedArray[0];
     }
+    // If updatedArray is empty, newValue remains empty string
 
     const updatedData = {
       ...terminalInfoData,
@@ -180,7 +181,7 @@ function TerminalInfo({
     };
 
     setTerminalInfoData(updatedData);
-    fetchTestCaseData(updatedData);
+    // fetchTestCaseData(updatedData);
   };
 
   return (

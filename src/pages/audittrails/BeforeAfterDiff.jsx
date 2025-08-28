@@ -64,10 +64,23 @@ function BeforeAfterDiff({ oldData, newData }) {
                 style={{ cursor: "pointer" }}
               >
                 <td>{key}</td>
-                <td className="text-break small" style={{ maxWidth: "300px" }}>
+
+                <td
+                  className="text-break small"
+                  style={{
+                    maxWidth: "300px",
+                    whiteSpace: key === "testing_steps" ? "pre-line" : "normal",
+                  }}
+                >
                   {displayOldVal}
                 </td>
-                <td className="text-break small" style={{ maxWidth: "300px" }}>
+                <td
+                  className="text-break small"
+                  style={{
+                    maxWidth: "300px",
+                    whiteSpace: key === "testing_steps" ? "pre-line" : "normal",
+                  }}
+                >
                   {displayNewVal}
                 </td>
               </tr>
@@ -102,7 +115,14 @@ function BeforeAfterDiff({ oldData, newData }) {
                   <strong>Before:</strong>
                   <div
                     className="border p-2 mt-1 bg-light text-break small font-monospace"
-                    style={{ maxHeight: "200px", overflowY: "auto" }}
+                    style={{
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      whiteSpace:
+                        modalData.key === "testing_steps"
+                          ? "pre-line"
+                          : "normal",
+                    }}
                   >
                     {modalData.oldVal || "N/A"}
                   </div>
@@ -111,7 +131,14 @@ function BeforeAfterDiff({ oldData, newData }) {
                   <strong>After:</strong>
                   <div
                     className="border p-2 mt-1 bg-light text-break small font-monospace"
-                    style={{ maxHeight: "200px", overflowY: "auto" }}
+                    style={{
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      whiteSpace:
+                        modalData.key === "testing_steps"
+                          ? "pre-line"
+                          : "normal",
+                    }}
                   >
                     {modalData.newVal || "N/A"}
                   </div>

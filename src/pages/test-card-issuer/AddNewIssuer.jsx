@@ -94,7 +94,7 @@ const AddNewIssuer = () => {
         confirm_secured_connection: cardType.includes("Pos")
           ? values.securedConnection?.toLowerCase() || "yes"
           : undefined,
-        createdBy: 178, // Uncomment if you have user context
+        createdBy: 178,
       };
       Object.keys(payload).forEach(
         (key) => payload[key] === undefined && delete payload[key]

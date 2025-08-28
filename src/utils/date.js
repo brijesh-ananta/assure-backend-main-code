@@ -9,6 +9,59 @@ export function formatDateToLocal(date) {
   return "N/A";
 }
 
+export function formatDate(date) {
+  if (!date) return "N/A";
+  // Match YYYY-MM-DD from ISO string
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "N/A";
+  const [, year, month, day] = match;
+  return `${month}/${day}/${year}`;
+}
+
+export function formatDateMMDDYY(date) {
+  if (!date) return "N/A";
+  // Match YYYY-MM-DD from ISO string
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "N/A";
+  const [, year, month, day] = match;
+  const shortDate = year.slice(-2);
+  return `${month}/${day}/${shortDate}`;
+}
+
+export function convertUTCToESTTime(utcDateStr) {
+  if (!utcDateStr) return "N/A";
+  const date = new Date(utcDateStr);
+  const estTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(date);
+  return estTime;
+}
+
+export function convertUTCtoEST(utcString) {
+  if (!utcString) return "";
+
+  // Ensure it's in ISO format (add "Z" = UTC if missing)
+  const isoString = utcString.endsWith("Z")
+    ? utcString
+    : utcString.replace(" ", "T") + "Z";
+  const date = new Date(isoString);
+
+  // Format to US Eastern time (handles EST/EDT automatically)
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
 export function convertToMMDDYYYY(dateStr) {
   if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return "";
   const [year, month, day] = dateStr.split("-");

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import "../../components/shared/table/style.css";
+import { formatDate } from "../../utils/date";
 
 function IssuerList() {
   const navigate = useNavigate();
@@ -298,7 +299,7 @@ function IssuerList() {
             to={`/dashboard/test-card-issuer/edit/${item.issuer_id}?environment=${item.environment}`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
-            {item.created_at ? item.created_at.slice(0, 10) : ""}
+            {item.created_at ? formatDate(item.created_at) : "-"}
           </Link>
         ),
       },

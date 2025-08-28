@@ -118,7 +118,7 @@ const PosCard = (props) => {
                 ? formatMaskedCardNumber(cardDetails?.cardNumber, "full")
                 : formatMaskedCardNumber(cardDetails?.cardNumber)}
             </span>
-            {user.role === 2 ? (
+            {user.role === 2 || user.role === 3 ? (
               <></>
             ) : (
               <>

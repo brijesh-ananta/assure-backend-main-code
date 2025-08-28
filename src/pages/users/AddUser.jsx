@@ -115,6 +115,8 @@ function AddUser() {
     return partners.find((partner) => partner.partner_id == testingPartnerId);
   }, [partners, testingPartnerId]);
 
+  console.log("exit user--->", existingUserData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
@@ -129,13 +131,6 @@ function AddUser() {
       formData = {
         ...existingUserData,
         shippingAddress,
-        environments: selectedEnvironments,
-        userType: existingUserData?.userType || "mobile",
-        userRole: existingUserData?.userRole || selectedUserRole,
-        selectedRoles: existingUserData?.selectedRoles?.length
-          ? existingUserData.selectedRoles
-          : ["mobile"],
-        ...(passwordType === "admin" && password && { password }),
       };
     } else {
       formData = {
@@ -158,8 +153,9 @@ function AddUser() {
     }
 
     try {
+      console.log("formdata--->", formData);
       const response = userId
-        ? await axiosToken.put(`/users/${userId}`, formData)
+        ? await axiosToken.put(`/users/${userId}/shipping-address`, formData)
         : await axiosToken.post(`/users`, formData);
 
       toast.success(response.data.message);

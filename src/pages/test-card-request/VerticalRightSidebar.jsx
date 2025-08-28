@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../utils/AuthContext";
 /* eslint-disable react/prop-types */
 const VerticalRightSidebar = ({
   activeStep,
@@ -9,12 +9,11 @@ const VerticalRightSidebar = ({
   isPhysicalCard,
   requestInfoData,
   environment,
-  isTestCaseAvailable,
 }) => {
   const navigate = useNavigate();
   const afterSubmitStatus = ["approved", "assign_card", "shipped", "completed"];
   const afterAssigneStatus = ["assign_card", "shipped", "completed"];
-
+  const { user } = useAuth();
   const onTabClick = (index) => {
     handleStepChange(index);
 
@@ -47,67 +46,122 @@ const VerticalRightSidebar = ({
     }
   }, [requestInfoData]);
 
+  const length = Object.keys(requestInfoData).length;
+  console.log(length);
+
+  console.log("request info data---->", requestInfoData);
+  console.log(length === 0 && user.role === 1);
   return (
     <div className="sidebar">
       {/* Approval */}
-      {!afterSubmitStatus.includes(requestInfoData.status) && (
-        <button
-          className={`right-sidebar-item ${
-            activeStep != 7 && activeStep != 8 && "active"
-          }`}
-          onClick={() => onTabClick(1)}
-        >
-          <span className="sidebar-text">Approval</span>
-        </button>
+
+      {requestInfoData.status === "submitted" ? (
+        <>
+          {!afterSubmitStatus.includes(requestInfoData.status) && (
+            <button
+              className={`right-sidebar-item ${
+                activeStep != 7 && activeStep != 8 && "active"
+              }`}
+              onClick={() => onTabClick(1)}
+            >
+              <span className="sidebar-text">Approval</span>
+            </button>
+          )}{" "}
+        </>
+      ) : (
+        <></>
       )}
 
       {/* Assign Card */}
-      {afterSubmitStatus.includes(requestInfoData.status) &&
-        environment != 3 && (
-          <button
-            className={`right-sidebar-item ${activeStep === 7 && "active"}`}
-            onClick={() => onTabClick(7)}
-            disabled={!isTestInfoAvailable || environment == 3}
-          >
-            <span className="sidebar-text">Assign Card</span>
-          </button>
-        )}
+
+      {user.role === 2 || user.role === 3 ? (
+        <>
+          {requestInfoData.status === "assign_card" ||
+          requestInfoData.status === "completed" ? (
+            <>
+              {" "}
+              <button
+                className={`right-sidebar-item ${activeStep === 7 && "active"}`}
+                onClick={() => onTabClick(7)}
+                disabled={!isTestInfoAvailable || Number(environment) === 3}
+              >
+                <span className="sidebar-text">Assign Card</span>
+              </button>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <>
+          {afterSubmitStatus.includes(requestInfoData.status) &&
+            Number(environment) !== 3 && (
+              <button
+                className={`right-sidebar-item ${activeStep === 7 && "active"}`}
+                onClick={() => onTabClick(7)}
+                disabled={!isTestInfoAvailable || environment === 3}
+              >
+                <span className="sidebar-text">Assign Card</span>
+              </button>
+            )}
+        </>
+      )}
 
       {/* Ship Card */}
-      {((isPhysicalCard != "no" &&
-        afterAssigneStatus.includes(requestInfoData.status)) ||
-        showShipDetails ||
-        (environment == 3 && requestInfoData.status == "approved")) && (
-        <button
-          className={`right-sidebar-item ${activeStep === 8 && "active"}`}
-          onClick={() => onTabClick(8)}
-        >
-          <span className="sidebar-text">Ship Card</span>
-        </button>
+
+      {user.role === 2 || user.role === 3 ? (
+        <>
+          {requestInfoData.status === "completed" ? (
+            <>
+              {" "}
+              {((isPhysicalCard != "no" &&
+                afterAssigneStatus.includes(requestInfoData.status)) ||
+                showShipDetails ||
+                (environment == 3 && requestInfoData.status == "approved")) && (
+                <button
+                  className={`right-sidebar-item ${
+                    activeStep === 8 && "active"
+                  }`}
+                  onClick={() => onTabClick(8)}
+                >
+                  <span className="sidebar-text">Ship Card</span>
+                </button>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <>
+          {((isPhysicalCard != "no" &&
+            afterAssigneStatus.includes(requestInfoData.status)) ||
+            showShipDetails ||
+            (environment == 3 && requestInfoData.status == "approved")) && (
+            <button
+              className={`right-sidebar-item ${activeStep === 8 && "active"}`}
+              onClick={() => onTabClick(8)}
+            >
+              <span className="sidebar-text">Ship Card</span>
+            </button>
+          )}
+        </>
       )}
 
       {/* Stop fulfillment */}
-      {afterSubmitStatus.includes(requestInfoData.status) && (
-        <button
-          className={`right-sidebar-item ${activeStep === 9 && "active"}`}
-          onClick={() => onTabClick(9)}
-          disabled={
-            requestInfoData.status == "completed" ||
-            requestInfoData.status == "returned"
-          }
-        >
-          <span className="sidebar-text">Stop Fulfillment</span>
-        </button>
-      )}
-
-      {/* Test Case */}
-      <button
-        className={`right-sidebar-item ${activeStep === 10 && "active"}`}
-        onClick={() => onTabClick(10)}
-        disabled={!isTestCaseAvailable}
-      >
-        <span className="sidebar-text">Test Case</span>
-      </button>
+      {afterSubmitStatus.includes(requestInfoData.status) &&
+        user.role === 1 && (
+          <button
+            className={`right-sidebar-item ${activeStep === 9 && "active"}`}
+            onClick={() => onTabClick(9)}
+            disabled={
+              requestInfoData.status == "completed" ||
+              requestInfoData.status == "returned"
+            }
+          >
+            <span className="sidebar-text">Stop Fulfillment</span>
+          </button>
+        )}
     </div>
   );
 };

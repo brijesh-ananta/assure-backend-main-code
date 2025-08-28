@@ -215,7 +215,7 @@ const TesterDetails = ({
   };
   useEffect(() => {
     fetchPartners();
-  });
+  }, []);
   console.log(canEdit, isApproved, isRequester);
 
   const handleSave = async (goNext = false, skipRowCheck = false) => {

@@ -5,6 +5,8 @@ import axiosToken from "../../utils/axiosToken";
 import { useAuth } from "../../utils/AuthContext";
 import { ToastContainer } from "react-toastify";
 
+import { formatDate } from "../../utils/date";
+
 const TestingPartnerList = () => {
   const { user } = useAuth();
   const userRole = user.role;
@@ -110,7 +112,7 @@ const TestingPartnerList = () => {
           label: "Date Created",
           sortable: true,
           width: "140px",
-          renderCell: (item) => new Date(item.created_at).toLocaleDateString(),
+          renderCell: (item) => formatDate(item?.created_at),
         },
       ],
       options: {
