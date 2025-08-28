@@ -7,6 +7,7 @@ import {
   ChevronDown,
   CheckCircle,
   MinusCircle,
+  X,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 
@@ -19,63 +20,37 @@ function TestCase({ requestInfoData, fetchData }) {
   useEffect(() => {
     const fetchCardRequestData = async () => {
       try {
-        const response = await axiosToken.get(
-          `/card-requests/${cardRequestId}`
+        const testCasesResponse = await axiosToken.get(
+          `/test-cases-user-mapping/user-card/${cardRequestId}`
         );
-        console.log("Card Request API Response:", response.data);
+        console.log("Test Cases API Response:", testCasesResponse.data);
 
-        const userCardInfo = JSON.parse(response.data.userCardInfo || "{}");
-        const userCardId = userCardInfo.user_card_id;
-
-        if (userCardId) {
-          const testCasesResponse = await axiosToken.get(
-            `/test-cases-user-mapping/user-card/${userCardId}`
+        if (
+          testCasesResponse.data.data &&
+          testCasesResponse.data.data.testers
+        ) {
+          const testersData = testCasesResponse.data.data.testers.map(
+            (tester) => ({
+              id: tester.testerId,
+              name: tester.testerName,
+              email: tester.email,
+              assignedStatus: tester.assignedStatus,
+              testCases: tester.testCases
+                ? tester.testCases.map((testCase) => ({
+                    mappingId: testCase.caseId,
+                    testId: testCase.uniqueId,
+                    description: testCase.short_description,
+                    testingSteps: testCase.testing_steps,
+                    testerStatus:
+                      testCase.status === "pending"
+                        ? "Pending Testing"
+                        : "Complete",
+                    supportStatus: testCase.supportStatus,
+                  }))
+                : null,
+            })
           );
-          console.log("Test Cases API Response:", testCasesResponse.data);
-
-          const groupedTesters = testCasesResponse.data.data.reduce(
-            (acc, testCase) => {
-              const existingTester = acc.find(
-                (t) => t.id === testCase.tester_id
-              );
-              if (existingTester) {
-                existingTester.testCases.push({
-                  mappingId: testCase.id,
-                  testId: testCase.test_cases_unique_id,
-                  description: testCase.short_description,
-                  testingSteps: testCase.testing_steps,
-                  testerStatus:
-                    testCase.status === "pending"
-                      ? "Pending Testing"
-                      : "Complete",
-                  supportStatus: testCase.support_status,
-                });
-              } else {
-                acc.push({
-                  id: testCase.tester_id,
-                  name: testCase.tester_name,
-                  email: testCase.tester_email,
-                  testCases: [
-                    {
-                      mappingId: testCase.id,
-                      testId: testCase.test_cases_unique_id,
-                      description: testCase.short_description,
-                      testingSteps: testCase.testing_steps,
-                      testerStatus:
-                        testCase.status === "pending"
-                          ? "Pending Testing"
-                          : "Complete",
-                      supportStatus: testCase.support_status,
-                    },
-                  ],
-                });
-              }
-              return acc;
-            },
-            []
-          );
-
-          setTesters(groupedTesters);
+          setTesters(testersData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -96,6 +71,26 @@ function TestCase({ requestInfoData, fetchData }) {
   ];
 
   const getIconsToShow = (tester) => {
+    if (tester.assignedStatus === "unassigned") {
+      return {
+        showRedCross: true,
+        showBlueCross: false,
+        showYellow: false,
+        showGreen: false,
+        showIcons: true,
+      };
+    }
+
+    if (tester.assignedStatus === "assigned" && !tester.testCases) {
+      return {
+        showRedCross: false,
+        showBlueCross: true,
+        showYellow: false,
+        showGreen: false,
+        showIcons: true,
+      };
+    }
+
     const allTestsComplete = tester.testCases.every(
       (tc) => tc.testerStatus === "Complete"
     );
@@ -107,6 +102,8 @@ function TestCase({ requestInfoData, fetchData }) {
     );
 
     return {
+      showRedCross: false,
+      showBlueCross: false,
       showYellow: allTestsComplete,
       showGreen: allSupportComplete,
       showIcons: allTestsComplete || allSupportComplete,
@@ -120,12 +117,20 @@ function TestCase({ requestInfoData, fetchData }) {
     }));
   };
 
-  const handleSupportStatusChange = async (testerId, testId, newStatus, mappingId) => {
+  const handleSupportStatusChange = async (
+    testerId,
+    testId,
+    newStatus,
+    mappingId
+  ) => {
     try {
       // Make PUT API call to update admin status using mapping ID
-      await axiosToken.put(`/test-cases-user-mapping/admin-update/${mappingId}`, {
-        support_status: newStatus
-      });
+      await axiosToken.put(
+        `/test-cases-user-mapping/admin-update/${mappingId}`,
+        {
+          support_status: newStatus,
+        }
+      );
 
       // Update local state
       setTesters((prev) =>
@@ -167,6 +172,10 @@ function TestCase({ requestInfoData, fetchData }) {
         <p className="blue-heading text-center mb-0">Test Case Management</p>
         <div className="d-flex gap-3 align-items-center">
           <div className="d-flex align-items-center gap-1">
+            <X size={16} className="text-danger" />
+            <small>Unassigned</small>
+          </div>
+          <div className="d-flex align-items-center gap-1">
             <CheckCircle size={16} className="text-warning" />
             <small>Tester Complete</small>
           </div>
@@ -181,17 +190,33 @@ function TestCase({ requestInfoData, fetchData }) {
         {testers.map((tester) => (
           <div key={tester.id} className="mb-3">
             <div
-              className="d-flex gap-3 align-items-center p-2 border rounded cursor-pointer"
-              onClick={() => toggleTester(tester.id)}
-              style={{ cursor: "pointer" }}
+              className={`d-flex gap-3 align-items-center p-2 border rounded ${tester.assignedStatus !== "unassigned" ? "cursor-pointer" : ""}`}
+              onClick={
+                tester.assignedStatus !== "unassigned"
+                  ? () => toggleTester(tester.id)
+                  : undefined
+              }
+              style={{
+                cursor:
+                  tester.assignedStatus !== "unassigned"
+                    ? "pointer"
+                    : "default",
+              }}
             >
               <div className="d-flex gap-1" style={{ width: "45px" }}>
                 {(() => {
-                  const { showYellow, showGreen, showIcons } =
-                    getIconsToShow(tester);
+                  const {
+                    showRedCross,
+                    showBlueCross,
+                    showYellow,
+                    showGreen,
+                    showIcons,
+                  } = getIconsToShow(tester);
                   if (!showIcons) return null;
                   return (
                     <>
+                      {showRedCross && <X size={20} className="text-danger" />}
+                      {showBlueCross && <X size={20} className="text-danger" />}
                       {showYellow && (
                         <CheckCircle size={20} className="text-warning" />
                       )}
@@ -203,15 +228,16 @@ function TestCase({ requestInfoData, fetchData }) {
                 })()}
               </div>
               <span className="me-2">
-                {expandedTesters[tester.id] ? (
-                  <ChevronDown />
-                ) : (
-                  <ChevronRight />
-                )}
+                {tester.assignedStatus !== "unassigned" &&
+                  (expandedTesters[tester.id] ? (
+                    <ChevronDown />
+                  ) : (
+                    <ChevronRight />
+                  ))}
               </span>
               <div className="d-flex gap-3 flex-grow-1">
-                <div className="form-control-plaintext fw-bold text-primary underline">
-                  Tester <span className="">{tester.id}</span>
+                <div className="form-control-plaintext fw-bold text-primary">
+                  Tester_{testers.indexOf(tester) + 1}
                 </div>
                 <div className="form-control-plaintext d-flex gap-2 align-items-center">
                   <span className="fw-bold">Name</span>{" "}
@@ -230,59 +256,69 @@ function TestCase({ requestInfoData, fetchData }) {
 
             {expandedTesters[tester.id] && (
               <div className="border border-top-0 p-3">
-                <div className="row mb-2 fw-bold text-muted">
-                  <div className="col-md-2">Test ID</div>
-                  <div className="col-md-4">Description</div>
-                  <div className="col-md-2 text-center">Tester Update</div>
-                  <div className="col-md-3">Support Update</div>
-                </div>
-                {tester.testCases.map((testCase) => (
-                  <div
-                    key={testCase.testId}
-                    className="row mb-3 align-items-center"
-                  >
-                    <div className="col-md-2">
-                      <a href="#" className="text-muted fw-bold">
-                        {testCase.testId}
-                      </a>
+                {tester.testCases && tester.testCases.length > 0 ? (
+                  <>
+                    <div className="row mb-2 fw-bold text-muted">
+                      <div className="col-md-2">Test ID</div>
+                      <div className="col-md-4">Description</div>
+                      <div className="col-md-2 text-center">Tester Update</div>
+                      <div className="col-md-3">Support Update</div>
                     </div>
-                    <div className="col-md-4">
-                      <textarea
-                        className="form-control form-control-sm"
-                        value={testCase.testingSteps || testCase.description}
-                        rows={2}
-                        readOnly
-                      />
-                    </div>
-                    <div className="col-md-2 text-center">
-                      <span
-                        className={`badge ${testCase.testerStatus === "Complete" ? "text-success" : "text-muted"}`}
+                    {tester.testCases.map((testCase) => (
+                      <div
+                        key={testCase.testId}
+                        className="row mb-3 align-items-center"
                       >
-                        {getTesterIcon(testCase.testerStatus)}
-                      </span>
-                    </div>
-                    <div className="col-md-3">
-                      <select
-                        className="form-select form-select-sm"
-                        value={testCase.supportStatus}
-                        onChange={(e) =>
-                          handleSupportStatusChange(
-                            tester.id,
-                            testCase.testId,
-                            e.target.value,
-                            testCase.mappingId
-                          )
-                        }
-                      >
-                        {supportStatuses.map((status) => (
-                          <option key={status.value} value={status.value}>
-                            {status.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                        <div className="col-md-2">
+                          <a href="#" className="text-muted fw-bold">
+                            {testCase.testId}
+                          </a>
+                        </div>
+                        <div className="col-md-4">
+                          <textarea
+                            className="form-control form-control-sm"
+                            value={
+                              testCase.testingSteps || testCase.description
+                            }
+                            rows={2}
+                            readOnly
+                          />
+                        </div>
+                        <div className="col-md-2 text-center">
+                          <span
+                            className={`badge ${testCase.testerStatus === "Complete" ? "text-success" : "text-muted"}`}
+                          >
+                            {getTesterIcon(testCase.testerStatus)}
+                          </span>
+                        </div>
+                        <div className="col-md-3">
+                          <select
+                            className="form-select form-select-sm"
+                            value={testCase.supportStatus}
+                            onChange={(e) =>
+                              handleSupportStatusChange(
+                                tester.id,
+                                testCase.testId,
+                                e.target.value,
+                                testCase.mappingId
+                              )
+                            }
+                          >
+                            {supportStatuses.map((status) => (
+                              <option key={status.value} value={status.value}>
+                                {status.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="text-center text-muted py-3">
+                    No test cases assigned to this tester
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>
